@@ -1,15 +1,15 @@
-name = "moonbitstack/CHANGE-ME"
+name = "moonbitstack/moonrand"
 
 version = "0.1.0"
 
 readme = "README.md"
 
-repository = "https://github.com/moonbitstack/CHANGE-ME"
+repository = "https://github.com/moonbitstack/moonrand"
 
 license = "Apache-2.0"
 
-keywords = [ "moonbit" ]
+keywords = [ "random", "entropy", "csprng", "crypto", "moonbit" ]
 
-description = "One sentence saying what this is and what it is not."
+description = "Secure random bytes and unbiased sampling for MoonBit; never a seeded generator."
 
 source = "src"
