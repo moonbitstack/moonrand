@@ -14,24 +14,82 @@ test "bytes takes exactly n from the source" {
 }
 
 ///|
+/// The bound as the fewest big-endian bytes that hold it.
+fn bound_of(n : Int32) -> Bytes {
+  let out = []
+  let mut v = n
+  while v > 0 {
+    out.insert(0, (v & 0xFF).to_byte())
+    v = v >> 8
+  }
+  Bytes::from_array(out)
+}
+
+///|
+fn int_of(b : Bytes) -> Int32 {
+  b.iter().fold(init=0, (acc, x) => acc * 256 + x.to_int())
+}
+
+///|
+/// Go's `TestIntReads`: a power-of-two bound reads exactly the bytes its
+/// largest value needs.
+test "below reads as many bytes as the bound's largest value needs" {
+  for i in 0..<31 {
+    let source = @moonrand.Replay::new(b"\x00\x00\x00\x00\x00\x00\x00\x00")
+    ignore(@moonrand.below(bound_of(1 << i), source))
+    assert_eq(8 - source.remaining(), (i + 7) / 8)
+  }
+}
+
+///|
+/// Go's `TestIntMask`: a single byte in range comes back unchanged.
+test "below returns a byte in range as it was drawn" {
+  for max in 1..<=256 {
+    for i in 0..<max {
+      let source = @moonrand.Replay::new(Bytes::from_array([i.to_byte()]))
+      let got = @moonrand.below(bound_of(max), source)
+      assert_eq(int_of(got), i)
+    }
+  }
+}
+
+///|
+/// Go's `TestInt`, over a source that never refuses.
+test "below over the platform for bounds of a whole and a part byte" {
+  for n in 128..<140 {
+    let got = @moonrand.below(bound_of(n), Counter::{ })
+    assert_true(int_of(got) < n)
+  }
+}
+
+///|
+/// The root package has no platform source, so its tests carry a stand-in that
+/// never refuses: bytes from a counter run through a mixing step.
+priv struct Counter {}
+
+///|
+let state : Ref[UInt64] = Ref(0x9E3779B97F4A7C15)
+
+///|
+impl @moonrand.Source for Counter with fn fill(_self, buf) {
+  for i in 0..<buf.length() {
+    state.val = state.val * 6364136223846793005 + 1442695040888963407
+    buf[i] = (state.val >> 56).to_byte()
+  }
+}
+
+///|
 test "below keeps the bound's width and leading zeros" {
   let got = @moonrand.below(b"\x00\x05", @moonrand.Replay::new(b"\x04"))
   assert_eq(got, b"\x00\x04")
 }
 
 ///|
-test "below masks to the bound's bit length before comparing" {
-  // 256 has one bit in its top byte, so 0xff 0xff is masked to 0x01 0xff,
-  // which is still too big; 0x00 0x10 is taken.
-  let source = @moonrand.Replay::new(b"\xff\xff\x00\x10")
-  assert_eq(@moonrand.below(b"\x01\x00", source), b"\x00\x10")
+test "below draws again on a value at or above the bound" {
+  // 1000 needs ten bits, so 0xff 0xff is cut to 0x03 0xff, which is still 1023.
+  let source = @moonrand.Replay::new(b"\xff\xff\x03\xe7")
+  assert_eq(@moonrand.below(b"\x03\xe8", source), b"\x03\xe7")
   assert_eq(source.remaining(), 0)
-}
-
-///|
-test "below draws again on a value equal to the bound" {
-  let source = @moonrand.Replay::new(b"\x80\x00\x7f\xff")
-  assert_eq(@moonrand.below(b"\x80\x00", source), b"\x7f\xff")
 }
 
 ///|
@@ -53,27 +111,29 @@ test "below takes every value in range from the same number of draws" {
 }
 
 ///|
-test "scalar draws again on zero and on values at or above the order" {
-  let source = @moonrand.Replay::new(b"\x00\x06\x04")
+test "scalar keeps the leftmost bits and draws again on zero and on the order" {
+  // 5 needs three bits, so a draw keeps its top three: 0x00 is zero, 0xc0 is 6,
+  // and 0x80 is 4.
+  let source = @moonrand.Replay::new(b"\x00\xc0\x80")
   assert_eq(@moonrand.scalar(b"\x05", source), b"\x04")
   assert_eq(source.remaining(), 0)
 }
 
 ///|
-test "scalar is as wide as the order" {
-  let order = b"\x01\xff\xff"
+test "scalar shifts across byte boundaries and is as wide as the order" {
+  // 0x01ffff needs seventeen bits: the draw 0x12 0x34 0x56 keeps its top
+  // seventeen, which is 0x2468.
   let got = @moonrand.scalar(
-    order,
-    @moonrand.Replay::new(b"\x00\x00\x00\x00\x12\x34"),
+    b"\x00\x01\xff\xff",
+    @moonrand.Replay::new(b"\x12\x34\x56"),
   )
-  assert_eq(got, b"\x00\x12\x34")
+  assert_eq(got, b"\x00\x00\x24\x68")
 }
 
 ///|
 test "a source of the program's own plugs in" {
-  let failing = Broken::{ }
   let refused = try {
-    ignore(@moonrand.bytes(4, failing))
+    ignore(@moonrand.bytes(4, Broken::{ }))
     ""
   } catch {
     e => e.to_string()

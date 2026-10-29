@@ -48,13 +48,20 @@ from a replay, `Failed(reason)` from a source of your own.
 ## Sampling
 
 `below(bound, source)` reads `bound` as a big-endian number and returns one in
-[0, `bound`), as wide as `bound`. It draws only as many bits as `bound` has and
-draws again when the value lands at or above it, so every value is equally
+[0, `bound`), as wide as `bound`. It draws as Go's `crypto/rand.Int` does: as
+many bytes as `bound - 1` needs, the unused high bits of the first cleared,
+drawn again while the value is at or above `bound`. Every value is equally
 likely; reducing a wider draw modulo `bound` would favour the small ones.
 
 `scalar(order, source)` returns a value in [1, `order` - 1], as wide as `order`:
-a private key or a nonce for a group of that order. A P-521 scalar is 66 bytes
+a private key or a nonce for a group of that order. It draws as FIPS 186-5
+A.2.2 and Go's ECDSA do: the leftmost bits of a draw as long as `order`, drawn
+again while the value is zero or not below `order`. A P-521 scalar is 66 bytes
 with the top bits clear, which is why this is not "ask for 32 bytes".
+
+Both are checked against Go: `scripts/gen_vectors.go` has `crypto/rand.Int` and
+`ecdsa.GenerateKey` draw from fixed byte streams, and the tests replay those
+bytes and expect the same values, every byte used.
 
 ## Licence
 
