@@ -4,6 +4,7 @@ package "moonbitstack/moonrand"
 import {
   "moonbitstack/moonrand/chacha",
   "moonbitstack/moonrand/contract",
+  "moonbitstack/moonseed",
 }
 
 // Values
@@ -12,6 +13,8 @@ pub fn[R : @contract.Rng, T] choice(R, ArrayView[T]) -> T?
 pub fn[R : @contract.Rng, T] choices(R, ArrayView[T], k? : Int32, weights? : ArrayView[Double]) -> Array[T]
 
 pub fn[R : @contract.Rng] expovariate(R, Double) -> Double
+
+pub fn from_entropy() -> @chacha.ChaCha12 raise @moonseed.Unavailable
 
 pub fn[R : @contract.Rng] gauss(R, mu? : Double, sigma? : Double) -> Double
 

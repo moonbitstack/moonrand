@@ -1,7 +1,6 @@
 // Pseudo-random numbers and random algorithms. The default generator opens
-// ready to use; pick a specific algorithm from a subpackage when you need one.
-// Sampling and distributions never touch the platform: for secure entropy, use
-// moonseed.
+// from a seed you give it, or from platform entropy via `from_entropy`
+// (moonseed). Sampling and distributions themselves never touch the platform.
 import {
   "moonbitstack/moonrand/contract",
 }
@@ -12,4 +11,12 @@ import {
 
 import {
   "moonbitlang/core/math",
+}
+
+import {
+  "moonbitstack/moonseed",
+}
+
+import {
+  "moonbitstack/moonseed/system",
 }

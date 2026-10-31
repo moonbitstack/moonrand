@@ -13,3 +13,7 @@ keywords = [ "random", "entropy", "csprng", "crypto", "moonbit" ]
 description = "Secure random bytes and unbiased sampling for MoonBit; never a seeded generator."
 
 source = "src"
+
+import {
+  "moonbitstack/moonseed@0.0.1",
+}
