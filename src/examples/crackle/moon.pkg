@@ -1,0 +1,13 @@
+// The ice-crackle page hook: the library compiled to wasm-gc, with two
+// functions exported to JavaScript. The page mixes its own entropy (clock,
+// screen, pointer, user agent) into two 64-bit words, hands them to `open`,
+// and from then on every number it draws comes from ChaCha12 inside here.
+pkgtype(kind: "executable")
+
+import {
+  "moonbitstack/moonrand",
+}
+
+options(
+  link: { "wasm-gc": { "exports": [ "open", "unit" ] } },
+)
