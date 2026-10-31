@@ -161,6 +161,9 @@ body[data-lang="zh"] .btn span::before{
 .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 var(--gut) }
 .sec{ padding:76px 0 }
 .sec + .sec{ padding-top:58px }
+html[lang="zh-Hans"] .kicker{
+  font-family:var(--kai); font-size:12px; letter-spacing:.26em; color:var(--cin);
+}
 .kicker{
   font-family:var(--mono); font-size:10px; letter-spacing:.32em; color:var(--k4);
   text-transform:uppercase; margin:0 0 14px;
@@ -347,7 +350,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 <div class="sheet">
 
   <header class="bar">
-    <div><b data-zh="MoonRand">moonrand</b> <span class="bar__v">0.2.0 · MIT</span></div>
+    <div><b data-zh="MoonRand">moonrand</b> <span class="bar__v"><span id="rev-value">0.1.0</span> · MIT</span></div>
     <div class="r">
       <a href="https://moonbitstack.github.io/moonseed/" id="x-link" data-zh="moonseed · 熵">moonseed · entropy</a>
       <a href="#what" data-zh="概览">overview</a>
@@ -394,7 +397,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <section class="sec" id="what">
     <div class="wrap two">
       <div>
-        <p class="kicker" data-zh="01 / 概览">01 / overview</p>
+        <p class="kicker" data-zh="一 · 概览">01 / overview</p>
         <h2 data-zh="种子进去，流出来&lt;small&gt;一句话&lt;/small&gt;">One seed in, one stream out<small>what it does</small></h2>
         <p class="prose" data-zh="moonrand 只做一件事：把 32 字节变成一个种子，把种子变成一条可复现的流，再把这条流变成你要的形状——均匀、正态、指数、对数正态、整数、比特。">
           moonrand does one thing: it turns thirty-two bytes into a seed, the seed into a
@@ -428,7 +431,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <!-- ══ 开始 ══════════════════════════════════ -->
   <section class="sec" id="start">
     <div class="wrap">
-      <p class="kicker" data-zh="02 / 开始">02 / start</p>
+      <p class="kicker" data-zh="二 · 开始">02 / start</p>
       <h2 data-zh="两行起笔&lt;small&gt;装好之后&lt;/small&gt;">Two lines to begin<small>quick start</small></h2>
       <div class="two" style="margin-top:30px">
         <div class="code"><span class="c" data-zh="// 32 字节。来源随你：常量、文件、平台熵">// 32 bytes. Where they come from is your business</span>
@@ -461,7 +464,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <!-- ══ 保证 ══════════════════════════════════ -->
   <section class="sec" id="promise">
     <div class="wrap">
-      <p class="kicker" data-zh="03 / 保证">03 / guarantees</p>
+      <p class="kicker" data-zh="三 · 保证">03 / guarantees</p>
       <h2 data-zh="三条，不多不少&lt;small&gt;它许给你什么&lt;/small&gt;">Three, no more<small>what it guarantees</small></h2>
       <div class="cols">
         <div class="col">
@@ -496,7 +499,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <!-- ══ 接口 ══════════════════════════════════ -->
   <section class="sec" id="api">
     <div class="wrap">
-      <p class="kicker" data-zh="04 / 接口">04 / api</p>
+      <p class="kicker" data-zh="四 · 接口">04 / api</p>
       <h2 data-zh="一套全貌&lt;small&gt;根包、契约、核&lt;/small&gt;">The whole surface<small>root, contract, core</small></h2>
       <p class="prose" data-zh="左边是签名，右边是它许给你的形状。函数皆以 &lt;em&gt;Rng&lt;/em&gt; 起首；类型与契约列于其后。">
         Left is the signature, right is the shape it promises. Functions take <em>Rng</em> first;
@@ -504,7 +507,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
       </p>
       <div class="ins" id="api-table">
         <!-- api:begin -->
-        <div class="ins__grp"><span>moonbitstack/moonrand</span><i>14 functions · 1 alias</i></div>
+        <div class="ins__grp"><span>moonbitstack/moonrand</span><i data-zh="函数14 · 别名一">14 functions · 1 alias</i></div>
         <div class="ins__rows">
         <div class="ins__row" data-item="seeded">
           <div class="ins__sig">pub fn seeded(seed : BytesView) -&gt; StdRng</div>
@@ -567,7 +570,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="默认发生器之名。欲换默认，改此一行即可，全库随之。">The default generator's name. Change this line and the whole library follows.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/contract</span><i>3 traits</i></div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/contract</span><i data-zh="契约三">3 traits</i></div>
         <div class="ins__rows">
         <div class="ins__row" data-item="Rng">
           <div class="ins__sig">pub(open) trait Rng {<br>  fn next_u64(Self) -&gt; UInt64<br>  fn next_u32(Self) -&gt; UInt32 = _<br>  fn fill(Self, buf : FixedArray[Byte]) -&gt; Unit = _<br>}</div>
@@ -582,7 +585,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="可自种子重建之发生器，供可复现之跑。种子几何，由 seed_size 自陈。">A generator rebuilt from a seed, for reproducible runs. seed_size says how many bytes it wants.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/chacha</span><i>3 types</i></div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/chacha</span><i data-zh="类型三">3 types</i></div>
         <div class="ins__rows">
         <div class="ins__row" data-item="ChaCha8">
           <div class="ins__sig">pub struct ChaCha8<br>new(seed : BytesView) -&gt; ChaCha8<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
@@ -607,7 +610,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <!-- ══ 演示 ══════════════════════════════════ -->
   <section class="sec" id="plates">
     <div class="wrap">
-      <p class="kicker" data-zh="05 / 一条流的三种样子">05 / one stream, three looks</p>
+      <p class="kicker" data-zh="五 · 一条流的三种样子">05 / one stream, three looks</p>
       <h2 data-zh="同一组字节，同一只盘&lt;small&gt;由这一页的流画出来&lt;/small&gt;">Same bytes, same dish<small>drawn by this page's stream</small></h2>
       <p class="prose" data-zh="下面三只盘不是画好的图。回纹折几道、盘心写哪个字，都是从各自那条流里现取的。刷新这一页，它们换一副样子；把每只盘下面的种子写进代码，它们就永远是这三只——一瓣不差。">
         These three dishes are not illustrations. How many times the fret band folds, which
@@ -624,7 +627,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <!-- ══ 边界 ══════════════════════════════════ -->
   <section class="sec" id="limits">
     <div class="wrap">
-      <p class="kicker" data-zh="06 / 边界">06 / limits</p>
+      <p class="kicker" data-zh="六 · 边界">06 / limits</p>
       <h2 data-zh="它不是什么&lt;small&gt;不好的那一面&lt;/small&gt;">What it is not<small>the honest side</small></h2>
       <div class="limits">
         <div class="lim">
@@ -657,7 +660,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
       <div class="foot__row">
         <div><span class="seal">掷</span></div>
         <div class="foot__meta">
-          <b>moonrand <span id="rev-value">0.1.0</span> · MIT</b>
+          <b>moonrand · MIT</b>
           <a href="https://github.com/moonbitstack/moonrand">github.com/moonbitstack/moonrand</a><br>
           <span data-zh="核 chaCha12 · 后端 native / js / wasm / wasm-gc">core chaCha12 · native / js / wasm / wasm-gc</span>
         </div>
