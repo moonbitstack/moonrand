@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>moonrand — a seedable stream</title>
+<meta name="description" content="moonrand — a seedable, portable PRNG for MoonBit. ChaCha12 core, fourteen draws, one Rng contract.">
+<style>
+:root{
+  /* 一窑一色：青花的蓝不是纯蓝，是带灰的钴。色相 212°，取自实物照片 */
+  --k1:#16283F;  /* 头浓：题名、落款 */
+  --k2:#1E3A5C;  /* 正浓：骨线、轮廓 */
+  --k3:#2E5887;  /* 二浓：正文、分水 */
+  --k4:#557EAC;  /* 正淡：注解 */
+  --k5:#8FA8C4;  /* 影淡：线、边饰 */
+  --k6:#C6D2DF;  /* 界 */
+  --porc:#F7F5ED;
+  --cin:#A83A2B;
+  --serif:"Songti SC","STSong","SimSun","Source Han Serif SC","Noto Serif CJK SC",serif;
+  --kai:"Kaiti SC","KaiTi","STKaiti","FangSong",serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  --gut:clamp(22px,6vw,110px);
+  --maxw:1120px;
+}
+*{ box-sizing:border-box }
+
+/* ── 滚动条：青花的一笔，不用系统那一根灰 ───────────── */
+html{ -webkit-text-size-adjust:100% }
+::-webkit-scrollbar{ width:11px; height:11px }
+::-webkit-scrollbar-button{ display:none; width:0; height:0 }
+::-webkit-scrollbar-track{
+  background:#EFECE2;
+  box-shadow:inset .5px 0 0 rgba(46,88,135,.10);
+}
+::-webkit-scrollbar-thumb{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,0) 46%),
+    linear-gradient(180deg,#A2B6CE,#6E8CB6);
+  box-shadow:
+    inset 0 0 0 .5px rgba(30,58,92,.30),
+    inset 0 1px 0 rgba(255,255,255,.5);
+}
+::-webkit-scrollbar-thumb:hover{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0) 46%),
+    linear-gradient(180deg,#ADC0D6,#7C99C0);
+}
+::-webkit-scrollbar-corner{ background:#EFECE2 }
+@supports not selector(::-webkit-scrollbar){
+  html{ scrollbar-width:thin; scrollbar-color:#8FA8C4 #EFECE2 }
+}
+a:focus-visible, button:focus-visible{
+  outline:.5px solid var(--k2); outline-offset:3px;
+}
+body{
+  margin:0; background:var(--porc); color:var(--k2);
+  font-family:var(--serif); font-size:15.5px; line-height:1.95;
+  letter-spacing:.02em; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(66% 48% at 18% 2%, rgba(255,255,251,.92), rgba(255,255,251,0) 62%),
+    radial-gradient(54% 40% at 94% 100%, rgba(150,166,178,.13), rgba(255,255,255,0) 72%),
+    linear-gradient(176deg, rgba(255,255,252,.5), rgba(238,236,226,.24) 58%, rgba(255,255,250,.3));
+}
+/* 锦地：极淡的联珠格，让纸不像纸 */
+body::after{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg fill='none' stroke='%238FA8C4' stroke-width='.5' opacity='.30'%3E%3Cpath d='M13 2.5 L23.5 13 L13 23.5 L2.5 13 Z'/%3E%3Ccircle cx='13' cy='13' r='2.1'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:26px 26px;
+}
+.sheet{ position:relative; z-index:1 }
+
+/* ── 页眉 ─────────────────────────────────────── */
+.bar{
+  position:relative; z-index:3;
+  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+  padding:20px var(--gut) 0;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.22em;
+  color:var(--k4); text-transform:uppercase;
+}
+.bar b{ font-weight:400; color:var(--k2); letter-spacing:.22em; text-transform:none }
+.bar .r{ display:flex; gap:22px }
+.bar a{ color:inherit; text-decoration:none; border-bottom:.5px solid var(--k6); padding-bottom:2px }
+.bar a:hover{ color:var(--k1); border-color:var(--k3) }
+
+/* ── 首屏 ─────────────────────────────────────── */
+.hero{ position:relative; z-index:1; margin-top:10px; overflow:hidden }
+.hero__in{
+  max-width:var(--maxw); margin:0 auto; padding:0 var(--gut);
+  display:grid; grid-template-columns:1fr auto; gap:40px; align-items:center;
+  min-height:min(70vh,600px);
+}
+.hero__tx{ max-width:540px; padding:22px 0 }
+.eyebrow{
+  font-family:var(--mono); font-size:10px; letter-spacing:.34em; color:var(--k4);
+  text-transform:uppercase; margin-bottom:22px;
+}
+h1{
+  margin:0; font-weight:400; line-height:1; letter-spacing:.05em;
+  color:var(--k1); font-size:clamp(46px,6.6vw,84px);
+  display:flex; align-items:baseline; gap:.24em; flex-wrap:wrap;
+}
+h1 em{
+  font-style:normal; font-family:var(--mono);
+  font-size:clamp(11px,1.2vw,13px); letter-spacing:.30em; color:var(--k4); text-transform:lowercase;
+}
+.lede{ margin:26px 0 0; max-width:25em; font-size:16px; line-height:2.1; color:var(--k2) }
+.lede b{ font-weight:400; color:var(--k1); border-bottom:.5px solid var(--k5); padding-bottom:1px }
+.sub{ margin:14px 0 0; font-family:var(--kai); font-size:17px; letter-spacing:.14em; color:var(--k3) }
+.acts{ display:flex; flex-wrap:wrap; gap:14px; margin-top:36px }
+.btn{
+  display:inline-flex; align-items:center; gap:12px;
+  padding:12px 22px 13px; border:.5px solid var(--k3); border-radius:0;
+  background:transparent; color:var(--k2);
+  font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+  text-decoration:none; cursor:pointer;
+  transition:background .12s linear, color .12s linear, border-color .12s linear;
+}
+.btn i{ display:block; width:18px; height:.5px; background:currentColor; opacity:.55 }
+/* 中文双线：字前字后各一道 */
+body[data-lang="zh"] .btn span{ display:inline-flex; align-items:center; gap:12px }
+body[data-lang="zh"] .btn span::before{
+  content:''; display:block; width:18px; height:.5px;
+  background:currentColor; opacity:.55; margin-right:-1px;
+}
+.btn:hover{ background:var(--k2); color:var(--porc); border-color:var(--k2) }
+.btn--solid{ background:var(--k2); color:var(--porc); border-color:var(--k2) }
+.btn--solid:hover{ background:var(--k1); border-color:var(--k1) }
+.hero__seal{ display:flex; align-items:center; gap:14px; margin-top:28px }
+.seal{
+  display:inline-block; width:34px; height:34px; background:var(--cin); color:#fff;
+  font-family:var(--kai); font-size:20px; line-height:34px; text-align:center;
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.34);
+}
+.hero__seal-t{ font-family:var(--kai); font-size:13px; letter-spacing:.24em; color:var(--k4) }
+
+/* ── 器：盘 ───────────────────────────────────── */
+.dish{ position:relative; width:min(42vw,470px); aspect-ratio:1; margin-right:-2vw }
+.dish svg{ display:block; width:100%; height:100%; overflow:visible }
+.dish::after{           /* 一道斜光，釉面上的窗影 */
+  content:''; position:absolute; inset:4%; pointer-events:none;
+  background:linear-gradient(126deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.5) 47%, rgba(255,255,255,0) 57%);
+  mix-blend-mode:soft-light; opacity:.9;
+}
+.dish-num{
+  font-family:var(--mono); font-size:7.5px; letter-spacing:0;
+  fill:#A83A2B; opacity:.72;
+}
+
+/* ── 边饰 ─────────────────────────────────────── */
+.band{ display:block; width:100%; color:var(--k5) }
+.band svg{ display:block; width:100%; height:auto }
+.band--top{ margin:2px 0 0 }
+.band--sea{ margin:30px 0 0 }
+.band--quiet{ opacity:.5 }
+
+/* ── 骨架 ─────────────────────────────────────── */
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 var(--gut) }
+.sec{ padding:76px 0 }
+.sec + .sec{ padding-top:58px }
+.kicker{
+  font-family:var(--mono); font-size:10px; letter-spacing:.32em; color:var(--k4);
+  text-transform:uppercase; margin:0 0 14px;
+}
+h2{ margin:0; font-weight:400; font-size:clamp(23px,2.9vw,31px); line-height:1.5; letter-spacing:.10em; color:var(--k1) }
+h2 small{
+  display:block; font-family:var(--mono); font-size:10px; letter-spacing:.28em;
+  color:var(--k4); margin-top:10px; text-transform:uppercase;
+}
+.prose{ margin:20px 0 0; max-width:34em; color:var(--k2) }
+.prose p{ margin:0 0 1.05em }
+.prose em{ font-style:normal; color:var(--k1); border-bottom:.5px solid var(--k5) }
+
+.pull{
+  margin:0; padding:4px 0;
+  font-family:var(--kai); font-size:clamp(20px,2.5vw,27px); line-height:2;
+  letter-spacing:.10em; color:var(--k2); max-width:27em;
+}
+.pull span{ display:block; color:var(--k1) }
+
+/* ── 五色 ─────────────────────────────────────── */
+.tones{ margin:30px 0 0; border-top:.5px solid var(--k6) }
+.tone{
+  display:grid; grid-template-columns:74px 1fr 94px; gap:22px; align-items:center;
+  padding:15px 0; border-bottom:.5px solid var(--k6);
+}
+.tone__chip{ display:block; width:74px; height:22px }
+.tone__n{ font-family:var(--kai); font-size:17px; letter-spacing:.18em; color:var(--k2); line-height:1.5 }
+.tone__n i{
+  display:block; font-style:normal; font-family:var(--mono); font-size:9px;
+  letter-spacing:.18em; color:var(--k5); margin-top:3px;
+}
+.tone__hex{ font-family:var(--mono); font-size:10.5px; letter-spacing:.10em; text-align:right; color:var(--k4) }
+.tone__u{ grid-column:2 / 4; margin-top:2px; font-size:13px; line-height:1.8; color:var(--k4) }
+
+/* ── 器型解构 ─────────────────────────────────── */
+.anat{ display:grid; grid-template-columns:1fr minmax(300px,430px); gap:64px; align-items:center; margin-top:34px }
+.anat .dish{ width:100%; margin:0 }
+.anat__list{ list-style:none; margin:0; padding:0; counter-reset:n }
+.anat__list li{
+  display:grid; grid-template-columns:34px 1fr; gap:16px;
+  padding:14px 0 15px; border-top:.5px solid var(--k6);
+  font-size:14px; line-height:1.85; color:var(--k2);
+}
+.anat__list li:last-child{ border-bottom:.5px solid var(--k6) }
+.anat__list b{
+  font-family:var(--mono); font-size:9.5px; font-weight:400; letter-spacing:.06em;
+  color:var(--cin); padding-top:4px;
+}
+.anat__list span i{
+  display:block; font-style:normal; font-family:var(--mono); font-size:9.5px;
+  letter-spacing:.16em; color:var(--k5); margin-top:3px; text-transform:uppercase;
+}
+
+/* ── 三盘 ─────────────────────────────────────── */
+.plates{ display:grid; grid-template-columns:repeat(3,1fr); gap:44px 34px; margin-top:38px }
+.plate{ display:block; text-align:center }
+.plate svg{ display:block; width:100%; height:auto }
+.plate__s{
+  margin-top:12px; padding-top:10px; border-top:.5px solid var(--k6);
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.10em; color:var(--k4);
+}
+.plate__s b{ display:block; font-weight:400; color:var(--k1); font-size:11px; letter-spacing:.08em; margin-bottom:3px }
+
+/* ── 题跋 ─────────────────────────────────────── */
+.ins{ margin:30px 0 0 }
+.ins__row{
+  display:grid; grid-template-columns:1.16fr 1fr; gap:18px; align-items:baseline;
+  padding:13px 0 14px; border-bottom:.5px solid var(--k6);
+  transition:background .12s linear;
+}
+.ins__grp{
+  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+  padding:26px 0 9px; border-bottom:.5px solid var(--k2);
+}
+.ins__rows{ border-bottom:.5px solid var(--k2) }
+.ins__grp span{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; color:var(--k2) }
+.ins__grp i{
+  font-style:normal; font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; color:var(--k5); text-transform:uppercase;
+}
+.ins__row:hover{ background:rgba(198,210,223,.26) }
+.ins__sig{ font-family:var(--mono); font-size:12px; color:var(--k1); line-height:1.75; letter-spacing:-.01em;
+  text-indent:-1.1em; padding-left:1.1em }
+.ins__g{ font-family:var(--kai); font-size:14px; letter-spacing:.10em; color:var(--k3); line-height:1.8 }
+html[lang="en-US"] .ins__g,
+html[lang="en"] .ins__g,
+html[lang="en-US"] .hero__seal-t,
+html[lang="en"] .hero__seal-t{ font-family:var(--serif); letter-spacing:.05em }
+html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5px }
+.code{
+  margin:26px 0 0; padding:20px 22px 22px;
+  border:.5px solid var(--k6); border-left:2px solid var(--k3);
+  background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(244,242,234,.44));
+  font-family:var(--mono); font-size:12.5px; line-height:2.05;
+  color:var(--k2); overflow-x:auto; white-space:pre;
+}
+.code .c{ color:var(--k5) }
+.code .k{ color:var(--k3) }
+.code .s{ color:var(--k3) }
+.two{ display:grid; grid-template-columns:1fr 1.04fr; gap:48px; align-items:start }
+
+/* ── 款识 ─────────────────────────────────────── */
+.foot{ padding:0 0 58px }
+.foot__row{
+  display:flex; flex-wrap:wrap; gap:36px; justify-content:space-between;
+  align-items:flex-end; padding-top:24px;
+}
+.foot__meta{
+  font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:var(--k4);
+  line-height:2.3; text-transform:uppercase;
+}
+.foot__meta b{ display:block; font-weight:400; color:var(--k2) }
+.foot__meta a{ color:inherit; text-decoration:none; border-bottom:.5px solid var(--k6) }
+
+.bar .r{ margin-left:auto }
+.bar__v{ color:var(--k5); letter-spacing:.18em }
+.lang{ display:flex; margin-left:2px }
+.lang button{
+  appearance:none; -webkit-appearance:none; background:none; border:0; border-bottom:.5px solid transparent;
+  cursor:pointer; padding:2px 9px 3px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--k4);
+}
+.lang button:hover{ color:var(--k2) }
+.lang button.is-on{ color:var(--k1); border-bottom-color:var(--k3) }
+.lang button + button{ border-left:.5px solid var(--k6) }
+.foot__next{
+  font-family:var(--kai); font-size:13px; letter-spacing:.14em; color:var(--k4);
+  text-align:right;
+}
+.foot__next a{ display:block; margin-top:5px; color:var(--k2); text-decoration:none;
+  border-bottom:.5px solid var(--k6); font-family:var(--mono); font-size:10.5px; letter-spacing:.12em }
+@media (max-width:1080px){
+  .hero__in{ grid-template-columns:1fr; gap:8px; min-height:0 }
+  .dish{ width:min(70vw,400px); margin:10px auto 0 }
+  .anat{ grid-template-columns:1fr; gap:34px }
+  .anat .dish{ width:min(72vw,380px); margin:0 auto }
+  .two{ grid-template-columns:1fr; gap:32px }
+  .ins__row{ grid-template-columns:1fr; gap:5px }
+}
+@media (max-width:760px){
+  body{ font-size:15px }
+  .bar .r{ display:none }
+  .sec{ padding:52px 0 }
+  .plates{ grid-template-columns:1fr; gap:34px }
+  .plate{ max-width:320px; margin:0 auto }
+  .tone{ grid-template-columns:56px 1fr 80px; gap:16px }
+  .tone__chip{ width:56px; height:20px }
+  .hero__tx{ padding:14px 0 0 }
+}
+
+.install{
+  margin:26px 0 0; display:inline-flex; align-items:baseline; gap:10px;
+  padding:10px 16px 11px; border:.5px solid var(--k6);
+  background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(244,242,234,.42));
+  font-family:var(--mono); font-size:12px; letter-spacing:.02em; color:var(--k2);
+}
+.install span{ color:var(--k5); letter-spacing:.16em; text-transform:uppercase; font-size:9.5px }
+.cols{ display:grid; grid-template-columns:repeat(3,1fr); gap:44px; margin-top:34px }
+.col b{
+  display:block; font-family:var(--mono); font-size:9.5px; font-weight:400;
+  letter-spacing:.12em; color:var(--cin); margin-bottom:12px;
+}
+.col h3{
+  margin:0 0 10px; font-weight:400; font-size:17px; letter-spacing:.10em; color:var(--k1);
+  padding-bottom:10px; border-bottom:.5px solid var(--k6);
+}
+.col p, .lim p{ margin:0; font-size:14px; line-height:1.95; color:var(--k3) }
+.limits{ margin-top:30px; border-top:.5px solid var(--k2) }
+.lim{
+  display:grid; grid-template-columns:230px 1fr; gap:34px; align-items:baseline;
+  padding:16px 0 17px; border-bottom:.5px solid var(--k6);
+}
+.lim b{ font-weight:400; font-size:15px; letter-spacing:.10em; color:var(--k1) }
+.lim em{ font-style:normal; color:var(--k2); border-bottom:.5px solid var(--k5) }
+@media (max-width:900px){
+  .cols{ grid-template-columns:1fr; gap:26px }
+  .lim{ grid-template-columns:1fr; gap:6px }
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="bar">
+    <div><b data-zh="MoonRand">moonrand</b> <span class="bar__v">0.2.0 · MIT</span></div>
+    <div class="r">
+      <a href="https://moonbitstack.github.io/moonseed/" id="x-link" data-zh="moonseed · 熵">moonseed · entropy</a>
+      <a href="#what" data-zh="概览">overview</a>
+      <a href="#start" data-zh="开始">start</a>
+      <a href="#api" data-zh="接口">api</a>
+      <a href="#limits" data-zh="边界">limits</a>
+      <a href="https://github.com/moonbitstack/moonrand">GitHub</a>
+    </div>
+    <div class="lang" id="lang">
+      <button type="button" data-lang="en" class="is-on" title="English (en-US)">en</button>
+      <button type="button" data-lang="zh" title="中文（zh-Hans）">zh</button>
+    </div>
+  </header>
+
+  <!-- ══ 首屏 ══════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero__in">
+      <div class="hero__tx">
+        <div class="eyebrow">moonbitstack / moonrand</div>
+        <h1 data-zh="MoonRand">moonrand</h1>
+        <p class="sub" data-zh="可播种的伪随机数发生器。">A seedable pseudo-random number generator.</p>
+        <p class="lede" data-zh="ChaCha12 作核，十四笔出分布，一个 &lt;b&gt;Rng&lt;/b&gt; 契约接住一切。32 字节决定整条流——同一条流在 native、JS、wasm、wasm-gc 上&lt;b&gt;逐位相同&lt;/b&gt;。">
+          ChaCha12 at the core, fourteen draws on top, one <b>Rng</b> contract underneath.
+          Thirty-two bytes fix the whole stream — and the same stream comes out
+          <b>bit for bit</b> on native, JS, wasm and wasm-gc.
+        </p>
+        <div class="install"><span>moon add</span>moonbitstack/moonrand</div>
+        <div class="acts">
+          <a class="btn btn--solid" href="https://github.com/moonbitstack/moonrand"><span data-zh="仓库">repository</span><i></i></a>
+          <a class="btn" href="#api"><span data-zh="接口表">the API</span><i></i></a>
+        </div>
+        <div class="hero__seal">
+          <span class="seal">掷</span>
+          <span class="hero__seal-t" data-zh="32 字节进去，一条流出来">32 bytes in, one stream out</span>
+        </div>
+      </div>
+      <div class="dish"><svg id="hero-dish" viewBox="-215 -215 430 430" aria-hidden="true"></svg></div>
+    </div>
+  </section>
+
+  <div class="band band--top" data-band="fret" data-h="15"></div>
+
+  <!-- ══ 概览 ══════════════════════════════════ -->
+  <section class="sec" id="what">
+    <div class="wrap two">
+      <div>
+        <p class="kicker" data-zh="01 / 概览">01 / overview</p>
+        <h2 data-zh="种子进去，流出来&lt;small&gt;一句话&lt;/small&gt;">One seed in, one stream out<small>what it does</small></h2>
+        <p class="prose" data-zh="moonrand 只做一件事：把 32 字节变成一个种子，把种子变成一条可复现的流，再把这条流变成你要的形状——均匀、正态、指数、对数正态、整数、比特。">
+          moonrand does one thing: it turns thirty-two bytes into a seed, the seed into a
+          reproducible stream, and the stream into the shape you asked for — uniform, normal,
+          exponential, log-normal, integers, bits.
+        </p>
+        <p class="prose" data-zh="核是 &lt;em&gt;ChaCha12&lt;/em&gt;：Daniel J. Bernstein 的 ARX 流密码，取 12 轮。不是线性同余——低位不退化，连续抽几百万个数也不会开始出现条纹。一条流最多 2&lt;sup&gt;32&lt;/sup&gt; 个 64 字节块，用完就换种子，不会回到起点。">
+          The core is <em>ChaCha12</em>: Daniel J. Bernstein's ARX stream cipher, twelve rounds.
+          Not a linear congruential generator — the low bits do not degrade, and a few million
+          draws in a row still show no stripe. One stream runs for 2<sup>32</sup> blocks of
+          sixty-four bytes; after that you reseed, and it never loops back to the start.
+        </p>
+      </div>
+      <div>
+        <div class="code"><span class="c" data-zh="// 契约只有三笔，其余全在它上面长">// three methods; everything else grows on top</span>
+<span class="k">pub</span>(<span class="k">open</span>) <span class="k">trait</span> Rng {
+  <span class="k">fn</span> next_u64(<span class="k">Self</span>) -&gt; UInt64
+  <span class="k">fn</span> next_u32(<span class="k">Self</span>) -&gt; UInt = _
+  <span class="k">fn</span> fill(<span class="k">Self</span>, FixedArray[Byte]) -&gt; Unit = _
+}</div>
+        <p class="prose" style="margin-top:22px" data-zh="十四笔接口都吃同一个 &lt;em&gt;Rng&lt;/em&gt;。传 &lt;em&gt;StdRng&lt;/em&gt; 可以，传你自己的实现也可以——接口不为具体类型写死。">
+          All fourteen functions take the same <em>Rng</em>. Pass a <em>StdRng</em>, or pass your
+          own implementation — the signatures are not tied to a concrete type.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="band" data-band="bead" data-h="16"></div>
+
+  <!-- ══ 开始 ══════════════════════════════════ -->
+  <section class="sec" id="start">
+    <div class="wrap">
+      <p class="kicker" data-zh="02 / 开始">02 / start</p>
+      <h2 data-zh="两行起笔&lt;small&gt;装好之后&lt;/small&gt;">Two lines to begin<small>quick start</small></h2>
+      <div class="two" style="margin-top:30px">
+        <div class="code"><span class="c" data-zh="// 32 字节。来源随你：常量、文件、平台熵">// 32 bytes. Where they come from is your business</span>
+<span class="k">let</span> seed : Bytes =
+  <span class="k">@moonseed</span>.bytes(<span class="s">32</span>, <span class="k">@system</span>.source)
+<span class="k">let</span> rng = <span class="k">@moonrand</span>.seeded(seed[<span class="s">0</span>:])
+
+<span class="c" data-zh="// 此后每个数都从这条流里出来">// from here, every number comes out of this stream</span>
+<span class="k">let</span> u = <span class="k">@moonrand</span>.uniform(rng, <span class="s">0.0</span>, <span class="s">1.0</span>)    <span class="c">// [0, 1)</span>
+<span class="k">let</span> n = <span class="k">@moonrand</span>.randint(rng, <span class="s">1</span>, <span class="s">6</span>)       <span class="c">// 1..6</span>
+<span class="k">let</span> g = <span class="k">@moonrand</span>.gauss(rng, <span class="s">0.0</span>, <span class="s">1.0</span>)     <span class="c">// N(0, 1)</span></div>
+        <div>
+          <p class="prose" style="margin-top:0" data-zh="&lt;em&gt;seeded&lt;/em&gt; 收一个 BytesView，返回 &lt;em&gt;StdRng&lt;/em&gt;（ChaCha12 的别名）。同样的字节，永远同一条流；换一个字节，整条流都换掉。">
+            <em>seeded</em> takes a BytesView and returns a <em>StdRng</em>, which is ChaCha12
+            under a shorter name. Same bytes, same stream, forever; change one byte and the whole
+            stream changes.
+          </p>
+          <p class="prose" data-zh="手上没有种子也不要紧：&lt;em&gt;from_entropy()&lt;/em&gt; 向平台要 32 字节，直接给你一条不可复现的流。这条路径会 &lt;em&gt;raise&lt;/em&gt;——不安静地退化成伪随机，而是明确告诉你这台机器没有熵。">
+            No seed at hand? <em>from_entropy()</em> asks the platform for thirty-two bytes and
+            hands you a stream that cannot be reproduced. This path <em>raises</em> — it does not
+            quietly degrade into something deterministic, it tells you the machine has no entropy.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="band" data-band="bead" data-h="16"></div>
+
+  <!-- ══ 保证 ══════════════════════════════════ -->
+  <section class="sec" id="promise">
+    <div class="wrap">
+      <p class="kicker" data-zh="03 / 保证">03 / guarantees</p>
+      <h2 data-zh="三条，不多不少&lt;small&gt;它许给你什么&lt;/small&gt;">Three, no more<small>what it guarantees</small></h2>
+      <div class="cols">
+        <div class="col">
+          <b>01</b>
+          <h3 data-zh="逐位可复现">Bit-for-bit reproducible</h3>
+          <p data-zh="同一个种子，四个后端（native / js / wasm / wasm-gc）出同一串数。测试里锁着 RFC 8439 的官方向量，任何一位偏差都会红。">
+            One seed, four backends (native / js / wasm / wasm-gc), one sequence of numbers.
+            The RFC 8439 vectors are pinned in the test suite; a single wrong bit turns it red.
+          </p>
+        </div>
+        <div class="col">
+          <b>02</b>
+          <h3 data-zh="没有隐藏状态">No hidden state</h3>
+          <p data-zh="发生器是一个值，不是全局单例。两条流可以并排放在同一个函数里，互不影响；复制一份，就从同一处继续。">
+            A generator is a value, not a global singleton. Two streams can sit side by side in
+            one function without touching each other; copy one and it continues from the same place.
+          </p>
+        </div>
+        <div class="col">
+          <b>03</b>
+          <h3 data-zh="熵不在这里">Entropy is not here</h3>
+          <p data-zh="moonrand 从不碰操作系统。要真随机，走 moonseed；要可复现，走 seeded。两件事分开，谁也不会悄悄替你做决定。">
+            moonrand never touches the operating system. For real randomness, go to moonseed;
+            for reproducibility, go to seeded. Keeping them apart is what stops either from
+            deciding for you.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 接口 ══════════════════════════════════ -->
+  <section class="sec" id="api">
+    <div class="wrap">
+      <p class="kicker" data-zh="04 / 接口">04 / api</p>
+      <h2 data-zh="一套全貌&lt;small&gt;根包、契约、核&lt;/small&gt;">The whole surface<small>root, contract, core</small></h2>
+      <p class="prose" data-zh="左边是签名，右边是它许给你的形状。函数皆以 &lt;em&gt;Rng&lt;/em&gt; 起首；类型与契约列于其后。">
+        Left is the signature, right is the shape it promises. Functions take <em>Rng</em> first;
+        the types and contracts follow.
+      </p>
+      <div class="ins" id="api-table">
+        <!-- api:begin -->
+        <div class="ins__grp"><span>moonbitstack/moonrand</span><i>14 functions · 1 alias</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="seeded">
+          <div class="ins__sig">pub fn seeded(seed : BytesView) -&gt; StdRng</div>
+          <div class="ins__g" data-zh="以三十二字节起笔。字节同，则流同，四后端逐位不差。">Start from thirty-two bytes. The same bytes give the same stream, bit for bit on all four backends.</div>
+        </div>
+        <div class="ins__row" data-item="from_entropy">
+          <div class="ins__sig">pub fn from_entropy() -&gt; StdRng raise @moonseed.Unavailable</div>
+          <div class="ins__g" data-zh="向平台要三十二字节，交与 seeded。无熵则 raise，不暗自改用钟表或常数。">Ask the platform for thirty-two bytes and hand them to seeded. No entropy, no stream; it never falls back to a clock or a constant.</div>
+        </div>
+        <div class="ins__row" data-item="random">
+          <div class="ins__sig">random(rng : R) -&gt; Double</div>
+          <div class="ins__g" data-zh="[0, 1) 之实数，恰五十三位。Python 之 random() 同此一取。">A real in [0, 1) with exactly fifty-three bits, the same draw as Python's random().</div>
+        </div>
+        <div class="ins__row" data-item="uniform">
+          <div class="ins__sig">uniform(rng : R, low : Double, high : Double) -&gt; Double</div>
+          <div class="ins__g" data-zh="[low, high) 之内，处处同厚。low 高于 high 亦听之，端点自换。">Anywhere in [low, high), equally thick. Reversed ends are taken as given.</div>
+        </div>
+        <div class="ins__row" data-item="randint">
+          <div class="ins__sig">randint(rng : R, low : Int64, high : Int64) -&gt; Int64</div>
+          <div class="ins__g" data-zh="整数，两端皆算。high 小于 low，则还 low。">An integer, both ends included. A high below low returns low.</div>
+        </div>
+        <div class="ins__row" data-item="randrange">
+          <div class="ins__sig">randrange(rng : R, stop : Int64, start~ : Int64 = 0, step? : Int64) -&gt; Int64</div>
+          <div class="ins__g" data-zh="整数，右端不算；可给起点与步长。空范围、零步长，皆 abort。">An integer, right end excluded, with an optional start and step. An empty range or a zero step aborts.</div>
+        </div>
+        <div class="ins__row" data-item="getrandbits">
+          <div class="ins__sig">getrandbits(rng : R, k : Int32) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="取 k 个低位，一位不多。k 逾六十四，则整字相付。">The low k bits, not one more. Above sixty-four, the whole word comes back.</div>
+        </div>
+        <div class="ins__row" data-item="choice">
+          <div class="ins__sig">choice(rng : R, items : ArrayView[T]) -&gt; T?</div>
+          <div class="ins__g" data-zh="拈一颗；空则 None，不编一个出来。">Take one, or None when there is nothing to take.</div>
+        </div>
+        <div class="ins__row" data-item="choices">
+          <div class="ins__sig">choices(rng : R, items : ArrayView[T], k~ : Int32 = 1, weights? : ArrayView[Double]) -&gt; Array[T]</div>
+          <div class="ins__g" data-zh="有放回地拈 k 次；给权重，则按权重拈。全零之权，视同无权。">Take k with replacement; give weights and the draws follow them. All-zero weights are read as none.</div>
+        </div>
+        <div class="ins__row" data-item="sample">
+          <div class="ins__sig">sample(rng : R, items : ArrayView[T], k : Int32) -&gt; Array[T]</div>
+          <div class="ins__g" data-zh="不放回地拈 k 个，无一重复。k 逾其数，则尽取。">Take k without replacement, no repeats. A k past the end takes all of them.</div>
+        </div>
+        <div class="ins__row" data-item="shuffle">
+          <div class="ins__sig">shuffle(rng : R, a : Array[T]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="就地把顺序打散。元素一个不少，位置全非旧观。">Shuffle in place. Every element stays, no position does.</div>
+        </div>
+        <div class="ins__row" data-item="gauss">
+          <div class="ins__sig">gauss(rng : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__g" data-zh="正态一取，Box–Muller 之法，中峰在 mu，宽为 sigma。">One normal draw by Box–Muller, centred on mu, as wide as sigma.</div>
+        </div>
+        <div class="ins__row" data-item="expovariate">
+          <div class="ins__sig">expovariate(rng : R, lambd : Double) -&gt; Double</div>
+          <div class="ins__g" data-zh="指数一取，率为 lambda，均值为其倒数。lambda 非正，则 abort。">One exponential draw at rate lambda, mean its reciprocal. A non-positive rate aborts.</div>
+        </div>
+        <div class="ins__row" data-item="lognormvariate">
+          <div class="ins__sig">lognormvariate(rng : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__g" data-zh="对数正态一取，即取正态而幂之。">One lognormal draw: a normal draw, exponentiated.</div>
+        </div>
+        <div class="ins__row" data-item="StdRng">
+          <div class="ins__sig">pub type StdRng = @chacha.ChaCha12</div>
+          <div class="ins__g" data-zh="默认发生器之名。欲换默认，改此一行即可，全库随之。">The default generator's name. Change this line and the whole library follows.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/contract</span><i>3 traits</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="Rng">
+          <div class="ins__sig">pub(open) trait Rng {<br>  fn next_u64(Self) -&gt; UInt64<br>  fn next_u32(Self) -&gt; UInt32 = _<br>  fn fill(Self, buf : FixedArray[Byte]) -&gt; Unit = _<br>}</div>
+          <div class="ins__g" data-zh="一切发生器之约：交出均匀机器字。只须自具 next_u64，余二法有默认。">The contract every generator keeps: uniform machine words. Only next_u64 is yours to write; the other two have defaults.</div>
+        </div>
+        <div class="ins__row" data-item="Secure">
+          <div class="ins__sig">pub(open) trait Secure : Rng {}</div>
+          <div class="ins__g" data-zh="可为密码学用之标记。Philox 与 PCG 统计上过，然不在此列。">A marker for generators fit for cryptography. Philox and PCG pass the statistics and do not carry it.</div>
+        </div>
+        <div class="ins__row" data-item="Seeded">
+          <div class="ins__sig">pub(open) trait Seeded : Rng {<br>  fn from_seed(BytesView) -&gt; Self<br>  fn seed_size() -&gt; Int32<br>}</div>
+          <div class="ins__g" data-zh="可自种子重建之发生器，供可复现之跑。种子几何，由 seed_size 自陈。">A generator rebuilt from a seed, for reproducible runs. seed_size says how many bytes it wants.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/chacha</span><i>3 types</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="ChaCha8">
+          <div class="ins__sig">pub struct ChaCha8<br>new(seed : BytesView) -&gt; ChaCha8<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
+          <div class="ins__g" data-zh="八轮。快，余裕最薄，宜于不涉密钥之处。">Eight rounds: fastest, thinnest margin, for places no key passes through.</div>
+        </div>
+        <div class="ins__row" data-item="ChaCha12">
+          <div class="ins__sig">pub struct ChaCha12<br>new(seed : BytesView) -&gt; ChaCha12<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
+          <div class="ins__g" data-zh="十二轮，默认之选。速度与余裕之间，取其中。">Twelve rounds, the default: the middle of the road between speed and margin.</div>
+        </div>
+        <div class="ins__row" data-item="ChaCha20">
+          <div class="ins__sig">pub struct ChaCha20<br>new(seed : BytesView) -&gt; ChaCha20<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
+          <div class="ins__g" data-zh="二十轮，RFC 8439 之数。余裕最厚，速度最让。">Twenty rounds, RFC 8439's count: the widest margin, the least speed.</div>
+        </div>
+        </div>
+        <!-- api:end -->
+      </div>
+    </div>
+  </section>
+
+  <div class="band" data-band="bead" data-h="16"></div>
+
+  <!-- ══ 演示 ══════════════════════════════════ -->
+  <section class="sec" id="plates">
+    <div class="wrap">
+      <p class="kicker" data-zh="05 / 一条流的三种样子">05 / one stream, three looks</p>
+      <h2 data-zh="同一组字节，同一只盘&lt;small&gt;由这一页的流画出来&lt;/small&gt;">Same bytes, same dish<small>drawn by this page's stream</small></h2>
+      <p class="prose" data-zh="下面三只盘不是画好的图。回纹折几道、盘心写哪个字，都是从各自那条流里现取的。刷新这一页，它们换一副样子；把每只盘下面的种子写进代码，它们就永远是这三只——一瓣不差。">
+        These three dishes are not illustrations. How many times the fret band folds, which
+        character sits in the well — both came out of their own stream, just now.
+        Reload and they change; write the seed under each dish into your code and they stay
+        exactly these three, down to the petal.
+      </p>
+      <div class="plates" id="plates-grid"></div>
+    </div>
+  </section>
+
+  <div class="band band--sea band--quiet" data-band="bead" data-h="14"></div>
+
+  <!-- ══ 边界 ══════════════════════════════════ -->
+  <section class="sec" id="limits">
+    <div class="wrap">
+      <p class="kicker" data-zh="06 / 边界">06 / limits</p>
+      <h2 data-zh="它不是什么&lt;small&gt;不好的那一面&lt;/small&gt;">What it is not<small>the honest side</small></h2>
+      <div class="limits">
+        <div class="lim">
+          <b data-zh="不是密码学安全的">Not cryptographically secure</b>
+          <p data-zh="ChaCha12 快，但不为你挡攻击者。密钥、nonce、一次性口令——去用 moonseed 的 ChaCha20 加平台熵。">
+            ChaCha12 is fast; it is not a shield. Keys, nonces, one-time passwords — use moonseed's
+            ChaCha20 with platform entropy instead.
+          </p>
+        </div>
+        <div class="lim">
+          <b data-zh="不承诺跨版本一致">No cross-version promise</b>
+          <p data-zh="同一版本内逐位可复现。大版本换核时流会变，所以需要长期稳定的种子，请连版本一起钉住。">
+            Bit-for-bit within a version. A major release may swap the core and the stream moves,
+            so pin the version alongside the seed.
+          </p>
+        </div>
+        <div class="lim">
+          <b data-zh="不替你管内存">No memory management</b>
+          <p data-zh="没有内部缓冲池，不分配不确定大小的数组。&lt;em&gt;fill&lt;/em&gt; 由契约的默认实现补齐，你需要时才用。">
+            No internal buffer pool, no unbounded allocation. <em>fill</em> comes from the trait's
+            default implementation; reach for it only when you need it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="sec foot" style="padding:54px 0 46px">
+    <div class="wrap">
+      <div class="foot__row">
+        <div><span class="seal">掷</span></div>
+        <div class="foot__meta">
+          <b>moonrand <span id="rev-value">0.1.0</span> · MIT</b>
+          <a href="https://github.com/moonbitstack/moonrand">github.com/moonbitstack/moonrand</a><br>
+          <span data-zh="核 chaCha12 · 后端 native / js / wasm / wasm-gc">core chaCha12 · native / js / wasm / wasm-gc</span>
+        </div>
+        <div class="foot__meta" style="text-align:right">
+          <b id="f-seed">—</b>
+          <span data-zh="本页种子 · 三只盘由它画出">this page's seed · three dishes drawn from it</span><br>
+          <span id="f-engine">chaCha12 · wasm-gc</span>
+        </div>
+        <div class="foot__next">
+          <span data-zh="另一层 · 熵">the other layer · entropy</span>
+          <a href="https://moonbitstack.github.io/moonseed/" id="x-link2" data-zh="moonseed · 取字节">moonseed · take bytes</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+
+<script id="rand-wasm" type="application/wasm;base64">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IgIgARAqCxQBAWQYIAD7Fhn7AhkGIgIgARAaCxgBAWQYIAD7Fhn7AhkGIgQgASACIAMQIwsUAQFkGCAA+xYZ+wIZBiICIAEQJwsSANIB+wAWJAEjA0EA+wAHJAALBgAjAdQaCwuIBAEBhARBAHIAcgBhAHkAIABjAGEAcABhAGMAaQB0AHkAIABvAHYAZQByAGYAbABvAHcAMAByAGEAZABpAHgAIABtAHUAcwB0ACAAYgBlACAAYgBlAHQAdwBlAGUAbgAgADIAIABhAG4AZAAgADMANgAwADEAMgAzADQANQA2ADcAOAA5AGEAYgBjAGQAZQBmAGcAaABpAGoAawBsAG0AbgBvAHAAcQByAHMAdAB1AHYAdwB4AHkAegBpAG4AdgBhAGwAaQBkACAAYwBvAGQAZQAgAHAAbwBpAG4AdABTAHQAcgBpAG4AZwBCAHUAaQBsAGQAZQByACAAYwBhAHAAYQBjAGkAdAB5ACAAbwB2AGUAcgBmAGwAbwB3AHMAaQB6AGUAXwBoAGkAbgB0ACAAbQB1AHMAdAAgAGIAZQAgAG4AbwBuAC0AbgBlAGcAYQB0AGkAdgBlACwAIABzAHIAYwAuAGwAZQBuAGcAdABoACAAPQAgACwAIABsAGUAbgAgAD0AIAAsACAAZABzAHQAXwBvAGYAZgBzAGUAdAAgAD0AIAAsACAAcwByAGMAXwBvAGYAZgBzAGUAdAAgAD0AIABiAG8AdQBuAGQAcwAgAGMAaABlAGMAawAgAGYAYQBpAGwAZQBkADoAIABhAGwAbABvAGMAYQB0AGUAXwBsAGUAbgAgAD0AIAAANARuYW1lAC0sbW9vbmJpdHN0YWNrL21vb25yYW5kL2V4YW1wbGVzL2NyYWNrbGVAMC4xLjAARQlwcm9kdWNlcnMCCGxhbmd1YWdlAQdNb29uQml0AAxwcm9jZXNzZWQtYnkBBW1vb25jEnYwLjEwLjE4KzZjODNhN2Y2Mg==</script>
+<script>
+(function(){
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════
+   0. 语言：英文为默认，中文按需切换（与 moonseed 页同一套办法）
+   ══════════════════════════════════════════════════════════════ */
+const I18N = (function(){
+  const nodes = Array.prototype.slice.call(document.querySelectorAll('[data-zh]'));
+  const orig = new Map();
+  nodes.forEach(function(el){ orig.set(el, el.innerHTML); });
+  let lang = 'en';
+  function apply(next){
+    lang = next;
+    nodes.forEach(function(el){
+      el.innerHTML = (next === 'zh') ? el.getAttribute('data-zh') : orig.get(el);
+    });
+    document.documentElement.lang = (next === 'zh') ? 'zh-Hans' : 'en-US';
+    document.title = (next === 'zh')
+      ? 'MoonRand — 可播种的伪随机数发生器'
+      : 'moonrand — a seedable stream';
+    document.querySelectorAll('#lang button').forEach(function(b){
+      b.classList.toggle('is-on', b.getAttribute('data-lang') === next);
+    });
+    const suffix = (next === 'zh') ? '?lang=zh' : '';
+    ['x-link', 'x-link2'].forEach(function(id){
+      const a = document.getElementById(id);
+      if (a) a.setAttribute('href', 'https://moonbitstack.github.io/moonseed/' + suffix);
+    });
+    renderDynamic();
+  }
+  document.querySelectorAll('#lang button').forEach(function(b){
+    b.addEventListener('click', function(){ apply(b.getAttribute('data-lang')); });
+  });
+  return { apply: apply, get: function(){ return lang; } };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   1. 流
+   ══════════════════════════════════════════════════════════════ */
+const FIXED_HI = 0x6d6f6f6e72616e64n;
+const FIXED_LO = 0x9e3779b97f4a7c15n;
+
+function splitmix32(a){
+  return function(){
+    a |= 0; a = a + 0x9E3779B9 | 0;
+    let t = a ^ a >>> 16;
+    t = Math.imul(t, 0x21F0AAAD);
+    t = t ^ t >>> 15;
+    t = Math.imul(t, 0x735A2D97);
+    return ((t = t ^ t >>> 15) >>> 0) / 4294967296;
+  };
+}
+let rnd = splitmix32(0x6d6f6f6e);
+let openStream = null;      /* 由 wasm 或兜底接管，用来把一条流转到某个种子 */
+
+/* 这一页现取 32 字节：头 8 个是页种子，其余三份给三只盘。
+   取到就画，画完就扔——页面不存、不留底。 */
+const DRAW = (function(){
+  const b = new Uint8Array(32);
+  if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(b);
+  else for (let i = 0; i < 32; i++) b[i] = Math.floor(Math.random() * 256);
+  function u64(o){ let v = 0n; for (let i = 0; i < 8; i++) v = (v << 8n) | BigInt(b[o + i]); return v; }
+  return { page: u64(0), plates: [u64(8), u64(16), u64(24)] };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   2. 五道水：一支料，兑五次
+   ══════════════════════════════════════════════════════════════ */
+const RAMP = [[198,210,223],[143,168,196],[85,126,172],[46,88,135],[30,58,92],[22,40,63]];
+function ink(t, a){
+  t = Math.max(0, Math.min(1, t));
+  const p = t * 5, i = Math.min(4, Math.floor(p)), f = p - i;
+  const A = RAMP[i], B = RAMP[i + 1];
+  return 'rgba(' + Math.round(A[0] + (B[0]-A[0])*f) + ',' +
+                  Math.round(A[1] + (B[1]-A[1])*f) + ',' +
+                  Math.round(A[2] + (B[2]-A[2])*f) + ',' + a.toFixed(2) + ')';
+}
+
+const TAU = Math.PI * 2;
+const N = function(v){ return v.toFixed(2); };
+const pt = function(x, y){ return N(x) + ',' + N(y); };
+
+/* ── 分水：一块平涂，边缘略不齐，像釉下沉住的料 ───────
+   defs 里给一个 turbulence 位移滤镜，所有填充都过它一遍 */
+function washDefs(id){
+  return '<filter id="' + id + '" x="-12%" y="-12%" width="124%" height="124%">' +
+    '<feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="7" result="t"/>' +
+    '<feDisplacementMap in="SourceGraphic" in2="t" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>' +
+  '</filter>' +
+  '<filter id="' + id + 'b" x="-8%" y="-8%" width="116%" height="116%">' +
+    '<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="3" result="g"/>' +
+    '<feColorMatrix in="g" type="saturate" values="0" result="gg"/>' +
+    '<feComposite in="SourceGraphic" in2="gg" operator="arithmetic" k1="0" k2="1" k3="0.16" k4="-0.06"/>' +
+  '</filter>';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   3. 四道带：每一道都是「勾」+「填」
+      勾是深的，填是浅的，填比勾短一截，中间留一条水线
+   ══════════════════════════════════════════════════════════════ */
+
+/* 回纹：方折，往里收三折。w 一个单元宽，h 带高。
+   页面上用淡的（它是界），盘上用浓的（它是纹）。 */
+function fretUnit(w, h, dark){
+  const t = h * 0.10 * (dark ? 2.0 : 1);
+  const x0 = w * 0.07, y0 = h * 0.92, y1 = h * 0.12;
+  const d = 'M' + pt(x0, y0) + 'V' + N(y1) + 'H' + N(x0 + w * 0.80) +
+            'V' + N(h * 0.66) + 'H' + N(x0 + w * 0.34) + 'V' + N(h * 0.38) +
+            'H' + N(x0 + w * 0.56);
+  return '<path d="' + d + '" fill="none" stroke="' + (dark ? ink(0.82, .92) : ink(0.52, .70)) +
+    '" stroke-width="' + N(t) + '" stroke-linecap="butt" stroke-linejoin="miter"/>';
+}
+
+/* 莲瓣：瓣与瓣之间必须留白，否则连成一圈锯齿。
+   尖是圆尖，不是针尖；瓣里再描一道，瓣心一颗珠。 */
+function lappetUnit(w, h, dark){
+  const t = Math.max(1.5, h * 0.062) * (dark ? 1.5 : 1);
+  const d = 'M' + N(w*.06) + ',' + N(h) +
+    ' C' + pt(w*.14, h*.58) + ' ' + pt(w*.30, h*.15) + ' ' + pt(w*.44, h*.045) +
+    ' Q' + pt(w*.50, h*.005) + ' ' + pt(w*.56, h*.045) +
+    ' C' + pt(w*.70, h*.15) + ' ' + pt(w*.86, h*.58) + ' ' + pt(w*.94, h);
+  const inner = 'M' + N(w*.19) + ',' + N(h*0.94) +
+    ' C' + pt(w*.25, h*.56) + ' ' + pt(w*.36, h*.23) + ' ' + pt(w*.46, h*.155) +
+    ' Q' + pt(w*.50, h*.125) + ' ' + pt(w*.54, h*.155) +
+    ' C' + pt(w*.64, h*.23) + ' ' + pt(w*.75, h*.56) + ' ' + pt(w*.81, h*0.94);
+  /* 主脉与侧脉：一片叶子得有一条脊，否则只是齿 */
+  let veins = '<path d="M' + pt(w*.5, h*.98) + 'L' + pt(w*.5, h*.06) + '" stroke="' +
+    (dark ? ink(0.97, .85) : ink(0.62, .50)) + '" stroke-width="' + N(t*0.55) + '"/>';
+  for (let i = 1; i <= 3; i++){
+    const u = 0.22 + i * 0.20;
+    const yy = h * (1 - u);
+    const dx = w * (0.10 + i * 0.055);
+    veins += '<path d="M' + pt(w*.5, yy) + 'L' + pt(w*.5 - dx, yy - h*0.10) +
+             ' M' + pt(w*.5, yy) + 'L' + pt(w*.5 + dx, yy - h*0.10) + '" stroke="' +
+             (dark ? ink(0.94, .58) : ink(0.62, .34)) + '" stroke-width="' + N(t*0.38) + '"/>';
+  }
+  return '<path d="' + d + '" fill="' + (dark ? ink(0.26, .55) : ink(0.30, .50)) +
+      '" stroke="' + (dark ? ink(0.95, .92) : ink(0.58, .62)) + '" stroke-width="' + N(t) +
+      '" stroke-linejoin="round" filter="url(#washA)"/>' + veins;
+}
+
+/* 海水：一排浪头，卷回来，浪尖几点沫 */
+function waveUnit(w, h, dark){
+  const t = Math.max(0.95, h * 0.055);
+  const k = dark ? 1 : 0.62;
+  const spine = 'M0,' + N(h*.60) +
+    ' C' + pt(w*.14, h*.16) + ' ' + pt(w*.36, h*.04) + ' ' + pt(w*.54, h*.20) +
+    ' C' + pt(w*.70, h*.34) + ' ' + pt(w*.67, h*.54) + ' ' + pt(w*.56, h*.52) +
+    ' C' + pt(w*.49, h*.51) + ' ' + pt(w*.48, h*.43) + ' ' + pt(w*.54, h*.40) +
+    ' C' + pt(w*.59, h*.38) + ' ' + pt(w*.61, h*.42) + ' ' + pt(w*.58, h*.44) +
+    ' M0,' + N(h*.60) + ' C' + pt(w*.30, h*.76) + ' ' + pt(w*.62, h*.78) + ' ' + pt(w, h*.60);
+  const base = 'M0,' + N(h*.94) + ' C' + pt(w*.22, h*.70) + ' ' + pt(w*.58, h*.70) + ' ' + pt(w, h*.94);
+  return '<path d="' + base + '" fill="none" stroke="' + ink(0.60, .55*k) + '" stroke-width="' + N(t*0.75) + '"/>' +
+    '<path d="' + spine + '" fill="none" stroke="' + ink(0.88, .88*k) + '" stroke-width="' + N(t) +
+      '" stroke-linecap="round"/>' +
+    '<circle cx="' + N(w*.30) + '" cy="' + N(h*.12) + '" r="' + N(h*.030) + '" fill="' + ink(0.70, .50*k) + '"/>' +
+    '<circle cx="' + N(w*.40) + '" cy="' + N(h*.04) + '" r="' + N(h*.022) + '" fill="' + ink(0.70, .38*k) + '"/>';
+}
+
+const UNIT = { fret: fretUnit, lappet: lappetUnit, wave: waveUnit };
+
+/* ── 一条直线带 ─────────────────────────────────── */
+function bandLinear(kind, W, H){
+  const unit = UNIT[kind];
+  const w = kind === 'fret' ? H * 1.85 : (kind === 'lappet' ? H * 1.18 : H * 1.30);
+  const n = Math.ceil(W / w) + 1;
+  let g = '';
+  for (let i = 0; i < n; i++)
+    g += '<g transform="translate(' + N(i * w) + ',0)">' + unit(w, H, false) + '</g>';
+  return g;
+}
+
+/* ── 一圈带 ─────────────────────────────────────── */
+function bandPolar(kind, r, h, target, shrink){
+  const unit = UNIT[kind];
+  const circ = TAU * r;
+  const w = target || h * 1.2;
+  const n = Math.max(6, Math.round(circ / w));
+  const ww = circ / n;
+  let g = '';
+  for (let i = 0; i < n; i++){
+    const a = (i / n) * 360;
+    g += '<g transform="rotate(' + N(a) + ') translate(0,' + N(-r) + ') translate(' + N(-ww/2) + ',0)">' +
+      unit(ww * (shrink || 1), h, true) + '</g>';
+  }
+  return g;
+}
+
+/* ── 缠枝：一根连续的茎绕一圈，峰上卷草、谷上出叶 ──
+   不是一排图元，是一条线，所以它不像贴纸 */
+function scrollRing(r, n, amp){
+  const steps = n * 26;
+  const pt0 = function(th){ return [Math.cos(th) * (r + amp * Math.sin(n * th)),
+                                    Math.sin(th) * (r + amp * Math.sin(n * th))]; };
+  let d = '';
+  for (let i = 0; i <= steps; i++){
+    const th = i / steps * TAU;
+    const q = pt0(th);
+    d += (i ? 'L' : 'M') + pt(q[0], q[1]);
+  }
+  let g = '<path d="' + d + '" fill="none" stroke="' + ink(0.90, .84) +
+    '" stroke-width="3.1" stroke-linecap="round"/>';
+
+  for (let k = 0; k < n; k++){
+    /* 峰：一个小卷，往里收两圈 */
+    const th = (k + 0.25) / n * TAU;
+    const base = r + amp;
+    let curl = '';
+    let cx = Math.cos(th) * base, cy = Math.sin(th) * base;
+    let a0 = th + Math.PI / 2, rad = amp * 0.62;
+    let x = cx, y = cy;
+    curl = 'M' + pt(x, y);
+    for (let i = 0; i < 7; i++){
+      a0 -= 0.62;
+      rad *= 0.74;
+      x = cx + Math.cos(a0) * rad + Math.cos(th) * amp * 0.34;
+      y = cy + Math.sin(a0) * rad + Math.sin(th) * amp * 0.34;
+      curl += 'L' + pt(x, y);
+    }
+    g += '<path d="' + curl + '" fill="none" stroke="' + ink(0.92, .74) +
+      '" stroke-width="2.2" stroke-linecap="round"/>';
+
+    /* 谷：一片尖叶，朝心里 */
+    const th2 = (k + 0.75) / n * TAU;
+    const rr = r - amp;
+    const bx = Math.cos(th2) * rr, by = Math.sin(th2) * rr;
+    const inx = -Math.cos(th2), iny = -Math.sin(th2);
+    const tx = bx + inx * amp * 1.15 + iny * amp * 0.5;
+    const ty = by + iny * amp * 1.15 - inx * amp * 0.5;
+    const c1x = bx + inx * amp * 0.5 + iny * amp * 0.55;
+    const c1y = by + iny * amp * 0.5 - inx * amp * 0.55;
+    g += '<path d="M' + pt(bx, by) + 'Q' + pt(c1x, c1y) + ' ' + pt(tx, ty) +
+      'Q' + pt(bx + inx * amp * 0.62 + iny * amp * 0.10, by + iny * amp * 0.62 - inx * amp * 0.10) +
+      ' ' + pt(bx, by) + 'Z" fill="' + ink(0.40, .72) + '" stroke="' + ink(0.92, .66) +
+      '" stroke-width=".9" stroke-linejoin="round"/>';
+    /* 叶尖一颗点 */
+    g += '<circle cx="' + pt(tx, ty).split(',')[0] + '" cy="' + pt(tx, ty).split(',')[1] +
+      '" r="1.05" fill="' + ink(0.86, .6) + '"/>';
+  }
+  return g;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   4. 团花：两层瓣，瓣是尖的，心里一颗珠
+   ══════════════════════════════════════════════════════════════ */
+function petal(x, y, ang, r0, r1, hw){
+  const c = Math.cos(ang), s = Math.sin(ang);
+  const P = function(r, a){ return [x + Math.cos(a) * r * c - Math.sin(a) * r * s,
+                                    y + Math.cos(a) * r * s + Math.sin(a) * r * c]; };
+  const p0 = P(r0, -hw), p1 = P(r0, hw), tip = P(r1, 0);
+  const m1 = (r0 + r1) * 0.56;
+  const c1 = P(m1, -hw * 1.30), c2 = P(m1, hw * 1.30);
+  return 'M' + pt(p0[0], p0[1]) +
+    'Q' + pt(c1[0], c1[1]) + ' ' + pt(tip[0], tip[1]) +
+    'Q' + pt(c2[0], c2[1]) + ' ' + pt(p1[0], p1[1]) +
+    'A' + N(r0) + ',' + N(r0) + ' 0 0 1 ' + pt(p0[0], p0[1]) + 'Z';
+}
+
+function rosette(o){
+  const R = o.R, g = [];
+  const rot = o.rot || 0;
+  const n1 = o.n1 || 8, n2 = o.n2 || 8;
+
+  for (let i = 0; i < n1; i++){
+    const a = rot + i / n1 * TAU;
+    const d = petal(0, 0, a, R * 0.30, R * 1.0, (TAU / n1) * 0.40);
+    g.push('<path d="' + d + '" fill="' + ink(0.34, .78) + '" stroke="' + ink(0.92, .92) +
+      '" stroke-width="' + N(R*0.042) + '" stroke-linejoin="round" filter="url(#washA)"/>');
+    const d2 = petal(0, 0, a, R * 0.52, R * 0.82, (TAU / n1) * 0.22);
+    g.push('<path d="' + d2 + '" fill="none" stroke="' + ink(0.95, .50) + '" stroke-width="' + N(R*0.022) + '"/>');
+  }
+  for (let i = 0; i < n2; i++){
+    const a = rot + Math.PI / n2 + i / n2 * TAU;
+    const d = petal(0, 0, a, R * 0.12, R * 0.62, (TAU / n2) * 0.30);
+    g.push('<path d="' + d + '" fill="' + ink(0.46, .72) + '" stroke="' + ink(0.94, .80) +
+      '" stroke-width="' + N(R*0.028) + '" stroke-linejoin="round"/>');
+  }
+  g.push('<circle r="' + N(R*0.075) + '" fill="' + ink(0.96, .88) + '"/>');
+  for (let i = 0; i < 8; i++){
+    const a = rot + i / 8 * TAU + 0.2;
+    g.push('<circle cx="' + N(Math.cos(a)*R*0.16) + '" cy="' + N(Math.sin(a)*R*0.16) +
+      '" r="' + N(R*0.020) + '" fill="' + ink(0.86, .7) + '"/>');
+  }
+  return g.join('');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   5. 一只盘：五道带，一圈白隔一圈纹
+   ══════════════════════════════════════════════════════════════ */
+function ring(r, tone, a, w){
+  return '<circle r="' + N(r) + '" fill="none" stroke="' + ink(tone, a) + '" stroke-width="' + N(w || .8) + '"/>';
+}
+
+function dish(o){
+  const R = 200;
+  const g = [];
+  const fretN = o.fretN || 56, lapN = o.lapN || 40;
+
+  g.push('<defs>' + washDefs('washA') +
+    '<radialGradient id="body" cx="42%" cy="36%" r="72%">' +
+      '<stop offset="0" stop-color="#FFFFFF" stop-opacity=".92"/>' +
+      '<stop offset=".62" stop-color="#F3F1E8" stop-opacity=".55"/>' +
+      '<stop offset=".92" stop-color="#D9DEE2" stop-opacity=".62"/>' +
+      '<stop offset="1" stop-color="#C3CBd2" stop-opacity=".7"/>' +
+    '</radialGradient></defs>');
+
+  /* 盘身：一点厚度，一点投影，不然又成了纸片 */
+  g.push('<circle r="' + (R*1.005) + '" fill="#B9AFA0" opacity=".13" transform="translate(3,7)"/>');
+  g.push('<circle r="' + R + '" fill="url(#body)"/>');
+  g.push('<circle r="' + (R-2.5) + '" fill="none" stroke="' + ink(0.10, .45) + '" stroke-width="2.2"/>');
+  g.push('<circle r="' + R + '" fill="none" stroke="' + ink(0.42, .35) + '" stroke-width=".7"/>');
+
+  /* 01 口沿 */
+  g.push(ring(R-7, 0.55, .55, 1.5));
+  g.push(ring(R-11, 0.40, .45, 1.0));
+
+  /* 02 回纹 */
+  g.push(bandPolar('fret', 186, 13, (TAU*186)/fretN));
+  g.push(ring(175.5, 0.45, .52, 1.1));
+
+  /* 03 联珠 */
+  {
+    const rb = 167;
+    g.push(ring(rb+5.5, 0.45, .48, 1.0));
+    g.push(ring(rb-5.5, 0.45, .48, 1.0));
+    const nb = Math.round(TAU * rb / 9.5);
+    let beads = '';
+    for (let i = 0; i < nb; i++){
+      const a = i / nb * TAU;
+      beads += '<circle cx="' + N(Math.cos(a)*rb) + '" cy="' + N(Math.sin(a)*rb) +
+        '" r="2.0" fill="' + ink(0.62, .88) + '"/>';
+    }
+    g.push(beads);
+  }
+
+  /* 04 弦纹：两道，把盘心围出来。带与带之间必须留白 */
+  g.push(ring(150, 0.45, .46, 1.2));
+  g.push(ring(145, 0.45, .30, .8));
+
+  /* 05 心：留白，只写一个字。瓷的好看，一半是没画的地方 */
+  g.push(ring(96, 0.40, .26, .8));
+  if (o.glyph){
+    g.push('<text x="0" y="2" text-anchor="middle" dominant-baseline="central" ' +
+      'font-family="Kaiti SC, KaiTi, STKaiti, Songti SC, serif" ' +
+      'font-size="' + N(R*0.58) + '" fill="' + ink(0.99, .94) + '">' + o.glyph + '</text>');
+  }
+
+  /* 编号 */
+  if (o.nums){
+    const marks = [[199,'1'],[186,'2'],[167,'3'],[148,'4'],[96,'5']];
+    marks.forEach(function(m){
+      const a = -1.06;
+      g.push('<text class="dish-num" x="' + N(Math.cos(a)*m[0]) + '" y="' + N(Math.sin(a)*m[0]) + '">' + m[1] + '</text>');
+    });
+  }
+  return g.join('');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   6. 题跋
+   ══════════════════════════════════════════════════════════════ */
+/* 盘心那个字：也从流里取，不是点题 */
+const GLYPHS = ['月', '掷', '种', '熵', '瓷', '釉', '回', '流'];
+let PLATES = [];
+
+function hex16(v){
+  const s = v.toString(16).padStart(16, '0');
+  return '0x' + s.slice(0, 8) + ' ' + s.slice(8);
+}
+
+/* 一条流决定一只盘：回纹几折、弦纹几道、心里哪个字 */
+function plateParams(seed){
+  if (openStream) openStream(seed);
+  const fretN = 46 + Math.floor(rnd() * 40);
+  const lapN = 30 + Math.floor(rnd() * 26);
+  const glyph = GLYPHS[Math.floor(rnd() * GLYPHS.length)];
+  return { fretN: fretN, lapN: lapN, glyph: glyph, seed: seed };
+}
+
+function buildPlates(){
+  const box = document.getElementById('plates-grid');
+  if (!box || !PLATES.length) return;
+  box.innerHTML = PLATES.map(function(p, i){
+    return '<div class="plate"><svg viewBox="-215 -215 430 430" aria-hidden="true">' + dish(p) +
+      '</svg><div class="plate__s"><b>' + ('0' + (i + 1)).slice(-2) + '</b>' +
+      hex16(p.seed) + '</div></div>';
+  }).join('');
+}
+
+/* 由 JS 生成、需要换语言的部分 */
+function renderDynamic(){
+  buildPlates();
+}
+
+function bandSvg(kind, H){
+  const W = 1440;
+  let body = '';
+  if (kind === 'bead'){
+    body = '<path d="M0 ' + (H*0.2) + ' H' + W + '" stroke="' + ink(0.55,.6) + '" stroke-width=".8"/>' +
+           '<path d="M0 ' + (H*0.8) + ' H' + W + '" stroke="' + ink(0.55,.6) + '" stroke-width=".8"/>';
+    const r = H * 0.22, step = H * 0.95;
+    let c = '';
+    for (let x = step * 0.5; x < W; x += step)
+      c += '<circle cx="' + N(x) + '" cy="' + N(H/2) + '" r="' + N(r) + '" fill="' + ink(0.6, .72) + '"/>';
+    body += c;
+  } else {
+    body = bandLinear(kind === 'sea' ? 'wave' : kind, W, H);
+    if (kind === 'fret'){
+      body = '<path d="M0 ' + N(H*0.04) + ' H' + W + '" stroke="' + ink(0.5,.5) + '" stroke-width=".8"/>' +
+             '<path d="M0 ' + N(H*0.97) + ' H' + W + '" stroke="' + ink(0.5,.5) + '" stroke-width=".8"/>' + body;
+    }
+  }
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' + body + '</svg>';
+}
+
+function paintAll(){
+  const hero = document.getElementById('hero-dish');
+  if (hero) hero.innerHTML = dish({ fretN: 56, lapN: 40, glyph: '月' });
+  const anat = document.getElementById('anat-dish');
+  if (anat) anat.innerHTML = dish({ fretN: 56, lapN: 40, nums: true, glyph: '月' });
+  document.querySelectorAll('.band').forEach(function(b){
+    b.innerHTML = bandSvg(b.getAttribute('data-band'), parseFloat(b.getAttribute('data-h')) || 24);
+  });
+  buildPlates();
+}
+
+/* 部署时由 docs 工作流现编到 engine/moonrand.wasm；file:// 打不开时，
+   落回页内那一份同一次编译的字节 */
+async function engineBytes(){
+  try {
+    const res = await fetch('engine/moonrand.wasm');
+    if (res.ok) return new Uint8Array(await res.arrayBuffer());
+  } catch (e){ /* file:// */ }
+  const el = document.getElementById('rand-wasm');
+  const raw = atob(el.textContent.trim());
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes;
+}
+
+(async function boot(){
+  try {
+    const bytes = await engineBytes();
+    const mod = await WebAssembly.instantiate(bytes, {});
+    const ex = mod.instance.exports;
+    ex._start();
+    ex.open(FIXED_HI, FIXED_LO);
+    rnd = function(){ return ex.unit(); };
+    openStream = function(seed){ ex.open(0n, seed); };
+    const fe = document.getElementById('f-engine');
+    if (fe) fe.textContent = 'chaCha12 · wasm-gc';
+  } catch (err){
+    openStream = function(seed){
+      rnd = splitmix32((Number(seed & 0xffffffffn) ^ Number((seed >> 32n) & 0xffffffffn)) | 0);
+    };
+    const fe = document.getElementById('f-engine');
+    if (fe) fe.textContent = 'splitmix32 · fallback';
+    console.warn('wasm unavailable:', err);
+  }
+
+  PLATES = DRAW.plates.map(plateParams);
+  const fs = document.getElementById('f-seed');
+  if (fs) fs.textContent = hex16(DRAW.page);
+
+  paintAll();
+
+  if (new URLSearchParams(location.search).get('lang') === 'zh') I18N.apply('zh');
+})();
+})();
+</script>
+</body>
+</html>
