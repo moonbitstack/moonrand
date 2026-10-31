@@ -4,3 +4,5 @@
 _*
 target/
 docs/engine/
+.deps/
+moon.work

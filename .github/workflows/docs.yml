@@ -27,6 +27,17 @@ jobs:
         with:
           persist-credentials: false
 
+      # moonseed is not on mooncakes yet, so CI takes it from its repository and
+      # resolves it as a workspace member instead of from the registry.
+      - uses: actions/checkout@v7
+        with:
+          repository: moonbitstack/moonseed
+          path: .deps/moonseed
+          persist-credentials: false
+
+      - name: resolve the dependency from the sibling checkout
+        run: printf 'members = [\n  "./.deps/moonseed",\n  ".",\n]\n' > moon.work
+
       - name: install moonbit
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
