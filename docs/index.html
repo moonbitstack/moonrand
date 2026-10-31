@@ -124,7 +124,7 @@ h1 em{
 body[data-lang="zh"] .btn span{ display:inline-flex; align-items:center; gap:12px }
 body[data-lang="zh"] .btn span::before{
   content:''; display:block; width:18px; height:.5px;
-  background:currentColor; opacity:.55; margin-right:-1px;
+  background:currentColor; opacity:.55;
 }
 .btn:hover{ background:var(--k2); color:var(--porc); border-color:var(--k2) }
 .btn--solid{ background:var(--k2); color:var(--porc); border-color:var(--k2) }
@@ -612,9 +612,10 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
     <div class="wrap">
       <p class="kicker" data-zh="五 · 一条流的三种样子">05 / one stream, three looks</p>
       <h2 data-zh="同一组字节，同一只盘&lt;small&gt;由这一页的流画出来&lt;/small&gt;">Same bytes, same dish<small>drawn by this page's stream</small></h2>
-      <p class="prose" data-zh="下面三只盘不是画好的图。回纹折几道、盘心写哪个字，都是从各自那条流里现取的。刷新这一页，它们换一副样子；把每只盘下面的种子写进代码，它们就永远是这三只——一瓣不差。">
+      <p class="prose" data-zh="下面三只盘不是画好的图。回纹折几道、盘心写哪个字，皆自各自那条流里现取，三只盘的字不重。刷新这一页，它们换一副样子；把每只盘下面的种子写进代码，它们就永远是这三只——一瓣不差。">
         These three dishes are not illustrations. How many times the fret band folds, which
-        character sits in the well — both came out of their own stream, just now.
+        character sits in the well — both came out of their own stream, just now, and no
+        two wells take the same character.
         Reload and they change; write the seed under each dish into your code and they stay
         exactly these three, down to the petal.
       </p>
@@ -699,6 +700,7 @@ const I18N = (function(){
       el.innerHTML = (next === 'zh') ? el.getAttribute('data-zh') : orig.get(el);
     });
     document.documentElement.lang = (next === 'zh') ? 'zh-Hans' : 'en-US';
+    document.body.setAttribute('data-lang', (next === 'zh') ? 'zh' : 'en');
     document.title = (next === 'zh')
       ? 'MoonRand — 可播种的伪随机数发生器'
       : 'moonrand — a seedable stream';
@@ -1044,8 +1046,9 @@ function dish(o){
    6. 题跋
    ══════════════════════════════════════════════════════════════ */
 /* 盘心那个字：也从流里取，不是点题 */
-const GLYPHS = ['月', '掷', '种', '熵', '瓷', '釉', '回', '流'];
+const GLYPHS = ['月', '掷', '种', '熵', '瓷', '釉', '回', '流', '伪'];
 let PLATES = [];
+let GLYPH_USED = [];
 
 function hex16(v){
   const s = v.toString(16).padStart(16, '0');
@@ -1057,7 +1060,10 @@ function plateParams(seed){
   if (openStream) openStream(seed);
   const fretN = 46 + Math.floor(rnd() * 40);
   const lapN = 30 + Math.floor(rnd() * 26);
-  const glyph = GLYPHS[Math.floor(rnd() * GLYPHS.length)];
+  /* 三块盘各取一字，取过的不再取：一页之上不重字 */
+  const free = GLYPHS.filter(function(g){ return GLYPH_USED.indexOf(g) < 0; });
+  const glyph = free[Math.floor(rnd() * free.length)] || GLYPHS[0];
+  GLYPH_USED.push(glyph);
   return { fretN: fretN, lapN: lapN, glyph: glyph, seed: seed };
 }
 
@@ -1142,6 +1148,7 @@ async function engineBytes(){
     console.warn('wasm unavailable:', err);
   }
 
+  GLYPH_USED = [];
   PLATES = DRAW.plates.map(plateParams);
   const fs = document.getElementById('f-seed');
   if (fs) fs.textContent = hex16(DRAW.page);
