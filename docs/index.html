@@ -264,6 +264,44 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 .code .c{ color:var(--k5) }
 .code .k{ color:var(--k3) }
 .code .s{ color:var(--k3) }
+
+/* 代码横过界时，不装横杆：一支青花流苏挂在册页边上，往下拉即往后看。
+   绳一丝，结一粒，缚一道，裙幅自束处散开，锋梢渐隐。 */
+.code{ scrollbar-width:none; -ms-overflow-style:none }
+.code::-webkit-scrollbar{ display:none; width:0; height:0 }
+.tassel{
+  position:absolute; left:7px; top:12px; z-index:3;
+  width:16px; height:46px; padding:0; border:0; background:none;
+  cursor:ns-resize; touch-action:none;
+  transition:filter .12s linear;
+}
+.tassel:hover{ filter:brightness(1.1) }
+.tassel:focus-visible{ outline:.5px solid var(--k3); outline-offset:2px }
+.tassel.is-live{ cursor:grabbing }
+.tassel__cord{
+  position:absolute; left:50%; top:0; width:1px; height:12px; margin-left:-.5px;
+  background:linear-gradient(180deg, rgba(35,71,127,.12), rgba(35,71,127,.66));
+}
+.tassel__bead{
+  position:absolute; left:50%; top:10px; width:4.5px; height:4.5px; margin-left:-2.25px;
+  border-radius:50%;
+  background:radial-gradient(62% 58% at 34% 26%, #8AA5C8, #23477F 74%);
+  box-shadow:0 0 0 .5px rgba(35,71,127,.5);
+}
+.tassel__collar{
+  position:absolute; left:50%; top:15px; width:6px; height:3px; margin-left:-3px;
+  background:linear-gradient(180deg,#3A5F9B,#1D3D6E);
+  border-radius:.5px .5px 1px 1px;
+  box-shadow:0 0 0 .5px rgba(35,71,127,.35), 0 1px 1px rgba(24,40,60,.3);
+}
+.tassel__skirt{
+  position:absolute; left:50%; top:18px; width:15px; height:26px; margin-left:-7.5px;
+  background-image:repeating-linear-gradient(90deg,
+    rgba(35,71,127,.88) 0 .55px, rgba(35,71,127,0) .55px 1.6px);
+  clip-path:polygon(36% 0, 64% 0, 100% 100%, 0 100%);
+  -webkit-mask-image:linear-gradient(180deg, #000 0, #000 58%, rgba(0,0,0,.10) 100%);
+  mask-image:linear-gradient(180deg, #000 0, #000 58%, rgba(0,0,0,.10) 100%);
+}
 .two{ display:grid; grid-template-columns:1fr 1.04fr; gap:48px; align-items:start }
 
 /* ── 款识 ─────────────────────────────────────── */
@@ -689,6 +727,82 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 /* ══════════════════════════════════════════════════════════════
    0. 语言：英文为默认，中文按需切换（与 moonseed 页同一套办法）
    ══════════════════════════════════════════════════════════════ */
+/* 流苏：挂在代码边上，往下拖即左右（或上下）看。
+   不另包一层 div —— 一包就改了栅格，代码自己会胀开。 */
+function wireTassels(){
+  document.querySelectorAll(".tassel").forEach(function(t){ t.remove(); });
+  document.querySelectorAll(".code").forEach(function(code){
+    const mx = code.scrollWidth - code.clientWidth;
+    const my = code.scrollHeight - code.clientHeight;
+    if (mx < 4 && my < 4) return;
+
+    const host = code.parentElement;
+    if (getComputedStyle(host).position === "static") host.style.position = "relative";
+    const horizontal = mx >= my;
+
+    const t = document.createElement("span");
+    t.className = "tassel";
+    t.tabIndex = 0;
+    t.setAttribute("role", "slider");
+    t.setAttribute("aria-orientation", "vertical");
+    t.setAttribute("aria-label", "pull to read the rest");
+    t.innerHTML = '<i class="tassel__cord"></i><i class="tassel__bead"></i>' +
+                  '<i class="tassel__collar"></i><i class="tassel__skirt"></i>';
+    host.appendChild(t);
+
+    const left = code.offsetLeft + 7;
+    const top0 = code.offsetTop + 12;
+    let p = 0;
+    const travel = function(){ return Math.max(1, code.clientHeight - 24 - 46); };
+    const paint = function(){
+      t.style.left = left + "px";
+      t.style.top = (top0 + p * travel()) + "px";
+      t.setAttribute("aria-valuenow", Math.round(p * 100));
+    };
+    const seek = function(v){
+      p = Math.max(0, Math.min(1, v));
+      if (horizontal) code.scrollLeft = p * (code.scrollWidth - code.clientWidth);
+      else code.scrollTop = p * (code.scrollHeight - code.clientHeight);
+      paint();
+    };
+    code.addEventListener("scroll", function(){
+      if (horizontal){
+        const m = code.scrollWidth - code.clientWidth;
+        p = m > 0 ? code.scrollLeft / m : 0;
+      } else {
+        const m = code.scrollHeight - code.clientHeight;
+        p = m > 0 ? code.scrollTop / m : 0;
+      }
+      paint();
+    });
+
+    let dragging = false, y0 = 0, p0 = 0;
+    t.addEventListener("pointerdown", function(e){
+      dragging = true; y0 = e.clientY; p0 = p;
+      try { t.setPointerCapture(e.pointerId); } catch (err) {}
+      t.classList.add("is-live");
+      e.preventDefault();
+    });
+    t.addEventListener("pointermove", function(e){
+      if (!dragging) return;
+      seek(p0 + (e.clientY - y0) / travel());
+    });
+    const stop = function(e){
+      if (!dragging) return;
+      dragging = false;
+      t.classList.remove("is-live");
+      try { t.releasePointerCapture(e.pointerId); } catch (err) {}
+    };
+    t.addEventListener("pointerup", stop);
+    t.addEventListener("pointercancel", stop);
+    t.addEventListener("keydown", function(e){
+      if (e.key === "ArrowDown" || e.key === "ArrowRight"){ seek(p + .08); e.preventDefault(); }
+      else if (e.key === "ArrowUp" || e.key === "ArrowLeft"){ seek(p - .08); e.preventDefault(); }
+    });
+    paint();
+  });
+}
+
 const I18N = (function(){
   const nodes = Array.prototype.slice.call(document.querySelectorAll('[data-zh]'));
   const orig = new Map();
@@ -713,6 +827,7 @@ const I18N = (function(){
       if (a) a.setAttribute('href', 'https://moonbitstack.github.io/moonseed/' + suffix);
     });
     renderDynamic();
+    setTimeout(function(){ if (typeof wireTassels === 'function') wireTassels(); }, 0);
   }
   document.querySelectorAll('#lang button').forEach(function(b){
     b.addEventListener('click', function(){ apply(b.getAttribute('data-lang')); });
@@ -1154,6 +1269,15 @@ async function engineBytes(){
   if (fs) fs.textContent = hex16(DRAW.page);
 
   paintAll();
+  wireTassels();
+  /* 字体到位、注释换过语言之后，长短都会变：再挂一次，免得穗子落单 */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(wireTassels);
+  setTimeout(wireTassels, 400);
+  let rz = 0;
+  window.addEventListener('resize', function(){
+    clearTimeout(rz);
+    rz = setTimeout(wireTassels, 160);
+  });
 
   if (new URLSearchParams(location.search).get('lang') === 'zh') I18N.apply('zh');
 })();
