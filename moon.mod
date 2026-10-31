@@ -15,5 +15,5 @@ description = "Secure random bytes and unbiased sampling for MoonBit; never a se
 source = "src"
 
 import {
-  "moonbitstack/moonseed@0.0.1",
+  "moonbitstack/moonseed@0.1.0",
 }
