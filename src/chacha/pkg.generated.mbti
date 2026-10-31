@@ -1,0 +1,45 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/chacha"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct ChaCha12 {
+  // private fields
+}
+pub fn ChaCha12::fill(Self, FixedArray[Byte]) -> Unit
+pub fn ChaCha12::new(BytesView) -> Self
+pub fn ChaCha12::next_u32(Self) -> UInt32
+pub fn ChaCha12::next_u64(Self) -> UInt64
+pub fn ChaCha12::with_nonce(BytesView, UInt32, UInt32, UInt32, UInt32) -> Self
+pub impl @contract.Rng for ChaCha12
+
+pub struct ChaCha20 {
+  // private fields
+}
+pub fn ChaCha20::fill(Self, FixedArray[Byte]) -> Unit
+pub fn ChaCha20::new(BytesView) -> Self
+pub fn ChaCha20::next_u32(Self) -> UInt32
+pub fn ChaCha20::next_u64(Self) -> UInt64
+pub fn ChaCha20::with_nonce(BytesView, UInt32, UInt32, UInt32, UInt32) -> Self
+pub impl @contract.Rng for ChaCha20
+
+pub struct ChaCha8 {
+  // private fields
+}
+pub fn ChaCha8::fill(Self, FixedArray[Byte]) -> Unit
+pub fn ChaCha8::new(BytesView) -> Self
+pub fn ChaCha8::next_u32(Self) -> UInt32
+pub fn ChaCha8::next_u64(Self) -> UInt64
+pub fn ChaCha8::with_nonce(BytesView, UInt32, UInt32, UInt32, UInt32) -> Self
+pub impl @contract.Rng for ChaCha8
+
+// Type aliases
+
+// Traits

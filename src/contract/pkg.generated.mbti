@@ -1,0 +1,25 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/contract"
+
+// Values
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub(open) trait Rng {
+  fn next_u64(Self) -> UInt64
+  fn next_u32(Self) -> UInt32 = _
+  fn fill(Self, FixedArray[Byte]) -> Unit = _
+}
+
+pub(open) trait Secure : Rng {
+}
+
+pub(open) trait Seeded : Rng {
+  fn from_seed(BytesView) -> Self
+  fn seed_size() -> Int32
+}

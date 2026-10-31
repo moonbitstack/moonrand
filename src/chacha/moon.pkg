@@ -1,0 +1,5 @@
+// ChaCha with 8, 12 and 20 rounds. The cipher itself is RFC 8439; the 12-round
+// variant is this library's default generator.
+import {
+  "moonbitstack/moonrand/contract",
+}

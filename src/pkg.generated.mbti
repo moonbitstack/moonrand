@@ -2,41 +2,42 @@
 package "moonbitstack/moonrand"
 
 import {
-  "moonbitlang/core/debug",
+  "moonbitstack/moonrand/chacha",
+  "moonbitstack/moonrand/contract",
 }
 
 // Values
-pub fn[S : Source] below(BytesView, S) -> Bytes raise Unavailable
+pub fn[R : @contract.Rng, T] choice(R, ArrayView[T]) -> T?
 
-pub fn[S : Source] bytes(Int32, S) -> Bytes raise Unavailable
+pub fn[R : @contract.Rng, T] choices(R, ArrayView[T], k? : Int32, weights? : ArrayView[Double]) -> Array[T]
 
-pub fn[S : Source] scalar(BytesView, S) -> Bytes raise Unavailable
+pub fn[R : @contract.Rng] expovariate(R, Double) -> Double
+
+pub fn[R : @contract.Rng] gauss(R, mu? : Double, sigma? : Double) -> Double
+
+pub fn[R : @contract.Rng] getrandbits(R, Int32) -> UInt64
+
+pub fn[R : @contract.Rng] lognormvariate(R, mu? : Double, sigma? : Double) -> Double
+
+pub fn[R : @contract.Rng] randint(R, Int64, Int64) -> Int64
+
+pub fn[R : @contract.Rng] random(R) -> Double
+
+pub fn[R : @contract.Rng] randrange(R, Int64, start? : Int64, step? : Int64) -> Int64
+
+pub fn[R : @contract.Rng, T] sample(R, ArrayView[T], Int32) -> Array[T]
+
+pub fn seeded(BytesView) -> @chacha.ChaCha12
+
+pub fn[R : @contract.Rng, T] shuffle(R, Array[T]) -> Unit
+
+pub fn[R : @contract.Rng] uniform(R, Double, Double) -> Double
 
 // Errors
-pub(all) suberror Unavailable {
-  Platform
-  Exhausted
-  Failed(String)
-} derive(Eq, @debug.Debug)
-pub fn Unavailable::equal(Self, Self) -> Bool
-pub fn Unavailable::not_equal(Self, Self) -> Bool
-pub fn Unavailable::output(Self, &Logger) -> Unit
-pub fn Unavailable::to_repr(Self) -> @debug.Repr
-pub fn Unavailable::to_string(Self) -> String
-pub impl Show for Unavailable
 
 // Types and methods
-pub struct Replay {
-  // private fields
-}
-pub fn Replay::fill(Self, FixedArray[Byte]) -> Unit raise Unavailable
-pub fn Replay::new(Bytes) -> Self
-pub fn Replay::remaining(Self) -> Int32
-pub impl Source for Replay
 
 // Type aliases
+pub using @chacha {type ChaCha12 as StdRng}
 
 // Traits
-pub(open) trait Source {
-  fn fill(Self, FixedArray[Byte]) -> Unit raise Unavailable
-}

@@ -1,0 +1,2 @@
+// The generator contract, kept apart so the root package and the algorithm
+// subpackages can both use it without a circular import.
