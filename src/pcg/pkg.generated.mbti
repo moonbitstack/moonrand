@@ -41,7 +41,6 @@ pub impl @contract.Seeded for Pcg64
 pub struct Pcg64Dxsm {
   // private fields
 }
-pub fn Pcg64Dxsm::advance(Self, UInt64) -> Unit
 pub fn Pcg64Dxsm::fill(Self, FixedArray[Byte]) -> Unit
 pub fn Pcg64Dxsm::from_seed(BytesView) -> Self
 pub fn Pcg64Dxsm::new(BytesView) -> Self
