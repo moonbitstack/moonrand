@@ -103,3 +103,38 @@ test "chacha8_deterministic_and_distinct" {
   let c20 = hex_stream(20, zeros_seed(), 0U, 0U, 0U, 0U, 64)
   assert_true(a != c20)
 }
+
+///|
+/// `advance` is a seek, not a march: skipping n words must land on exactly the
+/// word the nth draw would have returned, and it must land there for n inside a
+/// block, on a block boundary, and past several blocks.
+test "chacha12_advance_lands_on_the_same_word" {
+  for skip in [0UL, 1UL, 2UL, 7UL, 8UL, 9UL, 15UL, 16UL, 17UL, 64UL, 1000UL] {
+    let walked = @chacha.ChaCha12::new(ascending_seed())
+    for _i = 0UL; _i < skip; _i = _i + 1UL {
+      ignore(walked.next_u64())
+    }
+    let sought = @chacha.ChaCha12::new(ascending_seed())
+    sought.advance(skip)
+    assert_eq(sought.next_u64(), walked.next_u64())
+    assert_eq(sought.next_u64(), walked.next_u64())
+  }
+}
+
+///|
+test "chacha20_advance_matches_the_rfc_counter" {
+  // RFC 8439 §2.3.2 uses counter 1; seeking one 64-bit word into the generator
+  // at counter 0 must be the same as starting at counter 1 with position 0, and
+  // the keystream there is the vector's first eight bytes.
+  let c = @chacha.ChaCha20::with_nonce(
+    ascending_seed(),
+    0x09000000U,
+    0x4a000000U,
+    0U,
+    0U,
+  )
+  c.advance(8UL)
+  let buf = FixedArray::make(8, (0).to_byte())
+  c.fill(buf)
+  assert_eq(to_hex(buf), "10f1e7e4d13b5915")
+}

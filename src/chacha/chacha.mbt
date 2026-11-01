@@ -271,3 +271,145 @@ pub extend ChaCha12 with @contract.Rng::{next_u64, next_u32, fill}
 
 ///|
 pub extend ChaCha20 with @contract.Rng::{next_u64, next_u32, fill}
+
+///|
+/// Where a seek lands: only whole blocks can be skipped without generating
+/// them, so the block counter moves and the position inside the block is set.
+/// A remainder that is not zero generates the block it lands in.
+fn chacha_advance(
+  key : Array[UInt32],
+  nonce0 : UInt32,
+  nonce1 : UInt32,
+  nonce2 : UInt32,
+  words : Array[UInt32],
+  ctr : UInt32,
+  pos : Int32,
+  rounds : Int32,
+  n : UInt64,
+) -> (UInt32, Int32) {
+  let mut skip = n
+  let left = ((16 - pos) / 2).to_uint64()
+  if skip < left {
+    return (ctr, pos + skip.to_int() * 2)
+  }
+  skip = skip - left
+  let blocks = skip / 8UL
+  let rest = (skip % 8UL).to_int()
+  let moved = (ctr.to_uint64() + blocks).to_uint()
+  if rest == 0 {
+    (moved, 16)
+  } else {
+    ignore(
+      generate_block_into(key, nonce0, nonce1, nonce2, moved, words, rounds),
+    )
+    // The block just written is the one the seek lands in, so the counter has
+    // already moved past it; the next block generated is `moved + 1`.
+    (moved + 1U, rest * 2)
+  }
+}
+
+///|
+/// Skip the next `n` 64-bit draws. The counter names the block, so this is a
+/// seek rather than a march: `advance` costs the same for one draw as for
+/// 2^40.
+pub fn ChaCha8::advance(self : ChaCha8, n : UInt64) -> Unit {
+  let (ctr, pos) = chacha_advance(
+    self.key,
+    self.nonce0,
+    self.nonce1,
+    self.nonce2,
+    self.words,
+    self.ctr,
+    self.pos,
+    8,
+    n,
+  )
+  self.ctr = ctr
+  self.pos = pos
+}
+
+///|
+/// Skip the next `n` 64-bit draws.
+pub fn ChaCha12::advance(self : ChaCha12, n : UInt64) -> Unit {
+  let (ctr, pos) = chacha_advance(
+    self.key,
+    self.nonce0,
+    self.nonce1,
+    self.nonce2,
+    self.words,
+    self.ctr,
+    self.pos,
+    12,
+    n,
+  )
+  self.ctr = ctr
+  self.pos = pos
+}
+
+///|
+/// Skip the next `n` 64-bit draws.
+pub fn ChaCha20::advance(self : ChaCha20, n : UInt64) -> Unit {
+  let (ctr, pos) = chacha_advance(
+    self.key,
+    self.nonce0,
+    self.nonce1,
+    self.nonce2,
+    self.words,
+    self.ctr,
+    self.pos,
+    20,
+    n,
+  )
+  self.ctr = ctr
+  self.pos = pos
+}
+
+///|
+/// ChaCha is a stream cipher with a 256-bit key: if the key is secret and never
+/// reused with the same nonce, its stream is indistinguishable from uniform.
+pub impl @contract.Secure for ChaCha8
+
+///|
+pub impl @contract.Secure for ChaCha12
+
+///|
+pub impl @contract.Secure for ChaCha20
+
+///|
+pub impl @contract.Seeded for ChaCha8 with fn from_seed(seed : BytesView) -> ChaCha8 {
+  ChaCha8::new(seed)
+}
+
+///|
+pub impl @contract.Seeded for ChaCha8 with fn seed_size() -> Int32 {
+  32
+}
+
+///|
+pub impl @contract.Seeded for ChaCha12 with fn from_seed(seed : BytesView) -> ChaCha12 {
+  ChaCha12::new(seed)
+}
+
+///|
+pub impl @contract.Seeded for ChaCha12 with fn seed_size() -> Int32 {
+  32
+}
+
+///|
+pub impl @contract.Seeded for ChaCha20 with fn from_seed(seed : BytesView) -> ChaCha20 {
+  ChaCha20::new(seed)
+}
+
+///|
+pub impl @contract.Seeded for ChaCha20 with fn seed_size() -> Int32 {
+  32
+}
+
+///|
+pub extend ChaCha8 with @contract.Seeded::{from_seed, seed_size}
+
+///|
+pub extend ChaCha12 with @contract.Seeded::{from_seed, seed_size}
+
+///|
+pub extend ChaCha20 with @contract.Seeded::{from_seed, seed_size}
