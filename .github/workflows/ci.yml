@@ -19,17 +19,6 @@ jobs:
         with:
           persist-credentials: false
 
-      # moonseed is not on mooncakes yet, so CI takes it from its repository and
-      # resolves it as a workspace member instead of from the registry.
-      - uses: actions/checkout@v7
-        with:
-          repository: moonbitstack/moonseed
-          path: .deps/moonseed
-          persist-credentials: false
-
-      - name: resolve the dependency from the sibling checkout
-        run: printf 'members = [\n  "./.deps/moonseed",\n  ".",\n]\n' > moon.work
-
       - name: install-unix
         if: ${{ runner.os != 'Windows' }}
         run: |
@@ -38,8 +27,10 @@ jobs:
 
       - name: install-windows
         if: ${{ runner.os == 'Windows' }}
+        shell: pwsh
         run: |
-          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+          irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
           "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: post install

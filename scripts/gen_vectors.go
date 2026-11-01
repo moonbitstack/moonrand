@@ -13,6 +13,7 @@ package main
 
 import (
 	"fmt"
+	"math/bits"
 	"os"
 	"path/filepath"
 	"strings"
@@ -77,6 +78,12 @@ func main() {
 	xoshiroVectors()
 	splitmixVectors()
 	mtVectors()
+	pcgVectors()
+	sfcVectors()
+	jsfVectors()
+	xorshiftVectors()
+	wellVectors()
+	lcgVectors()
 
 	byPkg := map[string][]case_{}
 	order := []string{}
@@ -459,4 +466,337 @@ func mtVectors() {
 		w = append(w, h.word())
 	}
 	add("mt", "mt19937_64_by_array", w)
+}
+
+// ---------------------------------------------------------------------------
+// pcg
+// ---------------------------------------------------------------------------
+
+type pcg32 struct{ state, inc uint64 }
+
+func (p *pcg32) word() uint32 {
+	old := p.state
+	p.state = old*6364136223846793005 + p.inc
+	xored := uint32(((old >> 18) ^ old) >> 27)
+	rot := uint32(old >> 59)
+	return (xored >> rot) | (xored << ((32 - rot) & 31))
+}
+
+const (
+	pcg64MultLo = uint64(0x4385df649fccf645)
+	pcg64MultHi = uint64(0x2360ed051fc65da4)
+	dxsmMult    = uint64(0xda942042e4dd58b5)
+)
+
+type pcg128 struct{ lo, hi, incLo, incHi uint64 }
+
+func (p *pcg128) step() {
+	h1, l1 := bits.Mul64(p.lo, pcg64MultLo)
+	hi := h1 + p.lo*pcg64MultHi + p.hi*pcg64MultLo
+	lo := l1
+	s := lo + p.incLo
+	var carry uint64
+	if s < lo {
+		carry = 1
+	}
+	p.lo = s
+	p.hi = hi + p.incHi + carry
+}
+
+func (p *pcg128) xslrr() uint64 {
+	oldLo, oldHi := p.lo, p.hi
+	p.step()
+	x := oldHi ^ oldLo
+	rot := int(oldHi >> 58)
+	if rot == 0 {
+		return x
+	}
+	return x>>uint(rot) | x<<uint(64-rot)
+}
+
+func (p *pcg128) dxsm() uint64 {
+	lo, hi := p.lo, p.hi
+	p.step()
+	a := (hi ^ (hi >> 32)) * dxsmMult
+	b := a ^ (a >> 48)
+	return b * lo
+}
+
+func pcgVectors() {
+	g := &pcg32{state: 42, inc: 54 | 1}
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		w = append(w, uint64(g.word()))
+	}
+	add("pcg", "pcg32_stream54", w)
+
+	demo := &pcg32{inc: (54 << 1) | 1}
+	demo.word()
+	demo.state += 42
+	demo.word()
+	w = make([]uint64, 0, 6)
+	for i := 0; i < 6; i++ {
+		w = append(w, uint64(demo.word()))
+	}
+	add("pcg", "pcg32_demo_seed42_stream54", w)
+
+	h := &pcg128{lo: 42, hi: 0, incLo: 54 | 1, incHi: 0}
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		w = append(w, h.xslrr())
+	}
+	add("pcg", "pcg64_state42", w)
+
+	d := &pcg128{lo: 42, hi: 0, incLo: 54 | 1, incHi: 0}
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		w = append(w, d.dxsm())
+	}
+	add("pcg", "pcg64dxsm_state42", w)
+}
+
+// ---------------------------------------------------------------------------
+// sfc, jsf
+// ---------------------------------------------------------------------------
+
+type sfc64 struct{ a, b, c, n uint64 }
+
+func (s *sfc64) next() uint64 {
+	s.n++
+	c := s.c + s.n
+	tmp := s.a + s.b + c
+	s.a = s.b ^ (s.b >> 11)
+	s.b = c + (c << 3)
+	s.c = rotl(c, 24) + tmp
+	return tmp
+}
+
+type jsf64 struct{ a, b, c, d uint64 }
+
+func (j *jsf64) next() uint64 {
+	e := j.a - rotl(j.b, 7)
+	j.a = j.b ^ rotl(j.c, 13)
+	j.b = j.c + rotl(j.d, 37)
+	j.c = j.d + e
+	j.d = e + j.a
+	return j.d
+}
+
+func sfcVectors() {
+	st := seedWords(1, 3)
+	g := &sfc64{a: st[0], b: st[1], c: st[2]}
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		w = append(w, g.next())
+	}
+	add("sfc", "sfc64_state", st)
+	add("sfc", "sfc64_first", w)
+}
+
+func jsfVectors() {
+	st := seedWords(1, 4)
+	j := &jsf64{a: st[0], b: st[1], c: st[2], d: st[3]}
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		w = append(w, j.next())
+	}
+	add("jsf", "jsf64_state", st)
+	add("jsf", "jsf64_first", w)
+}
+
+// ---------------------------------------------------------------------------
+// xorshift
+// ---------------------------------------------------------------------------
+
+func xorshiftVectors() {
+	// The paper's own starting value for the 32-bit form.
+	x32 := uint32(2463534242)
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		x32 ^= x32 << 13
+		x32 ^= x32 >> 17
+		x32 ^= x32 << 5
+		w = append(w, uint64(x32))
+	}
+	add("xorshift", "xorshift32", w)
+
+	x64 := uint64(88172645463325252)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		x64 ^= x64 << 13
+		x64 ^= x64 >> 7
+		x64 ^= x64 << 17
+		w = append(w, x64)
+	}
+	add("xorshift", "xorshift64", w)
+
+	st := seedWords(1, 2)
+	st32 := []uint64{uint64(uint32(st[0])), uint64(uint32(st[0] >> 32)), uint64(uint32(st[1])), uint64(uint32(st[1] >> 32))}
+	var s [4]uint32
+	for i := range s {
+		s[i] = uint32(st32[i])
+	}
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		t := s[0] ^ (s[0] << 11)
+		s[0], s[1], s[2] = s[1], s[2], s[3]
+		s[3] = s[3] ^ (s[3] >> 19) ^ (t ^ (t >> 8))
+		w = append(w, uint64(s[3]))
+	}
+	add("xorshift", "xorshift128", w)
+	add("xorshift", "xorshift128_state", st32)
+
+	p := seedWords(1, 2)
+	x0, x1 := p[0], p[1]
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		x := x0
+		y := x1
+		x0 = y
+		x ^= x << 23
+		x1 = x ^ y ^ (x >> 17) ^ (y >> 26)
+		w = append(w, x1+y)
+	}
+	add("xorshift", "xorshift128plus_state", p)
+	add("xorshift", "xorshift128plus", w)
+
+	q := seedWords(1, 3)
+	var v [5]uint32
+	v[0] = uint32(q[0])
+	v[1] = uint32(q[0] >> 32)
+	v[2] = uint32(q[1])
+	v[3] = uint32(q[1] >> 32)
+	v[4] = uint32(q[2])
+	d := uint32(362437)
+	start := []uint64{uint64(v[0]), uint64(v[1]), uint64(v[2]), uint64(v[3]), uint64(v[4]), 362437}
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		t := v[0] ^ (v[0] >> 2)
+		v[0], v[1], v[2], v[3] = v[1], v[2], v[3], v[4]
+		v[4] = v[4] ^ (v[4] << 4) ^ (t ^ (t << 1))
+		d += 362437
+		w = append(w, uint64(v[4]+d))
+	}
+	add("xorshift", "xorwow_state", start)
+	add("xorshift", "xorwow", w)
+}
+
+// ---------------------------------------------------------------------------
+// well
+// ---------------------------------------------------------------------------
+
+func wellVectors() {
+	st := seedWords(1, 8)
+	var s [16]uint32
+	for i := 0; i < 8; i++ {
+		s[i*2] = uint32(st[i])
+		s[i*2+1] = uint32(st[i] >> 32)
+	}
+	idx := 0
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		a := s[idx]
+		c := s[(idx+13)&15]
+		b := a ^ c ^ (a << 16) ^ (c << 15)
+		c2 := s[(idx+9)&15]
+		c2 ^= c2 >> 11
+		a = b ^ c2
+		s[idx] = a
+		d := a ^ ((a << 5) & 0xDA442D24)
+		idx = (idx + 15) & 15
+		a2 := s[idx]
+		s[idx] = a2 ^ a ^ d ^ (a2 << 2) ^ (a << 18) ^ (c2 << 28)
+		w = append(w, uint64(s[idx]))
+	}
+	seed := make([]uint64, 0, 16)
+	for _, v := range s {
+		seed = append(seed, uint64(v))
+	}
+	_ = seed
+	state := make([]uint64, 0, 16)
+	st2 := seedWords(1, 8)
+	for i := 0; i < 8; i++ {
+		state = append(state, uint64(uint32(st2[i])), uint64(uint32(st2[i]>>32)))
+	}
+	add("well", "well512_state", state)
+	add("well", "well512_first", w)
+}
+
+// ---------------------------------------------------------------------------
+// lcg
+// ---------------------------------------------------------------------------
+
+func lcgVectors() {
+	// Numerical Recipes parameters, seed 42.
+	st := uint64(42)
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		st = st*1664525 + 1013904223
+		w = append(w, st)
+	}
+	add("lcg", "lcg64_nr_seed42", w)
+
+	// drand48 from a fixed state.
+	s48 := uint64(0x1234abcd)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		s48 = (s48*0x5deece66d + 0xb) & 0xffffffffffff
+		w = append(w, uint64(uint32(s48>>16)))
+	}
+	add("lcg", "lcg48_state", w)
+
+	// MINSTD from 1.
+	m := uint64(1)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		m = (m * 16807) % 2147483647
+		w = append(w, m)
+	}
+	add("lcg", "minstd_seed1", w)
+
+	// Quadratic and cubic, seed 42 with the library's coefficients.
+	q := uint64(42)
+	a := uint64(0x9e3779b97f4a7c15)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		q = a*q*q + 1
+		w = append(w, (q>>32)|(q<<32))
+	}
+	add("lcg", "qcg64_seed42", w)
+
+	c := uint64(42)
+	b := uint64(0xbf58476d1ce4e5b9)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		c = a*c*c*c + b*c*c + 1
+		w = append(w, (c>>32)|(c<<32))
+	}
+	add("lcg", "ccg64_seed42", w)
+
+	// Inversive over 2^32-5, seed 42.
+	const mod = int64(4294967291)
+	x := int64(42)
+	am := int64(12345)
+	cm := int64(1013904223)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		inv := invMod(x, mod)
+		x = (am*inv + cm) % mod
+		w = append(w, uint64(x))
+	}
+	add("lcg", "icg32_seed42", w)
+}
+
+func invMod(x, m int64) int64 {
+	t, newT := int64(0), int64(1)
+	r, newR := m, x%m
+	for newR != 0 {
+		q := r / newR
+		t, newT = newT, t-q*newT
+		r, newR = newR, r-q*newR
+	}
+	if t < 0 {
+		t += m
+	}
+	return t
 }
