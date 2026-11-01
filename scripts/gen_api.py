@@ -593,10 +593,16 @@ def parse_mbti(path: Path) -> list[tuple[str, str, str]]:
 def rows_html() -> str:
     out: list[str] = []
     group = None
-    for row in ROWS:
+    first = {}
+    for i, row in enumerate(ROWS):
+        first.setdefault(row["pkg"], i)
+    for row in sorted(ROWS, key=lambda r: first[r["pkg"]]):
         if row["pkg"] != group:
             if group is not None:
                 out.append("        </div>")
+                out.append("        </details>")
+            # The root package stays open; nineteen generators unfolded would bury the page.
+            opened = " open" if group is None else ""
             group = row["pkg"]
             counts: dict[str, int] = {}
             for other in ROWS:
@@ -606,9 +612,10 @@ def rows_html() -> str:
                 f"{n} {COUNT_WORD[k][1] if n > 1 else COUNT_WORD[k][0]}" for k, n in counts.items()
             )
             cn_summary = " · ".join(f"{CN_WORD[k]}{cn_count(n)}" for k, n in counts.items())
+            out.append(f'        <details class="ins__pkg"{opened}>')
             out.append(
-                f'        <div class="ins__grp"><span>{html.escape(group)}</span>'
-                f'<i data-zh="{cn_summary}">{summary}</i></div>'
+                f'        <summary class="ins__grp"><span>{html.escape(group)}</span>'
+                f'<i data-zh="{cn_summary}">{summary}</i></summary>'
             )
             out.append('        <div class="ins__rows">')
         sig = "<br>".join(html.escape(line) for line in row["sig"])
@@ -619,6 +626,7 @@ def rows_html() -> str:
         out.append("        </div>")
     if group is not None:
         out.append("        </div>")
+        out.append("        </details>")
     return "\n".join(out)
 
 

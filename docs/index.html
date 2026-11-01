@@ -241,6 +241,11 @@ h2 small{
   padding:26px 0 9px; border-bottom:.5px solid var(--k2);
 }
 .ins__rows{ border-bottom:.5px solid var(--k2) }
+.ins__pkg > summary{ list-style:none; cursor:pointer }
+.ins__pkg > summary::-webkit-details-marker{ display:none }
+.ins__pkg > summary span::before{ content:'+'; display:inline-block; width:1.4em; color:var(--k4) }
+.ins__pkg[open] > summary span::before{ content:'\2212' }
+.ins__pkg > summary:hover span{ color:var(--k1) }
 .ins__grp span{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; color:var(--k2) }
 .ins__grp i{
   font-style:normal; font-family:var(--mono); font-size:9px;
@@ -549,7 +554,8 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
       </p>
       <div class="ins" id="api-table">
         <!-- api:begin -->
-        <div class="ins__grp"><span>moonbitstack/moonrand</span><i data-zh="函数二十二 · 别名一">22 functions · 1 alias</i></div>
+        <details class="ins__pkg" open>
+        <summary class="ins__grp"><span>moonbitstack/moonrand</span><i data-zh="函数二十二 · 别名一">22 functions · 1 alias</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="seeded">
           <div class="ins__sig">pub fn seeded(seed : BytesView) -&gt; StdRng</div>
@@ -607,39 +613,6 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__sig">pub type StdRng = @chacha.ChaCha12</div>
           <div class="ins__g" data-zh="默认发生器之名。欲换默认，改此一行即可，全库随之。">The default generator's name. Change this line and the whole library follows.</div>
         </div>
-        </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/contract</span><i data-zh="契约三">3 traits</i></div>
-        <div class="ins__rows">
-        <div class="ins__row" data-item="Rng">
-          <div class="ins__sig">pub(open) trait Rng {<br>  fn next_u64(Self) -&gt; UInt64<br>  fn next_u32(Self) -&gt; UInt32 = _<br>  fn fill(Self, buf : FixedArray[Byte]) -&gt; Unit = _<br>}</div>
-          <div class="ins__g" data-zh="一切发生器之约：交出均匀机器字。只须自具 next_u64，余二法有默认。">The contract every generator keeps: uniform machine words. Only next_u64 is yours to write; the other two have defaults.</div>
-        </div>
-        <div class="ins__row" data-item="Secure">
-          <div class="ins__sig">pub(open) trait Secure : Rng {}</div>
-          <div class="ins__g" data-zh="可为密码学用之标记。Philox 与 PCG 统计上过，然不在此列。">A marker for generators fit for cryptography. Philox and PCG pass the statistics and do not carry it.</div>
-        </div>
-        <div class="ins__row" data-item="Seeded">
-          <div class="ins__sig">pub(open) trait Seeded : Rng {<br>  fn from_seed(BytesView) -&gt; Self<br>  fn seed_size() -&gt; Int32<br>}</div>
-          <div class="ins__g" data-zh="可自种子重建之发生器，供可复现之跑。种子几何，由 seed_size 自陈。">A generator rebuilt from a seed, for reproducible runs. seed_size says how many bytes it wants.</div>
-        </div>
-        </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/chacha</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></div>
-        <div class="ins__rows">
-        <div class="ins__row" data-item="ChaCha8">
-          <div class="ins__sig">pub struct ChaCha8<br>new(seed : BytesView) -&gt; ChaCha8<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
-          <div class="ins__g" data-zh="八轮。快，余裕最薄，宜于不涉密钥之处。">Eight rounds: fastest, thinnest margin, for places no key passes through.</div>
-        </div>
-        <div class="ins__row" data-item="ChaCha12">
-          <div class="ins__sig">pub struct ChaCha12<br>new(seed : BytesView) -&gt; ChaCha12<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
-          <div class="ins__g" data-zh="十二轮，默认之选。速度与余裕之间，取其中。">Twelve rounds, the default: the middle of the road between speed and margin.</div>
-        </div>
-        <div class="ins__row" data-item="ChaCha20">
-          <div class="ins__sig">pub struct ChaCha20<br>new(seed : BytesView) -&gt; ChaCha20<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
-          <div class="ins__g" data-zh="二十轮，RFC 8439 之数。余裕最厚，速度最让。">Twenty rounds, RFC 8439's count: the widest margin, the least speed.</div>
-        </div>
-        </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand</span><i data-zh="函数二十二 · 别名一">22 functions · 1 alias</i></div>
-        <div class="ins__rows">
         <div class="ins__row" data-item="gammavariate">
           <div class="ins__sig">gammavariate(rng : R, alpha : Double, beta : Double) -&gt; Double</div>
           <div class="ins__g" data-zh="伽马一取，Marsaglia–Tsang 之法：形为 alpha，尺度为 beta。">One gamma draw by Marsaglia-Tsang: shape alpha, scale beta.</div>
@@ -677,8 +650,39 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="正态一取，Kinderman–Monahan 的比值法；种子同而流与 gauss 不同。">One normal draw by Kinderman-Monahan; the same seed gives a different stream than gauss.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/chacha</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/contract</span><i data-zh="契约三">3 traits</i></summary>
         <div class="ins__rows">
+        <div class="ins__row" data-item="Rng">
+          <div class="ins__sig">pub(open) trait Rng {<br>  fn next_u64(Self) -&gt; UInt64<br>  fn next_u32(Self) -&gt; UInt32 = _<br>  fn fill(Self, buf : FixedArray[Byte]) -&gt; Unit = _<br>}</div>
+          <div class="ins__g" data-zh="一切发生器之约：交出均匀机器字。只须自具 next_u64，余二法有默认。">The contract every generator keeps: uniform machine words. Only next_u64 is yours to write; the other two have defaults.</div>
+        </div>
+        <div class="ins__row" data-item="Secure">
+          <div class="ins__sig">pub(open) trait Secure : Rng {}</div>
+          <div class="ins__g" data-zh="可为密码学用之标记。Philox 与 PCG 统计上过，然不在此列。">A marker for generators fit for cryptography. Philox and PCG pass the statistics and do not carry it.</div>
+        </div>
+        <div class="ins__row" data-item="Seeded">
+          <div class="ins__sig">pub(open) trait Seeded : Rng {<br>  fn from_seed(BytesView) -&gt; Self<br>  fn seed_size() -&gt; Int32<br>}</div>
+          <div class="ins__g" data-zh="可自种子重建之发生器，供可复现之跑。种子几何，由 seed_size 自陈。">A generator rebuilt from a seed, for reproducible runs. seed_size says how many bytes it wants.</div>
+        </div>
+        </div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/chacha</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></summary>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="ChaCha8">
+          <div class="ins__sig">pub struct ChaCha8<br>new(seed : BytesView) -&gt; ChaCha8<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
+          <div class="ins__g" data-zh="八轮。快，余裕最薄，宜于不涉密钥之处。">Eight rounds: fastest, thinnest margin, for places no key passes through.</div>
+        </div>
+        <div class="ins__row" data-item="ChaCha12">
+          <div class="ins__sig">pub struct ChaCha12<br>new(seed : BytesView) -&gt; ChaCha12<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
+          <div class="ins__g" data-zh="十二轮，默认之选。速度与余裕之间，取其中。">Twelve rounds, the default: the middle of the road between speed and margin.</div>
+        </div>
+        <div class="ins__row" data-item="ChaCha20">
+          <div class="ins__sig">pub struct ChaCha20<br>new(seed : BytesView) -&gt; ChaCha20<br>with_nonce(seed : BytesView, nonce0 : UInt32, nonce1 : UInt32, nonce2 : UInt32, ctr : UInt32)<br>next_u32() -&gt; UInt32 · next_u64() -&gt; UInt64 · fill(buf : FixedArray[Byte])</div>
+          <div class="ins__g" data-zh="二十轮，RFC 8439 之数。余裕最厚，速度最让。">Twenty rounds, RFC 8439's count: the widest margin, the least speed.</div>
+        </div>
         <div class="ins__row" data-item="ChaCha12::advance">
           <div class="ins__sig">pub fn ChaCha12::advance(self : ChaCha12, n : UInt64) -&gt; Unit</div>
           <div class="ins__g" data-zh="向前跳 n 个 64 位字：只动计数器，不逐个生成。">Skip n 64-bit words by moving the counter, not by drawing them.</div>
@@ -691,35 +695,6 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__sig">pub fn ChaCha20::advance(self : ChaCha20, n : UInt64) -&gt; Unit</div>
           <div class="ins__g" data-zh="同 ChaCha12：跳 n 个字。">As ChaCha12: skip n words.</div>
         </div>
-        </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/auto</span><i data-zh="函数一">1 function</i></div>
-        <div class="ins__rows">
-        <div class="ins__row" data-item="rng">
-          <div class="ins__sig">pub fn rng() -&gt; @moonrand.StdRng raise @moonseed.Unavailable</div>
-          <div class="ins__g" data-zh="一次导入，一次调用：向平台要三十二字节，交与默认生成器。无熵则 raise。">One import, one call: ask the platform for 32 bytes and hand them to the default generator. No entropy, no stream.</div>
-        </div>
-        </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/bits</span><i data-zh="函数四">4 functions</i></div>
-        <div class="ins__rows">
-        <div class="ins__row" data-item="mix64">
-          <div class="ins__sig">pub fn mix64(z : UInt64) -&gt; UInt64</div>
-          <div class="ins__g" data-zh="SplitMix64 的收尾函数：三段异或移位，两个奇乘子，字字对应。">The SplitMix64 finalizer: three shifted xors and two odd multipliers, one word to one word.</div>
-        </div>
-        <div class="ins__row" data-item="mul_hi">
-          <div class="ins__sig">pub fn mul_hi(a : UInt64, b : UInt64) -&gt; UInt64</div>
-          <div class="ins__g" data-zh="两字相乘的高半，不用 128 位类型：拆成四个半字再进位。">The high half of a 64-bit product, without a 128-bit type: four half-word products and a carry.</div>
-        </div>
-        <div class="ins__row" data-item="mul_wide">
-          <div class="ins__sig">pub fn mul_wide(a : UInt64, b : UInt64) -&gt; (UInt64, UInt64)</div>
-          <div class="ins__g" data-zh="两字相乘的两半，低半在前。">Both halves of a 64-bit product, low half first.</div>
-        </div>
-        <div class="ins__row" data-item="seed_words">
-          <div class="ins__sig">pub fn seed_words(seed : BytesView, n : Int32) -&gt; FixedArray[UInt64]</div>
-          <div class="ins__g" data-zh="把一串字节摊成 n 个状态字：先折进 SplitMix64，再往前跑。每一字节都算数。">Turn a seed into n state words: fold the bytes into SplitMix64, then run it forward. Every byte counts.</div>
-        </div>
-        </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/chacha</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></div>
-        <div class="ins__rows">
         <div class="ins__row" data-item="ChaCha12::fill">
           <div class="ins__sig">pub fn ChaCha12::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
           <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
@@ -805,7 +780,39 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="生成器界面之一。">Part of the generator's surface.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/xoshiro</span><i data-zh="类型九 · 函数八十一">9 types · 81 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/auto</span><i data-zh="函数一">1 function</i></summary>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="rng">
+          <div class="ins__sig">pub fn rng() -&gt; @moonrand.StdRng raise @moonseed.Unavailable</div>
+          <div class="ins__g" data-zh="一次导入，一次调用：向平台要三十二字节，交与默认生成器。无熵则 raise。">One import, one call: ask the platform for 32 bytes and hand them to the default generator. No entropy, no stream.</div>
+        </div>
+        </div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/bits</span><i data-zh="函数四">4 functions</i></summary>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="mix64">
+          <div class="ins__sig">pub fn mix64(z : UInt64) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="SplitMix64 的收尾函数：三段异或移位，两个奇乘子，字字对应。">The SplitMix64 finalizer: three shifted xors and two odd multipliers, one word to one word.</div>
+        </div>
+        <div class="ins__row" data-item="mul_hi">
+          <div class="ins__sig">pub fn mul_hi(a : UInt64, b : UInt64) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="两字相乘的高半，不用 128 位类型：拆成四个半字再进位。">The high half of a 64-bit product, without a 128-bit type: four half-word products and a carry.</div>
+        </div>
+        <div class="ins__row" data-item="mul_wide">
+          <div class="ins__sig">pub fn mul_wide(a : UInt64, b : UInt64) -&gt; (UInt64, UInt64)</div>
+          <div class="ins__g" data-zh="两字相乘的两半，低半在前。">Both halves of a 64-bit product, low half first.</div>
+        </div>
+        <div class="ins__row" data-item="seed_words">
+          <div class="ins__sig">pub fn seed_words(seed : BytesView, n : Int32) -&gt; FixedArray[UInt64]</div>
+          <div class="ins__g" data-zh="把一串字节摊成 n 个状态字：先折进 SplitMix64，再往前跑。每一字节都算数。">Turn a seed into n state words: fold the bytes into SplitMix64, then run it forward. Every byte counts.</div>
+        </div>
+        </div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/xoshiro</span><i data-zh="类型九 · 函数八十一">9 types · 81 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Xoroshiro128p">
           <div class="ins__sig">pub struct Xoroshiro128p {</div>
@@ -1168,7 +1175,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/pcg</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/pcg</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Pcg32">
           <div class="ins__sig">pub struct Pcg32 {</div>
@@ -1279,7 +1288,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/mt</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/mt</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="MT19937">
           <div class="ins__sig">pub struct MT19937 {</div>
@@ -1390,7 +1401,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以一字起笔，即参考之播种。">Start from one word, the reference seeding.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/splitmix</span><i data-zh="类型一 · 函数八">1 type · 8 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/splitmix</span><i data-zh="类型一 · 函数八">1 type · 8 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="SplitMix64">
           <div class="ins__sig">pub struct SplitMix64 {</div>
@@ -1429,7 +1442,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/sfc</span><i data-zh="类型一 · 函数七">1 type · 7 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/sfc</span><i data-zh="类型一 · 函数七">1 type · 7 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Sfc64">
           <div class="ins__sig">pub struct Sfc64 {</div>
@@ -1464,7 +1479,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/jsf</span><i data-zh="类型一 · 函数七">1 type · 7 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/jsf</span><i data-zh="类型一 · 函数七">1 type · 7 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Jsf64">
           <div class="ins__sig">pub struct Jsf64 {</div>
@@ -1499,7 +1516,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/xorshift</span><i data-zh="类型五 · 函数三十五">5 types · 35 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/xorshift</span><i data-zh="类型五 · 函数三十五">5 types · 35 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Xorshift128">
           <div class="ins__sig">pub struct Xorshift128 {</div>
@@ -1662,7 +1681,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/well</span><i data-zh="类型二 · 函数十四">2 types · 14 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/well</span><i data-zh="类型二 · 函数十四">2 types · 14 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Well1024">
           <div class="ins__sig">pub struct Well1024 {</div>
@@ -1729,7 +1750,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/lcg</span><i data-zh="类型六 · 函数四十四">6 types · 44 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/lcg</span><i data-zh="类型六 · 函数四十四">6 types · 44 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Ccg64">
           <div class="ins__sig">pub struct Ccg64 {</div>
@@ -1932,7 +1955,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以参数与种子起笔。">Start from the parameters and a seed.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/chaos</span><i data-zh="类型四 · 函数二十八">4 types · 28 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/chaos</span><i data-zh="类型四 · 函数二十八">4 types · 28 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Chebyshev">
           <div class="ins__sig">pub struct Chebyshev {</div>
@@ -2063,7 +2088,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以参数与种子起笔。">Start from the parameters and a seed.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/lfsr</span><i data-zh="类型五 · 函数三十五">5 types · 35 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/lfsr</span><i data-zh="类型五 · 函数三十五">5 types · 35 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Gfsr">
           <div class="ins__sig">pub struct Gfsr {</div>
@@ -2226,7 +2253,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/fib</span><i data-zh="类型六 · 函数四十二">6 types · 42 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/fib</span><i data-zh="类型六 · 函数四十二">6 types · 42 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="AddWithCarry">
           <div class="ins__sig">pub struct AddWithCarry {</div>
@@ -2421,7 +2450,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/mrg</span><i data-zh="类型一 · 函数八">1 type · 8 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/mrg</span><i data-zh="类型一 · 函数八">1 type · 8 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Mrg32k3a">
           <div class="ins__sig">pub struct Mrg32k3a {</div>
@@ -2460,7 +2491,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/lxm</span><i data-zh="类型二 · 函数十六">2 types · 16 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/lxm</span><i data-zh="类型二 · 函数十六">2 types · 16 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="L64X128">
           <div class="ins__sig">pub struct L64X128 {</div>
@@ -2535,7 +2568,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/philox</span><i data-zh="类型二 · 函数十六">2 types · 16 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/philox</span><i data-zh="类型二 · 函数十六">2 types · 16 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Philox4x32">
           <div class="ins__sig">pub struct Philox4x32 {</div>
@@ -2610,7 +2645,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/threefry</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/threefry</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Threefry2x64">
           <div class="ins__sig">pub struct Threefry2x64 {</div>
@@ -2721,7 +2758,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/squares</span><i data-zh="类型一 · 函数八">1 type · 8 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/squares</span><i data-zh="类型一 · 函数八">1 type · 8 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Squares">
           <div class="ins__sig">pub struct Squares {</div>
@@ -2760,7 +2799,9 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/classic</span><i data-zh="类型五 · 函数三十五">5 types · 35 functions</i></div>
+        </details>
+        <details class="ins__pkg">
+        <summary class="ins__grp"><span>moonbitstack/moonrand/classic</span><i data-zh="类型五 · 函数三十五">5 types · 35 functions</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="Bbs">
           <div class="ins__sig">pub struct Bbs {</div>
@@ -2923,6 +2964,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
         </div>
         </div>
+        </details>
         <!-- api:end -->
       </div>
     </div>
