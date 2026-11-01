@@ -1,0 +1,4 @@
+// Linear and polynomial congruential generators, and the inversive one.
+import {
+  "moonbitstack/moonrand/contract",
+}

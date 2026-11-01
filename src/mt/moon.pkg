@@ -1,0 +1,4 @@
+// The Mersenne Twister: MT19937, MT19937-64 and the SIMD-oriented variant.
+import {
+  "moonbitstack/moonrand/contract",
+}

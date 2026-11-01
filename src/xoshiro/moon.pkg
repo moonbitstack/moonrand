@@ -1,0 +1,8 @@
+// The xoshiro and xoroshiro families.
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
+}

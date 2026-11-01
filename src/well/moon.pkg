@@ -1,0 +1,4 @@
+// WELL: well-equidistributed long-period linear generators.
+import {
+  "moonbitstack/moonrand/contract",
+}

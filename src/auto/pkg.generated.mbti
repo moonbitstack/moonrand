@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/auto"
+
+import {
+  "moonbitstack/moonrand/chacha",
+  "moonbitstack/moonseed",
+}
+
+// Values
+pub fn rng() -> @chacha.ChaCha12 raise @moonseed.Unavailable
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

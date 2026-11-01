@@ -1,0 +1,93 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/fib"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct AddWithCarry {
+  // private fields
+}
+pub fn AddWithCarry::fill(Self, FixedArray[Byte]) -> Unit
+pub fn AddWithCarry::from_seed(BytesView) -> Self
+pub fn AddWithCarry::from_state(FixedArray[UInt32]) -> Self
+pub fn AddWithCarry::new(BytesView) -> Self
+pub fn AddWithCarry::next_u32(Self) -> UInt32
+pub fn AddWithCarry::next_u64(Self) -> UInt64
+pub fn AddWithCarry::seed_size() -> Int32
+pub impl @contract.Rng for AddWithCarry
+pub impl @contract.Seeded for AddWithCarry
+
+pub struct AdditiveCongruential {
+  // private fields
+}
+pub fn AdditiveCongruential::fill(Self, FixedArray[Byte]) -> Unit
+pub fn AdditiveCongruential::from_seed(BytesView) -> Self
+pub fn AdditiveCongruential::from_state(FixedArray[UInt32]) -> Self
+pub fn AdditiveCongruential::new(BytesView) -> Self
+pub fn AdditiveCongruential::next_u32(Self) -> UInt32
+pub fn AdditiveCongruential::next_u64(Self) -> UInt64
+pub fn AdditiveCongruential::seed_size() -> Int32
+pub impl @contract.Rng for AdditiveCongruential
+pub impl @contract.Seeded for AdditiveCongruential
+
+pub struct LaggedFibonacci {
+  // private fields
+}
+pub fn LaggedFibonacci::fill(Self, FixedArray[Byte]) -> Unit
+pub fn LaggedFibonacci::from_seed(BytesView) -> Self
+pub fn LaggedFibonacci::from_state(FixedArray[UInt32]) -> Self
+pub fn LaggedFibonacci::new(BytesView) -> Self
+pub fn LaggedFibonacci::next_u32(Self) -> UInt32
+pub fn LaggedFibonacci::next_u64(Self) -> UInt64
+pub fn LaggedFibonacci::seed_size() -> Int32
+pub impl @contract.Rng for LaggedFibonacci
+pub impl @contract.Seeded for LaggedFibonacci
+
+pub struct Ranlux24 {
+  // private fields
+}
+pub fn Ranlux24::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Ranlux24::from_seed(BytesView) -> Self
+pub fn Ranlux24::from_state(FixedArray[UInt32]) -> Self
+pub fn Ranlux24::new(BytesView) -> Self
+pub fn Ranlux24::next_u32(Self) -> UInt32
+pub fn Ranlux24::next_u64(Self) -> UInt64
+pub fn Ranlux24::seed_size() -> Int32
+pub impl @contract.Rng for Ranlux24
+pub impl @contract.Seeded for Ranlux24
+
+pub struct Ranlux48 {
+  // private fields
+}
+pub fn Ranlux48::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Ranlux48::from_seed(BytesView) -> Self
+pub fn Ranlux48::from_state(FixedArray[UInt64]) -> Self
+pub fn Ranlux48::new(BytesView) -> Self
+pub fn Ranlux48::next_u32(Self) -> UInt32
+pub fn Ranlux48::next_u64(Self) -> UInt64
+pub fn Ranlux48::seed_size() -> Int32
+pub impl @contract.Rng for Ranlux48
+pub impl @contract.Seeded for Ranlux48
+
+pub struct SubtractWithBorrow {
+  // private fields
+}
+pub fn SubtractWithBorrow::fill(Self, FixedArray[Byte]) -> Unit
+pub fn SubtractWithBorrow::from_seed(BytesView) -> Self
+pub fn SubtractWithBorrow::from_state(FixedArray[UInt32]) -> Self
+pub fn SubtractWithBorrow::new(BytesView) -> Self
+pub fn SubtractWithBorrow::next_u32(Self) -> UInt32
+pub fn SubtractWithBorrow::next_u64(Self) -> UInt64
+pub fn SubtractWithBorrow::seed_size() -> Int32
+pub impl @contract.Rng for SubtractWithBorrow
+pub impl @contract.Seeded for SubtractWithBorrow
+
+// Type aliases
+
+// Traits

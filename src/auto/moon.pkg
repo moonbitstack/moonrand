@@ -1,0 +1,13 @@
+// The zero-configuration entry point: one import, one call, a generator seeded
+// from the platform's entropy.
+import {
+  "moonbitstack/moonrand",
+}
+
+import {
+  "moonbitstack/moonseed",
+}
+
+import {
+  "moonbitstack/moonseed/system",
+}

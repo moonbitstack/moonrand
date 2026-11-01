@@ -1,0 +1,94 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/lcg"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Ccg64 {
+  // private fields
+}
+pub fn Ccg64::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Ccg64::from_seed(BytesView) -> Self
+pub fn Ccg64::new(BytesView) -> Self
+pub fn Ccg64::next_u32(Self) -> UInt32
+pub fn Ccg64::next_u64(Self) -> UInt64
+pub fn Ccg64::seed_size() -> Int32
+pub fn Ccg64::with_params(UInt64, UInt64, UInt64, UInt64) -> Self
+pub impl @contract.Rng for Ccg64
+pub impl @contract.Seeded for Ccg64
+
+pub struct Icg32 {
+  // private fields
+}
+pub fn Icg32::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Icg32::from_seed(BytesView) -> Self
+pub fn Icg32::new(BytesView) -> Self
+pub fn Icg32::next_u32(Self) -> UInt32
+pub fn Icg32::next_u64(Self) -> UInt64
+pub fn Icg32::seed_size() -> Int32
+pub fn Icg32::with_params(UInt64, UInt64, UInt64) -> Self
+pub impl @contract.Rng for Icg32
+pub impl @contract.Seeded for Icg32
+
+pub struct Lcg48 {
+  // private fields
+}
+pub fn Lcg48::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Lcg48::from_seed(BytesView) -> Self
+pub fn Lcg48::new(BytesView) -> Self
+pub fn Lcg48::next_u32(Self) -> UInt32
+pub fn Lcg48::next_u64(Self) -> UInt64
+pub fn Lcg48::seed_size() -> Int32
+pub impl @contract.Rng for Lcg48
+pub impl @contract.Seeded for Lcg48
+
+pub struct Lcg64 {
+  // private fields
+}
+pub fn Lcg64::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Lcg64::from_seed(BytesView) -> Self
+pub fn Lcg64::glibc(UInt64) -> Self
+pub fn Lcg64::new(BytesView) -> Self
+pub fn Lcg64::next_u32(Self) -> UInt32
+pub fn Lcg64::next_u64(Self) -> UInt64
+pub fn Lcg64::numerical_recipes(UInt64) -> Self
+pub fn Lcg64::seed_size() -> Int32
+pub fn Lcg64::with_params(UInt64, UInt64, UInt64) -> Self
+pub impl @contract.Rng for Lcg64
+pub impl @contract.Seeded for Lcg64
+
+pub struct MinStd {
+  // private fields
+}
+pub fn MinStd::fill(Self, FixedArray[Byte]) -> Unit
+pub fn MinStd::from_seed(BytesView) -> Self
+pub fn MinStd::new(BytesView) -> Self
+pub fn MinStd::next_u32(Self) -> UInt32
+pub fn MinStd::next_u64(Self) -> UInt64
+pub fn MinStd::seed_size() -> Int32
+pub fn MinStd::with_state(UInt64) -> Self
+pub impl @contract.Rng for MinStd
+pub impl @contract.Seeded for MinStd
+
+pub struct Qcg64 {
+  // private fields
+}
+pub fn Qcg64::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Qcg64::from_seed(BytesView) -> Self
+pub fn Qcg64::new(BytesView) -> Self
+pub fn Qcg64::next_u32(Self) -> UInt32
+pub fn Qcg64::next_u64(Self) -> UInt64
+pub fn Qcg64::seed_size() -> Int32
+pub fn Qcg64::with_params(UInt64, UInt64, UInt64) -> Self
+pub impl @contract.Rng for Qcg64
+pub impl @contract.Seeded for Qcg64
+
+// Type aliases
+
+// Traits

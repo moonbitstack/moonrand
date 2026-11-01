@@ -1,0 +1,8 @@
+// SplitMix64: a 64-bit counter through a 64-bit finalizer.
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
+}

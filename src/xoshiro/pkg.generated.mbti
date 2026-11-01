@@ -1,0 +1,150 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/xoshiro"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Xoroshiro128p {
+  // private fields
+}
+pub fn Xoroshiro128p::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoroshiro128p::from_seed(BytesView) -> Self
+pub fn Xoroshiro128p::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoroshiro128p::jump(Self) -> Unit
+pub fn Xoroshiro128p::long_jump(Self) -> Unit
+pub fn Xoroshiro128p::new(BytesView) -> Self
+pub fn Xoroshiro128p::next_u32(Self) -> UInt32
+pub fn Xoroshiro128p::next_u64(Self) -> UInt64
+pub fn Xoroshiro128p::seed_size() -> Int32
+pub impl @contract.Rng for Xoroshiro128p
+pub impl @contract.Seeded for Xoroshiro128p
+
+pub struct Xoroshiro128pp {
+  // private fields
+}
+pub fn Xoroshiro128pp::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoroshiro128pp::from_seed(BytesView) -> Self
+pub fn Xoroshiro128pp::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoroshiro128pp::jump(Self) -> Unit
+pub fn Xoroshiro128pp::long_jump(Self) -> Unit
+pub fn Xoroshiro128pp::new(BytesView) -> Self
+pub fn Xoroshiro128pp::next_u32(Self) -> UInt32
+pub fn Xoroshiro128pp::next_u64(Self) -> UInt64
+pub fn Xoroshiro128pp::seed_size() -> Int32
+pub impl @contract.Rng for Xoroshiro128pp
+pub impl @contract.Seeded for Xoroshiro128pp
+
+pub struct Xoroshiro128ss {
+  // private fields
+}
+pub fn Xoroshiro128ss::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoroshiro128ss::from_seed(BytesView) -> Self
+pub fn Xoroshiro128ss::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoroshiro128ss::jump(Self) -> Unit
+pub fn Xoroshiro128ss::long_jump(Self) -> Unit
+pub fn Xoroshiro128ss::new(BytesView) -> Self
+pub fn Xoroshiro128ss::next_u32(Self) -> UInt32
+pub fn Xoroshiro128ss::next_u64(Self) -> UInt64
+pub fn Xoroshiro128ss::seed_size() -> Int32
+pub impl @contract.Rng for Xoroshiro128ss
+pub impl @contract.Seeded for Xoroshiro128ss
+
+pub struct Xoshiro256p {
+  // private fields
+}
+pub fn Xoshiro256p::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoshiro256p::from_seed(BytesView) -> Self
+pub fn Xoshiro256p::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoshiro256p::jump(Self) -> Unit
+pub fn Xoshiro256p::long_jump(Self) -> Unit
+pub fn Xoshiro256p::new(BytesView) -> Self
+pub fn Xoshiro256p::next_u32(Self) -> UInt32
+pub fn Xoshiro256p::next_u64(Self) -> UInt64
+pub fn Xoshiro256p::seed_size() -> Int32
+pub impl @contract.Rng for Xoshiro256p
+pub impl @contract.Seeded for Xoshiro256p
+
+pub struct Xoshiro256pp {
+  // private fields
+}
+pub fn Xoshiro256pp::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoshiro256pp::from_seed(BytesView) -> Self
+pub fn Xoshiro256pp::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoshiro256pp::jump(Self) -> Unit
+pub fn Xoshiro256pp::long_jump(Self) -> Unit
+pub fn Xoshiro256pp::new(BytesView) -> Self
+pub fn Xoshiro256pp::next_u32(Self) -> UInt32
+pub fn Xoshiro256pp::next_u64(Self) -> UInt64
+pub fn Xoshiro256pp::seed_size() -> Int32
+pub impl @contract.Rng for Xoshiro256pp
+pub impl @contract.Seeded for Xoshiro256pp
+
+pub struct Xoshiro256ss {
+  // private fields
+}
+pub fn Xoshiro256ss::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoshiro256ss::from_seed(BytesView) -> Self
+pub fn Xoshiro256ss::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoshiro256ss::jump(Self) -> Unit
+pub fn Xoshiro256ss::long_jump(Self) -> Unit
+pub fn Xoshiro256ss::new(BytesView) -> Self
+pub fn Xoshiro256ss::next_u32(Self) -> UInt32
+pub fn Xoshiro256ss::next_u64(Self) -> UInt64
+pub fn Xoshiro256ss::seed_size() -> Int32
+pub impl @contract.Rng for Xoshiro256ss
+pub impl @contract.Seeded for Xoshiro256ss
+
+pub struct Xoshiro512p {
+  // private fields
+}
+pub fn Xoshiro512p::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoshiro512p::from_seed(BytesView) -> Self
+pub fn Xoshiro512p::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoshiro512p::jump(Self) -> Unit
+pub fn Xoshiro512p::long_jump(Self) -> Unit
+pub fn Xoshiro512p::new(BytesView) -> Self
+pub fn Xoshiro512p::next_u32(Self) -> UInt32
+pub fn Xoshiro512p::next_u64(Self) -> UInt64
+pub fn Xoshiro512p::seed_size() -> Int32
+pub impl @contract.Rng for Xoshiro512p
+pub impl @contract.Seeded for Xoshiro512p
+
+pub struct Xoshiro512pp {
+  // private fields
+}
+pub fn Xoshiro512pp::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoshiro512pp::from_seed(BytesView) -> Self
+pub fn Xoshiro512pp::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoshiro512pp::jump(Self) -> Unit
+pub fn Xoshiro512pp::long_jump(Self) -> Unit
+pub fn Xoshiro512pp::new(BytesView) -> Self
+pub fn Xoshiro512pp::next_u32(Self) -> UInt32
+pub fn Xoshiro512pp::next_u64(Self) -> UInt64
+pub fn Xoshiro512pp::seed_size() -> Int32
+pub impl @contract.Rng for Xoshiro512pp
+pub impl @contract.Seeded for Xoshiro512pp
+
+pub struct Xoshiro512ss {
+  // private fields
+}
+pub fn Xoshiro512ss::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xoshiro512ss::from_seed(BytesView) -> Self
+pub fn Xoshiro512ss::from_state(FixedArray[UInt64]) -> Self
+pub fn Xoshiro512ss::jump(Self) -> Unit
+pub fn Xoshiro512ss::long_jump(Self) -> Unit
+pub fn Xoshiro512ss::new(BytesView) -> Self
+pub fn Xoshiro512ss::next_u32(Self) -> UInt32
+pub fn Xoshiro512ss::next_u64(Self) -> UInt64
+pub fn Xoshiro512ss::seed_size() -> Int32
+pub impl @contract.Rng for Xoshiro512ss
+pub impl @contract.Seeded for Xoshiro512ss
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,4 @@
+// Marsaglia's xorshift generators, and the WebKit one built on them.
+import {
+  "moonbitstack/moonrand/contract",
+}

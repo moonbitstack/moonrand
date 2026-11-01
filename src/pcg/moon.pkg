@@ -1,0 +1,9 @@
+// The PCG family: a linear congruential state, a permutation of its bits as
+// the output.
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
+}

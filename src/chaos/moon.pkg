@@ -1,0 +1,5 @@
+// Chaotic maps. They look random and are not; use them to reproduce a map, not
+// to draw numbers for a simulation.
+import {
+  "moonbitstack/moonrand/contract",
+}

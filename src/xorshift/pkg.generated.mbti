@@ -1,0 +1,80 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/xorshift"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Xorshift128 {
+  // private fields
+}
+pub fn Xorshift128::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xorshift128::from_seed(BytesView) -> Self
+pub fn Xorshift128::from_state(FixedArray[UInt32]) -> Self
+pub fn Xorshift128::new(BytesView) -> Self
+pub fn Xorshift128::next_u32(Self) -> UInt32
+pub fn Xorshift128::next_u64(Self) -> UInt64
+pub fn Xorshift128::seed_size() -> Int32
+pub impl @contract.Rng for Xorshift128
+pub impl @contract.Seeded for Xorshift128
+
+pub struct Xorshift128Plus {
+  // private fields
+}
+pub fn Xorshift128Plus::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xorshift128Plus::from_seed(BytesView) -> Self
+pub fn Xorshift128Plus::new(BytesView) -> Self
+pub fn Xorshift128Plus::next_u32(Self) -> UInt32
+pub fn Xorshift128Plus::next_u64(Self) -> UInt64
+pub fn Xorshift128Plus::seed_size() -> Int32
+pub fn Xorshift128Plus::with_state(UInt64, UInt64) -> Self
+pub impl @contract.Rng for Xorshift128Plus
+pub impl @contract.Seeded for Xorshift128Plus
+
+pub struct Xorshift32 {
+  // private fields
+}
+pub fn Xorshift32::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xorshift32::from_seed(BytesView) -> Self
+pub fn Xorshift32::new(BytesView) -> Self
+pub fn Xorshift32::next_u32(Self) -> UInt32
+pub fn Xorshift32::next_u64(Self) -> UInt64
+pub fn Xorshift32::seed_size() -> Int32
+pub fn Xorshift32::with_state(UInt32) -> Self
+pub impl @contract.Rng for Xorshift32
+pub impl @contract.Seeded for Xorshift32
+
+pub struct Xorshift64 {
+  // private fields
+}
+pub fn Xorshift64::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xorshift64::from_seed(BytesView) -> Self
+pub fn Xorshift64::new(BytesView) -> Self
+pub fn Xorshift64::next_u32(Self) -> UInt32
+pub fn Xorshift64::next_u64(Self) -> UInt64
+pub fn Xorshift64::seed_size() -> Int32
+pub fn Xorshift64::with_state(UInt64) -> Self
+pub impl @contract.Rng for Xorshift64
+pub impl @contract.Seeded for Xorshift64
+
+pub struct Xorwow {
+  // private fields
+}
+pub fn Xorwow::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Xorwow::from_seed(BytesView) -> Self
+pub fn Xorwow::from_state(FixedArray[UInt32]) -> Self
+pub fn Xorwow::new(BytesView) -> Self
+pub fn Xorwow::next_u32(Self) -> UInt32
+pub fn Xorwow::next_u64(Self) -> UInt64
+pub fn Xorwow::seed_size() -> Int32
+pub impl @contract.Rng for Xorwow
+pub impl @contract.Seeded for Xorwow
+
+// Type aliases
+
+// Traits

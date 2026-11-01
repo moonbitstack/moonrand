@@ -219,3 +219,103 @@ pub fn[R : @contract.Rng] lognormvariate(
 ) -> Double {
   @math.exp(gauss(r, mu~, sigma~))
 }
+
+///|
+/// A gamma draw with shape `alpha` and scale `beta`, as Python's
+/// `gammavariate`.
+pub fn[R : @contract.Rng] gammavariate(
+  r : R,
+  alpha : Double,
+  beta : Double,
+) -> Double {
+  ignore((r.next_u64(), alpha, beta))
+  abort("moonrand: no implementation yet")
+}
+
+///|
+/// A beta draw with shape parameters `alpha` and `beta`, as Python's
+/// `betavariate`.
+pub fn[R : @contract.Rng] betavariate(
+  r : R,
+  alpha : Double,
+  beta : Double,
+) -> Double {
+  ignore((r.next_u64(), alpha, beta))
+  abort("moonrand: no implementation yet")
+}
+
+///|
+/// A Poisson draw with mean `mu`.
+pub fn[R : @contract.Rng] poisson(r : R, mu : Double) -> Int64 {
+  ignore((r.next_u64(), mu))
+  abort("moonrand: no implementation yet")
+}
+
+///|
+/// The number of successes in `n` trials with success probability `p`, as
+/// Python's `binomialvariate`.
+pub fn[R : @contract.Rng] binomialvariate(
+  r : R,
+  n : Int64,
+  p : Double,
+) -> Int64 {
+  ignore((r.next_u64(), n, p))
+  abort("moonrand: no implementation yet")
+}
+
+///|
+/// A triangular draw between `low` and `high` with the peak at `mode`, which
+/// defaults to the midpoint, as Python's `triangular`.
+pub fn[R : @contract.Rng] triangular(
+  r : R,
+  low~ : Double = 0.0,
+  high~ : Double = 1.0,
+  mode? : Double,
+) -> Double {
+  ignore((r.next_u64(), low, high, mode))
+  abort("moonrand: no implementation yet")
+}
+
+///|
+/// A von Mises draw with mean angle `mu` and concentration `kappa`, as Python's
+/// `vonmisesvariate`.
+pub fn[R : @contract.Rng] vonmisesvariate(
+  r : R,
+  mu : Double,
+  kappa : Double,
+) -> Double {
+  ignore((r.next_u64(), mu, kappa))
+  abort("moonrand: no implementation yet")
+}
+
+///|
+/// A Pareto draw with shape `alpha`, as Python's `paretovariate`.
+pub fn[R : @contract.Rng] paretovariate(r : R, alpha : Double) -> Double {
+  ignore((r.next_u64(), alpha))
+  abort("moonrand: no implementation yet")
+}
+
+///|
+/// A Weibull draw with shape `alpha` and scale `beta`, as Python's
+/// `weibullvariate`.
+pub fn[R : @contract.Rng] weibullvariate(
+  r : R,
+  alpha : Double,
+  beta : Double,
+) -> Double {
+  ignore((r.next_u64(), alpha, beta))
+  abort("moonrand: no implementation yet")
+}
+
+///|
+/// A normal draw by the ratio-of-uniforms method, as Python's
+/// `normalvariate` — a different algorithm from `gauss`, and a different
+/// stream for the same seed.
+pub fn[R : @contract.Rng] normalvariate(
+  r : R,
+  mu~ : Double = 0.0,
+  sigma~ : Double = 1.0,
+) -> Double {
+  ignore((r.next_u64(), mu, sigma))
+  abort("moonrand: no implementation yet")
+}

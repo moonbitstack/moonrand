@@ -1,0 +1,29 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/splitmix"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct SplitMix64 {
+  // private fields
+}
+pub fn SplitMix64::advance(Self, UInt64) -> Unit
+pub fn SplitMix64::fill(Self, FixedArray[Byte]) -> Unit
+pub fn SplitMix64::from_seed(BytesView) -> Self
+pub fn SplitMix64::from_state(UInt64) -> Self
+pub fn SplitMix64::new(BytesView) -> Self
+pub fn SplitMix64::next_u32(Self) -> UInt32
+pub fn SplitMix64::next_u64(Self) -> UInt64
+pub fn SplitMix64::seed_size() -> Int32
+pub impl @contract.Rng for SplitMix64
+pub impl @contract.Seeded for SplitMix64
+
+// Type aliases
+
+// Traits

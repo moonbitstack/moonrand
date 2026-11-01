@@ -1,0 +1,67 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/chaos"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Chebyshev {
+  // private fields
+}
+pub fn Chebyshev::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Chebyshev::from_seed(BytesView) -> Self
+pub fn Chebyshev::new(BytesView) -> Self
+pub fn Chebyshev::next_u32(Self) -> UInt32
+pub fn Chebyshev::next_u64(Self) -> UInt64
+pub fn Chebyshev::seed_size() -> Int32
+pub fn Chebyshev::with_params(Double, Double) -> Self
+pub impl @contract.Rng for Chebyshev
+pub impl @contract.Seeded for Chebyshev
+
+pub struct Logistic {
+  // private fields
+}
+pub fn Logistic::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Logistic::from_seed(BytesView) -> Self
+pub fn Logistic::new(BytesView) -> Self
+pub fn Logistic::next_u32(Self) -> UInt32
+pub fn Logistic::next_u64(Self) -> UInt64
+pub fn Logistic::seed_size() -> Int32
+pub fn Logistic::with_params(Double, Double) -> Self
+pub impl @contract.Rng for Logistic
+pub impl @contract.Seeded for Logistic
+
+pub struct Sine {
+  // private fields
+}
+pub fn Sine::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Sine::from_seed(BytesView) -> Self
+pub fn Sine::new(BytesView) -> Self
+pub fn Sine::next_u32(Self) -> UInt32
+pub fn Sine::next_u64(Self) -> UInt64
+pub fn Sine::seed_size() -> Int32
+pub fn Sine::with_state(Double) -> Self
+pub impl @contract.Rng for Sine
+pub impl @contract.Seeded for Sine
+
+pub struct Tent {
+  // private fields
+}
+pub fn Tent::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Tent::from_seed(BytesView) -> Self
+pub fn Tent::new(BytesView) -> Self
+pub fn Tent::next_u32(Self) -> UInt32
+pub fn Tent::next_u64(Self) -> UInt64
+pub fn Tent::seed_size() -> Int32
+pub fn Tent::with_params(Double, Double) -> Self
+pub impl @contract.Rng for Tent
+pub impl @contract.Seeded for Tent
+
+// Type aliases
+
+// Traits

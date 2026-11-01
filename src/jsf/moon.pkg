@@ -1,0 +1,4 @@
+// JSF: Jenkins' small fast generator, four words of state.
+import {
+  "moonbitstack/moonrand/contract",
+}

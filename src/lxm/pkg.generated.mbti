@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/lxm"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct L64X128 {
+  // private fields
+}
+pub fn L64X128::fill(Self, FixedArray[Byte]) -> Unit
+pub fn L64X128::from_seed(BytesView) -> Self
+pub fn L64X128::jump(Self) -> Unit
+pub fn L64X128::new(BytesView) -> Self
+pub fn L64X128::next_u32(Self) -> UInt32
+pub fn L64X128::next_u64(Self) -> UInt64
+pub fn L64X128::seed_size() -> Int32
+pub fn L64X128::with_state(UInt64, UInt64, UInt64) -> Self
+pub impl @contract.Rng for L64X128
+pub impl @contract.Seeded for L64X128
+
+pub struct L64X256 {
+  // private fields
+}
+pub fn L64X256::fill(Self, FixedArray[Byte]) -> Unit
+pub fn L64X256::from_seed(BytesView) -> Self
+pub fn L64X256::jump(Self) -> Unit
+pub fn L64X256::new(BytesView) -> Self
+pub fn L64X256::next_u32(Self) -> UInt32
+pub fn L64X256::next_u64(Self) -> UInt64
+pub fn L64X256::seed_size() -> Int32
+pub fn L64X256::with_state(UInt64, UInt64, UInt64, UInt64, UInt64) -> Self
+pub impl @contract.Rng for L64X256
+pub impl @contract.Seeded for L64X256
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/bits"
+
+// Values
+pub fn mix64(UInt64) -> UInt64
+
+pub fn mul_hi(UInt64, UInt64) -> UInt64
+
+pub fn mul_wide(UInt64, UInt64) -> (UInt64, UInt64)
+
+pub fn seed_words(BytesView, Int32) -> FixedArray[UInt64]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

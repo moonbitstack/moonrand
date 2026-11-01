@@ -1,0 +1,28 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/jsf"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Jsf64 {
+  // private fields
+}
+pub fn Jsf64::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Jsf64::from_seed(BytesView) -> Self
+pub fn Jsf64::new(BytesView) -> Self
+pub fn Jsf64::next_u32(Self) -> UInt32
+pub fn Jsf64::next_u64(Self) -> UInt64
+pub fn Jsf64::seed_size() -> Int32
+pub fn Jsf64::with_state(UInt64, UInt64, UInt64, UInt64) -> Self
+pub impl @contract.Rng for Jsf64
+pub impl @contract.Seeded for Jsf64
+
+// Type aliases
+
+// Traits

@@ -1,0 +1,4 @@
+// Threefry: counter-based, add-rotate-xor rounds, no multiplication.
+import {
+  "moonbitstack/moonrand/contract",
+}

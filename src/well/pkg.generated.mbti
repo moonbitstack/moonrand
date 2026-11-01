@@ -1,0 +1,41 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/well"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Well1024 {
+  // private fields
+}
+pub fn Well1024::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Well1024::from_seed(BytesView) -> Self
+pub fn Well1024::from_state(FixedArray[UInt32]) -> Self
+pub fn Well1024::new(BytesView) -> Self
+pub fn Well1024::next_u32(Self) -> UInt32
+pub fn Well1024::next_u64(Self) -> UInt64
+pub fn Well1024::seed_size() -> Int32
+pub impl @contract.Rng for Well1024
+pub impl @contract.Seeded for Well1024
+
+pub struct Well512 {
+  // private fields
+}
+pub fn Well512::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Well512::from_seed(BytesView) -> Self
+pub fn Well512::from_state(FixedArray[UInt32]) -> Self
+pub fn Well512::new(BytesView) -> Self
+pub fn Well512::next_u32(Self) -> UInt32
+pub fn Well512::next_u64(Self) -> UInt64
+pub fn Well512::seed_size() -> Int32
+pub impl @contract.Rng for Well512
+pub impl @contract.Seeded for Well512
+
+// Type aliases
+
+// Traits

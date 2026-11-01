@@ -1,0 +1,5 @@
+// Fibonacci and carry generators: additive lagged Fibonacci, add-with-carry,
+// subtract-with-borrow, and the ranlux forms of the last.
+import {
+  "moonbitstack/moonrand/contract",
+}

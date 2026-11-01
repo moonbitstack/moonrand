@@ -1,0 +1,28 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitstack/moonrand/sfc"
+
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Sfc64 {
+  // private fields
+}
+pub fn Sfc64::fill(Self, FixedArray[Byte]) -> Unit
+pub fn Sfc64::from_seed(BytesView) -> Self
+pub fn Sfc64::new(BytesView) -> Self
+pub fn Sfc64::next_u32(Self) -> UInt32
+pub fn Sfc64::next_u64(Self) -> UInt64
+pub fn Sfc64::seed_size() -> Int32
+pub fn Sfc64::with_state(UInt64, UInt64, UInt64) -> Self
+pub impl @contract.Rng for Sfc64
+pub impl @contract.Seeded for Sfc64
+
+// Type aliases
+
+// Traits
