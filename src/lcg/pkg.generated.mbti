@@ -45,6 +45,7 @@ pub fn Lcg48::new(BytesView) -> Self
 pub fn Lcg48::next_u32(Self) -> UInt32
 pub fn Lcg48::next_u64(Self) -> UInt64
 pub fn Lcg48::seed_size() -> Int32
+pub fn Lcg48::with_state(UInt64) -> Self
 pub impl @contract.Rng for Lcg48
 pub impl @contract.Seeded for Lcg48
 
