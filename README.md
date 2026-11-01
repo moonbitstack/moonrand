@@ -1,67 +1,140 @@
 # moonrand
 
-Secure random bytes, and numbers drawn from them without bias, over any entropy
-source the caller supplies.
+Reproducible pseudo-random numbers: one default generator that needs no
+configuration, thirty-six more behind it when the algorithm matters, and the
+sampling and distribution functions Python's `random` names.
 
-```moonbit
-test "draw" {
-  let key = @moonrand.bytes(32, @system.source) // 32 uniform bytes
-  let n = @moonrand.below(b"\x03\xe8", @system.source) // uniform in [0, 1000)
-  let d = @moonrand.scalar(b"\x05", @system.source) // uniform in [1, 4]
-  ignore((key, n, d))
+```moonbit nocheck
+import { "moonbitstack/moonrand", "moonbitstack/moonrand/auto" }
+
+fn main {
+  let rng = @auto.rng() catch { _ => @moonrand.seeded(b"a fixed seed") }
+  let roll = @moonrand.randint(rng, 1L, 6L)
+  let noise = @moonrand.gauss(rng, mu=0.0, sigma=1.0)
+  println("\{roll} \{noise}")
 }
 ```
 
-`moon run src/examples/tour` shows all of it in one run.
+`@auto.rng()` asks the operating system for 32 bytes and hands them to the
+default generator. On a host without an entropy source it raises
+`Unavailable` instead of guessing; `@moonrand.seeded` takes any seed you give
+it, and the same seed always draws the same numbers.
 
-## Packages
+## The default
 
-| Package | What it holds | Depends on |
-|:--:|:--|:--|
-| `moonrand` | `Source`, `Unavailable`, `bytes`, `below`, `scalar`, `Replay` | nothing |
-| `moonrand/system` | `source`, the platform's entropy | core `env` |
+| | |
+|:--|:--|
+| `StdRng` | ChaCha12, a 256-bit stream cipher used as a generator |
+| `seeded(bytes)` | a generator over the seed, reproducible |
+| `@auto.rng()` | a generator over 32 bytes of platform entropy |
 
-The root package touches no platform. Linking `system` links the platform's call,
-which on wasm is the WASI `random_get` import; a program for a wasm host without
-WASI uses the root package with a source of its own.
+A stream cipher is the default because its output is indistinguishable from
+uniform under a secret key, it carries the `Secure` marker, and seeking a
+million numbers ahead costs one addition to its counter.
 
-## Sources
+## Generators
 
-| Source | Where the bytes come from |
-|:--:|:--|
-| `@system.source` | `crypto.getRandomValues` on JavaScript, WASI `random_get` on wasm and wasm-gc, the runtime on native |
-| `Replay::new(bytes)` | the bytes given, in order; exhausted after |
-| your own | anything that implements `Source` |
+Every subpackage holds one family of algorithms, each type implementing the same
+`Rng` contract, so anything that draws from `Rng` works with all of them.
 
-```moonbit
-struct Device {}
+| Package | Types |
+|:--|:--|
+| `moonrand/chacha` | `ChaCha8`, `ChaCha12`, `ChaCha20` |
+| `moonrand/xoshiro` | `Xoshiro256ss`, `Xoshiro256pp`, `Xoshiro256p`, `Xoshiro512ss`, `Xoshiro512pp`, `Xoshiro512p`, `Xoroshiro128p`, `Xoroshiro128pp`, `Xoroshiro128ss` |
+| `moonrand/pcg` | `Pcg32`, `Pcg64`, `Pcg64Dxsm` |
+| `moonrand/mt` | `MT19937`, `MT19937_64` |
+| `moonrand/splitmix` | `SplitMix64` |
+| `moonrand/sfc` | `Sfc64` |
+| `moonrand/jsf` | `Jsf64` |
+| `moonrand/xorshift` | `Xorshift32`, `Xorshift64`, `Xorshift128`, `Xorshift128Plus`, `Xorwow` |
+| `moonrand/well` | `Well512` |
+| `moonrand/lcg` | `Lcg64`, `Lcg48`, `MinStd`, `Qcg64`, `Ccg64`, `Icg32` |
+| `moonrand/chaos` | `Logistic`, `Tent`, `Sine`, `Chebyshev` |
 
-impl @moonrand.Source for Device with fn fill(_self, _buf) {
-  raise Failed("the device is unplugged")
+Each type takes a seed of the size it announces, expands it through SplitMix64,
+and offers the reference constructor for a state you already have:
+
+```moonbit nocheck
+import { "moonbitstack/moonrand/xoshiro" }
+
+fn main {
+  let rng = @xoshiro.Xoshiro256ss::new(b"any number of bytes")
+  let from_state = @xoshiro.Xoshiro256ss::from_state([1UL, 2UL, 3UL, 4UL])
+  rng.jump() // 2^128 draws ahead
+  from_state.long_jump() // 2^192 ahead
 }
 ```
 
-No source falls back to a seeded generator. When there are no bytes to be had,
-the call raises `Unavailable`: `Platform` from the platform source, `Exhausted`
-from a replay, `Failed(reason)` from a source of your own.
+Generators that can jump say so: `jump` and `long_jump` on the xoshiro family,
+`advance` on the counter-based ones (ChaCha, PCG, SplitMix64).
 
 ## Sampling
 
-`below(bound, source)` reads `bound` as a big-endian number and returns one in
-[0, `bound`), as wide as `bound`. It draws as Go's `crypto/rand.Int` does: as
-many bytes as `bound - 1` needs, the unused high bits of the first cleared,
-drawn again while the value is at or above `bound`. Every value is equally
-likely; reducing a wider draw modulo `bound` would favour the small ones.
+Over any `Rng`, with Python's names:
 
-`scalar(order, source)` returns a value in [1, `order` - 1], as wide as `order`:
-a private key or a nonce for a group of that order. It draws as FIPS 186-5
-A.2.2 and Go's ECDSA do: the leftmost bits of a draw as long as `order`, drawn
-again while the value is zero or not below `order`. A P-521 scalar is 66 bytes
-with the top bits clear, which is why this is not "ask for 32 bytes".
+| Function | Draw |
+|:--|:--|
+| `random(rng)` | a real in [0, 1) with exactly 53 bits |
+| `uniform(rng, low, high)` | a real in [low, high) |
+| `randint(rng, lo, hi)` | an integer in [lo, hi], closed, unbiased |
+| `randrange(rng, stop, start~, step?)` | Python's `randrange` |
+| `getrandbits(rng, k)` | the low `k` bits of a word |
+| `choice(rng, items)` | one element, or `None` for an empty view |
+| `choices(rng, items, k~, weights?)` | `k` elements, in proportion when weighted |
+| `sample(rng, items, k)` | `k` distinct elements |
+| `shuffle(rng, items)` | the array in place |
 
-Both are checked against Go: `scripts/gen_vectors.go` has `crypto/rand.Int` and
-`ecdsa.GenerateKey` draw from fixed byte streams, and the tests replay those
-bytes and expect the same values, every byte used.
+`randint` and `randrange` reject out-of-range draws rather than taking a
+remainder, so no value is more likely than another, whatever the range.
+
+## Distributions
+
+| Function | Density |
+|:--|:--|
+| `gauss(rng, mu~, sigma~)` | normal, by Box-Muller |
+| `normalvariate(rng, mu~, sigma~)` | normal, by ratio of uniforms |
+| `expovariate(rng, lambda)` | exponential with rate `lambda` |
+| `lognormvariate(rng, mu~, sigma~)` | log-normal |
+| `gammavariate(rng, alpha, beta)` | gamma, Marsaglia-Tsang |
+| `betavariate(rng, alpha, beta)` | beta |
+| `poisson(rng, mu)` | Poisson, multiplication or transformed rejection |
+| `binomialvariate(rng, n, p)` | the count of successes in `n` trials |
+| `triangular(rng, low~, high~, mode?)` | triangular |
+| `vonmisesvariate(rng, mu, kappa)` | von Mises on the circle |
+| `paretovariate(rng, alpha)` | Pareto |
+| `weibullvariate(rng, alpha, beta)` | Weibull |
+
+`gauss` and `normalvariate` are two algorithms, not two spellings: they draw
+from the same generator differently, and a run that swaps one for the other does
+not reproduce.
+
+## Writing your own generator
+
+The contract is three methods, one of which has a body:
+
+```moonbit nocheck
+import { "moonbitstack/moonrand/contract", "moonbitstack/moonrand" }
+
+struct Counter {
+  priv n : UInt64
+}
+
+pub impl @contract.Rng for Counter with fn next_u64(self) -> UInt64 {
+  self.n = self.n + 1UL
+  self.n * 6364136223846793005UL
+}
+
+fn main {
+  let rng : Counter = { n: 0UL }
+  let x = @moonrand.random(rng)
+  println(x)
+}
+```
+
+`next_u32`, `fill` and everything above them follow. Add
+`impl @contract.Seeded for Counter` to rebuild it from a seed, or
+`impl @contract.Secure for Counter` when its output is fit for cryptography —
+Philox and PCG pass statistical tests and are not, so they do not carry it.
 
 ## Licence
 
