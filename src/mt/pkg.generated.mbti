@@ -38,20 +38,6 @@ pub fn MT19937_64::with_word(UInt64) -> Self
 pub impl @contract.Rng for MT19937_64
 pub impl @contract.Seeded for MT19937_64
 
-pub struct Sfmt19937 {
-  // private fields
-}
-pub fn Sfmt19937::fill(Self, FixedArray[Byte]) -> Unit
-pub fn Sfmt19937::from_array(FixedArray[UInt32]) -> Self
-pub fn Sfmt19937::from_seed(BytesView) -> Self
-pub fn Sfmt19937::new(BytesView) -> Self
-pub fn Sfmt19937::next_u32(Self) -> UInt32
-pub fn Sfmt19937::next_u64(Self) -> UInt64
-pub fn Sfmt19937::seed_size() -> Int32
-pub fn Sfmt19937::with_word(UInt32) -> Self
-pub impl @contract.Rng for Sfmt19937
-pub impl @contract.Seeded for Sfmt19937
-
 // Type aliases
 
 // Traits
