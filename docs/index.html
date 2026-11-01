@@ -1279,7 +1279,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/mt</span><i data-zh="类型二 · 函数十六">2 types · 16 functions</i></div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/mt</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></div>
         <div class="ins__rows">
         <div class="ins__row" data-item="MT19937">
           <div class="ins__sig">pub struct MT19937 {</div>
@@ -1351,6 +1351,42 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
         </div>
         <div class="ins__row" data-item="MT19937_64::with_word">
           <div class="ins__sig">pub fn MT19937_64::with_word(UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以一字起笔，即参考之播种。">Start from one word, the reference seeding.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937">
+          <div class="ins__sig">pub struct Sfmt19937 {</div>
+          <div class="ins__g" data-zh="面向 SIMD 的快速梅森旋转。">The SIMD-oriented Fast Mersenne Twister.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937::fill">
+          <div class="ins__sig">pub fn Sfmt19937::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937::from_array">
+          <div class="ins__sig">pub fn Sfmt19937::from_array(FixedArray[UInt32]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以键数组起笔，即参考之播种。">Start from a key array, the reference seeding.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937::from_seed">
+          <div class="ins__sig">pub fn Sfmt19937::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937::new">
+          <div class="ins__sig">pub fn Sfmt19937::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937::next_u32">
+          <div class="ins__sig">pub fn Sfmt19937::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937::next_u64">
+          <div class="ins__sig">pub fn Sfmt19937::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937::seed_size">
+          <div class="ins__sig">pub fn Sfmt19937::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Sfmt19937::with_word">
+          <div class="ins__sig">pub fn Sfmt19937::with_word(UInt32) -&gt; Self</div>
           <div class="ins__g" data-zh="以一字起笔，即参考之播种。">Start from one word, the reference seeding.</div>
         </div>
         </div>
@@ -1626,8 +1662,40 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
           <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
         </div>
         </div>
-        <div class="ins__grp"><span>moonbitstack/moonrand/well</span><i data-zh="类型一 · 函数七">1 type · 7 functions</i></div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/well</span><i data-zh="类型二 · 函数十四">2 types · 14 functions</i></div>
         <div class="ins__rows">
+        <div class="ins__row" data-item="Well1024">
+          <div class="ins__sig">pub struct Well1024 {</div>
+          <div class="ins__g" data-zh="三十二字，周期 2^1024-1。">Thirty-two words, period 2^1024-1.</div>
+        </div>
+        <div class="ins__row" data-item="Well1024::fill">
+          <div class="ins__sig">pub fn Well1024::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Well1024::from_seed">
+          <div class="ins__sig">pub fn Well1024::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Well1024::from_state">
+          <div class="ins__sig">pub fn Well1024::from_state(FixedArray[UInt32]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="Well1024::new">
+          <div class="ins__sig">pub fn Well1024::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Well1024::next_u32">
+          <div class="ins__sig">pub fn Well1024::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Well1024::next_u64">
+          <div class="ins__sig">pub fn Well1024::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Well1024::seed_size">
+          <div class="ins__sig">pub fn Well1024::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
         <div class="ins__row" data-item="Well512">
           <div class="ins__sig">pub struct Well512 {</div>
           <div class="ins__g" data-zh="十六字，周期 2^512-1。">Sixteen words, period 2^512-1.</div>
@@ -1993,6 +2061,866 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
         <div class="ins__row" data-item="Tent::with_params">
           <div class="ins__sig">pub fn Tent::with_params(Double, Double) -&gt; Self</div>
           <div class="ins__g" data-zh="以参数与种子起笔。">Start from the parameters and a seed.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/lfsr</span><i data-zh="类型五 · 函数三十五">5 types · 35 functions</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="Gfsr">
+          <div class="ins__sig">pub struct Gfsr {</div>
+          <div class="ins__g" data-zh="二百五十字的广义反馈。">Generalized feedback over 250 words.</div>
+        </div>
+        <div class="ins__row" data-item="Gfsr::fill">
+          <div class="ins__sig">pub fn Gfsr::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Gfsr::from_seed">
+          <div class="ins__sig">pub fn Gfsr::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Gfsr::from_state">
+          <div class="ins__sig">pub fn Gfsr::from_state(FixedArray[UInt32]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="Gfsr::new">
+          <div class="ins__sig">pub fn Gfsr::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Gfsr::next_u32">
+          <div class="ins__sig">pub fn Gfsr::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Gfsr::next_u64">
+          <div class="ins__sig">pub fn Gfsr::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Gfsr::seed_size">
+          <div class="ins__sig">pub fn Gfsr::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr113">
+          <div class="ins__sig">pub struct Lfsr113 {</div>
+          <div class="ins__g" data-zh="四个线性反馈寄存器，周期近 2^113。">Four linear feedback registers, period near 2^113.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr113::fill">
+          <div class="ins__sig">pub fn Lfsr113::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr113::from_seed">
+          <div class="ins__sig">pub fn Lfsr113::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr113::new">
+          <div class="ins__sig">pub fn Lfsr113::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr113::next_u32">
+          <div class="ins__sig">pub fn Lfsr113::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr113::next_u64">
+          <div class="ins__sig">pub fn Lfsr113::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr113::seed_size">
+          <div class="ins__sig">pub fn Lfsr113::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr113::with_state">
+          <div class="ins__sig">pub fn Lfsr113::with_state(UInt32, UInt32, UInt32, UInt32) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr258">
+          <div class="ins__sig">pub struct Lfsr258 {</div>
+          <div class="ins__g" data-zh="五个六十四位线性反馈寄存器。">Five linear feedback registers over 64-bit words.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr258::fill">
+          <div class="ins__sig">pub fn Lfsr258::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr258::from_seed">
+          <div class="ins__sig">pub fn Lfsr258::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr258::new">
+          <div class="ins__sig">pub fn Lfsr258::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr258::next_u32">
+          <div class="ins__sig">pub fn Lfsr258::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr258::next_u64">
+          <div class="ins__sig">pub fn Lfsr258::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr258::seed_size">
+          <div class="ins__sig">pub fn Lfsr258::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr258::with_state">
+          <div class="ins__sig">pub fn Lfsr258::with_state(UInt64, UInt64, UInt64, UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr64">
+          <div class="ins__sig">pub struct Lfsr64 {</div>
+          <div class="ins__g" data-zh="六十四位 Galois 移位寄存器。">A 64-bit Galois shift register.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr64::fill">
+          <div class="ins__sig">pub fn Lfsr64::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr64::from_seed">
+          <div class="ins__sig">pub fn Lfsr64::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr64::new">
+          <div class="ins__sig">pub fn Lfsr64::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr64::next_u32">
+          <div class="ins__sig">pub fn Lfsr64::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr64::next_u64">
+          <div class="ins__sig">pub fn Lfsr64::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr64::seed_size">
+          <div class="ins__sig">pub fn Lfsr64::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Lfsr64::with_state">
+          <div class="ins__sig">pub fn Lfsr64::with_state(UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="Taus88">
+          <div class="ins__sig">pub struct Taus88 {</div>
+          <div class="ins__g" data-zh="三个 Tausworthe 寄存器异或。">Three Tausworthe registers, xored.</div>
+        </div>
+        <div class="ins__row" data-item="Taus88::fill">
+          <div class="ins__sig">pub fn Taus88::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Taus88::from_seed">
+          <div class="ins__sig">pub fn Taus88::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Taus88::new">
+          <div class="ins__sig">pub fn Taus88::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Taus88::next_u32">
+          <div class="ins__sig">pub fn Taus88::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Taus88::next_u64">
+          <div class="ins__sig">pub fn Taus88::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Taus88::seed_size">
+          <div class="ins__sig">pub fn Taus88::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Taus88::with_state">
+          <div class="ins__sig">pub fn Taus88::with_state(UInt32, UInt32, UInt32) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/fib</span><i data-zh="类型六 · 函数四十二">6 types · 42 functions</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="AddWithCarry">
+          <div class="ins__sig">pub struct AddWithCarry {</div>
+          <div class="ins__g" data-zh="滞后 55 的加法，带进位。">Lag 55 addition with a carry bit.</div>
+        </div>
+        <div class="ins__row" data-item="AddWithCarry::fill">
+          <div class="ins__sig">pub fn AddWithCarry::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="AddWithCarry::from_seed">
+          <div class="ins__sig">pub fn AddWithCarry::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="AddWithCarry::from_state">
+          <div class="ins__sig">pub fn AddWithCarry::from_state(FixedArray[UInt32]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="AddWithCarry::new">
+          <div class="ins__sig">pub fn AddWithCarry::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="AddWithCarry::next_u32">
+          <div class="ins__sig">pub fn AddWithCarry::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="AddWithCarry::next_u64">
+          <div class="ins__sig">pub fn AddWithCarry::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="AddWithCarry::seed_size">
+          <div class="ins__sig">pub fn AddWithCarry::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="AdditiveCongruential">
+          <div class="ins__sig">pub struct AdditiveCongruential {</div>
+          <div class="ins__g" data-zh="x(n) = x(n-55) + x(n-24)。">x(n) = x(n-55) + x(n-24).</div>
+        </div>
+        <div class="ins__row" data-item="AdditiveCongruential::fill">
+          <div class="ins__sig">pub fn AdditiveCongruential::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="AdditiveCongruential::from_seed">
+          <div class="ins__sig">pub fn AdditiveCongruential::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="AdditiveCongruential::from_state">
+          <div class="ins__sig">pub fn AdditiveCongruential::from_state(FixedArray[UInt32]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="AdditiveCongruential::new">
+          <div class="ins__sig">pub fn AdditiveCongruential::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="AdditiveCongruential::next_u32">
+          <div class="ins__sig">pub fn AdditiveCongruential::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="AdditiveCongruential::next_u64">
+          <div class="ins__sig">pub fn AdditiveCongruential::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="AdditiveCongruential::seed_size">
+          <div class="ins__sig">pub fn AdditiveCongruential::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="LaggedFibonacci">
+          <div class="ins__sig">pub struct LaggedFibonacci {</div>
+          <div class="ins__g" data-zh="同为滞后递推，取 607 与 273。">The same recurrence with lags 607 and 273.</div>
+        </div>
+        <div class="ins__row" data-item="LaggedFibonacci::fill">
+          <div class="ins__sig">pub fn LaggedFibonacci::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="LaggedFibonacci::from_seed">
+          <div class="ins__sig">pub fn LaggedFibonacci::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="LaggedFibonacci::from_state">
+          <div class="ins__sig">pub fn LaggedFibonacci::from_state(FixedArray[UInt32]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="LaggedFibonacci::new">
+          <div class="ins__sig">pub fn LaggedFibonacci::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="LaggedFibonacci::next_u32">
+          <div class="ins__sig">pub fn LaggedFibonacci::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="LaggedFibonacci::next_u64">
+          <div class="ins__sig">pub fn LaggedFibonacci::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="LaggedFibonacci::seed_size">
+          <div class="ins__sig">pub fn LaggedFibonacci::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux24">
+          <div class="ins__sig">pub struct Ranlux24 {</div>
+          <div class="ins__g" data-zh="二十四位字之借位减法，弃其大半。">Subtract-with-borrow over 24-bit words, discarding most.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux24::fill">
+          <div class="ins__sig">pub fn Ranlux24::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux24::from_seed">
+          <div class="ins__sig">pub fn Ranlux24::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux24::from_state">
+          <div class="ins__sig">pub fn Ranlux24::from_state(FixedArray[UInt32]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux24::new">
+          <div class="ins__sig">pub fn Ranlux24::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux24::next_u32">
+          <div class="ins__sig">pub fn Ranlux24::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux24::next_u64">
+          <div class="ins__sig">pub fn Ranlux24::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux24::seed_size">
+          <div class="ins__sig">pub fn Ranlux24::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux48">
+          <div class="ins__sig">pub struct Ranlux48 {</div>
+          <div class="ins__g" data-zh="同为借位减法，取四十八位字。">The same over 48-bit words.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux48::fill">
+          <div class="ins__sig">pub fn Ranlux48::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux48::from_seed">
+          <div class="ins__sig">pub fn Ranlux48::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux48::from_state">
+          <div class="ins__sig">pub fn Ranlux48::from_state(FixedArray[UInt64]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux48::new">
+          <div class="ins__sig">pub fn Ranlux48::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux48::next_u32">
+          <div class="ins__sig">pub fn Ranlux48::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux48::next_u64">
+          <div class="ins__sig">pub fn Ranlux48::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Ranlux48::seed_size">
+          <div class="ins__sig">pub fn Ranlux48::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="SubtractWithBorrow">
+          <div class="ins__sig">pub struct SubtractWithBorrow {</div>
+          <div class="ins__g" data-zh="滞后 55 的减法，带借位。">Lag 55 subtraction with a borrow bit.</div>
+        </div>
+        <div class="ins__row" data-item="SubtractWithBorrow::fill">
+          <div class="ins__sig">pub fn SubtractWithBorrow::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="SubtractWithBorrow::from_seed">
+          <div class="ins__sig">pub fn SubtractWithBorrow::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="SubtractWithBorrow::from_state">
+          <div class="ins__sig">pub fn SubtractWithBorrow::from_state(FixedArray[UInt32]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="SubtractWithBorrow::new">
+          <div class="ins__sig">pub fn SubtractWithBorrow::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="SubtractWithBorrow::next_u32">
+          <div class="ins__sig">pub fn SubtractWithBorrow::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="SubtractWithBorrow::next_u64">
+          <div class="ins__sig">pub fn SubtractWithBorrow::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="SubtractWithBorrow::seed_size">
+          <div class="ins__sig">pub fn SubtractWithBorrow::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/mrg</span><i data-zh="类型一 · 函数八">1 type · 8 functions</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="Mrg32k3a">
+          <div class="ins__sig">pub struct Mrg32k3a {</div>
+          <div class="ins__g" data-zh="两个三阶素数递推相减。">Two order-three recurrences over primes, subtracted.</div>
+        </div>
+        <div class="ins__row" data-item="Mrg32k3a::advance">
+          <div class="ins__sig">pub fn Mrg32k3a::advance(Self, UInt64) -&gt; Unit</div>
+          <div class="ins__g" data-zh="跳过 n 次，不真取。">Skip n draws without making them.</div>
+        </div>
+        <div class="ins__row" data-item="Mrg32k3a::fill">
+          <div class="ins__sig">pub fn Mrg32k3a::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Mrg32k3a::from_seed">
+          <div class="ins__sig">pub fn Mrg32k3a::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Mrg32k3a::from_state">
+          <div class="ins__sig">pub fn Mrg32k3a::from_state(FixedArray[Int64]) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="Mrg32k3a::new">
+          <div class="ins__sig">pub fn Mrg32k3a::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Mrg32k3a::next_u32">
+          <div class="ins__sig">pub fn Mrg32k3a::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Mrg32k3a::next_u64">
+          <div class="ins__sig">pub fn Mrg32k3a::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Mrg32k3a::seed_size">
+          <div class="ins__sig">pub fn Mrg32k3a::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/lxm</span><i data-zh="类型二 · 函数十六">2 types · 16 functions</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="L64X128">
+          <div class="ins__sig">pub struct L64X128 {</div>
+          <div class="ins__g" data-zh="六十四位线性同余与 xoroshiro128+ 相加。">A 64-bit LCG added to xoroshiro128+.</div>
+        </div>
+        <div class="ins__row" data-item="L64X128::fill">
+          <div class="ins__sig">pub fn L64X128::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="L64X128::from_seed">
+          <div class="ins__sig">pub fn L64X128::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="L64X128::jump">
+          <div class="ins__sig">pub fn L64X128::jump(Self) -&gt; Unit</div>
+          <div class="ins__g" data-zh="按参考多项式向前一跳。">A fixed distance ahead, by the reference polynomial.</div>
+        </div>
+        <div class="ins__row" data-item="L64X128::new">
+          <div class="ins__sig">pub fn L64X128::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="L64X128::next_u32">
+          <div class="ins__sig">pub fn L64X128::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="L64X128::next_u64">
+          <div class="ins__sig">pub fn L64X128::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="L64X128::seed_size">
+          <div class="ins__sig">pub fn L64X128::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="L64X128::with_state">
+          <div class="ins__sig">pub fn L64X128::with_state(UInt64, UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256">
+          <div class="ins__sig">pub struct L64X256 {</div>
+          <div class="ins__g" data-zh="六十四位线性同余与 xoshiro256+ 相加。">A 64-bit LCG added to xoshiro256+.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256::fill">
+          <div class="ins__sig">pub fn L64X256::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256::from_seed">
+          <div class="ins__sig">pub fn L64X256::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256::jump">
+          <div class="ins__sig">pub fn L64X256::jump(Self) -&gt; Unit</div>
+          <div class="ins__g" data-zh="按参考多项式向前一跳。">A fixed distance ahead, by the reference polynomial.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256::new">
+          <div class="ins__sig">pub fn L64X256::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256::next_u32">
+          <div class="ins__sig">pub fn L64X256::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256::next_u64">
+          <div class="ins__sig">pub fn L64X256::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256::seed_size">
+          <div class="ins__sig">pub fn L64X256::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="L64X256::with_state">
+          <div class="ins__sig">pub fn L64X256::with_state(UInt64, UInt64, UInt64, UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/philox</span><i data-zh="类型二 · 函数十六">2 types · 16 functions</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="Philox4x32">
+          <div class="ins__sig">pub struct Philox4x32 {</div>
+          <div class="ins__g" data-zh="四个三十二位计数器字，十轮。">Four 32-bit counter words, ten rounds.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x32::advance">
+          <div class="ins__sig">pub fn Philox4x32::advance(Self, UInt64) -&gt; Unit</div>
+          <div class="ins__g" data-zh="跳过 n 次，不真取。">Skip n draws without making them.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x32::fill">
+          <div class="ins__sig">pub fn Philox4x32::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x32::from_seed">
+          <div class="ins__sig">pub fn Philox4x32::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x32::new">
+          <div class="ins__sig">pub fn Philox4x32::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x32::next_u32">
+          <div class="ins__sig">pub fn Philox4x32::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x32::next_u64">
+          <div class="ins__sig">pub fn Philox4x32::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x32::seed_size">
+          <div class="ins__sig">pub fn Philox4x32::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x32::with_key">
+          <div class="ins__sig">pub fn Philox4x32::with_key(UInt32, UInt32) -&gt; Self</div>
+          <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64">
+          <div class="ins__sig">pub struct Philox4x64 {</div>
+          <div class="ins__g" data-zh="同样的轮，取六十四位字。">The same round over 64-bit words.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64::advance">
+          <div class="ins__sig">pub fn Philox4x64::advance(Self, UInt64) -&gt; Unit</div>
+          <div class="ins__g" data-zh="跳过 n 次，不真取。">Skip n draws without making them.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64::fill">
+          <div class="ins__sig">pub fn Philox4x64::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64::from_seed">
+          <div class="ins__sig">pub fn Philox4x64::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64::new">
+          <div class="ins__sig">pub fn Philox4x64::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64::next_u32">
+          <div class="ins__sig">pub fn Philox4x64::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64::next_u64">
+          <div class="ins__sig">pub fn Philox4x64::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64::seed_size">
+          <div class="ins__sig">pub fn Philox4x64::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Philox4x64::with_key">
+          <div class="ins__sig">pub fn Philox4x64::with_key(UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/threefry</span><i data-zh="类型三 · 函数二十四">3 types · 24 functions</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="Threefry2x64">
+          <div class="ins__sig">pub struct Threefry2x64 {</div>
+          <div class="ins__g" data-zh="两个字，十三轮。">Two counter words, thirteen rounds.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry2x64::advance">
+          <div class="ins__sig">pub fn Threefry2x64::advance(Self, UInt64) -&gt; Unit</div>
+          <div class="ins__g" data-zh="跳过 n 次，不真取。">Skip n draws without making them.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry2x64::fill">
+          <div class="ins__sig">pub fn Threefry2x64::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry2x64::from_seed">
+          <div class="ins__sig">pub fn Threefry2x64::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry2x64::new">
+          <div class="ins__sig">pub fn Threefry2x64::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry2x64::next_u32">
+          <div class="ins__sig">pub fn Threefry2x64::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry2x64::next_u64">
+          <div class="ins__sig">pub fn Threefry2x64::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry2x64::seed_size">
+          <div class="ins__sig">pub fn Threefry2x64::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry2x64::with_key">
+          <div class="ins__sig">pub fn Threefry2x64::with_key(UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32">
+          <div class="ins__sig">pub struct Threefry4x32 {</div>
+          <div class="ins__g" data-zh="同样的轮序，取三十二位字。">The same schedule over 32-bit words.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32::advance">
+          <div class="ins__sig">pub fn Threefry4x32::advance(Self, UInt64) -&gt; Unit</div>
+          <div class="ins__g" data-zh="跳过 n 次，不真取。">Skip n draws without making them.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32::fill">
+          <div class="ins__sig">pub fn Threefry4x32::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32::from_seed">
+          <div class="ins__sig">pub fn Threefry4x32::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32::new">
+          <div class="ins__sig">pub fn Threefry4x32::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32::next_u32">
+          <div class="ins__sig">pub fn Threefry4x32::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32::next_u64">
+          <div class="ins__sig">pub fn Threefry4x32::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32::seed_size">
+          <div class="ins__sig">pub fn Threefry4x32::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x32::with_key">
+          <div class="ins__sig">pub fn Threefry4x32::with_key(UInt32, UInt32) -&gt; Self</div>
+          <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64">
+          <div class="ins__sig">pub struct Threefry4x64 {</div>
+          <div class="ins__g" data-zh="四个六十四位字，二十轮，不用乘法。">Four 64-bit counter words, twenty rounds, no multiply.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64::advance">
+          <div class="ins__sig">pub fn Threefry4x64::advance(Self, UInt64) -&gt; Unit</div>
+          <div class="ins__g" data-zh="跳过 n 次，不真取。">Skip n draws without making them.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64::fill">
+          <div class="ins__sig">pub fn Threefry4x64::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64::from_seed">
+          <div class="ins__sig">pub fn Threefry4x64::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64::new">
+          <div class="ins__sig">pub fn Threefry4x64::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64::next_u32">
+          <div class="ins__sig">pub fn Threefry4x64::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64::next_u64">
+          <div class="ins__sig">pub fn Threefry4x64::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64::seed_size">
+          <div class="ins__sig">pub fn Threefry4x64::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Threefry4x64::with_key">
+          <div class="ins__sig">pub fn Threefry4x64::with_key(UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/squares</span><i data-zh="类型一 · 函数八">1 type · 8 functions</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="Squares">
+          <div class="ins__sig">pub struct Squares {</div>
+          <div class="ins__g" data-zh="带密钥的计数器，过三轮平方。">A keyed counter through three rounds of squaring.</div>
+        </div>
+        <div class="ins__row" data-item="Squares::advance">
+          <div class="ins__sig">pub fn Squares::advance(Self, UInt64) -&gt; Unit</div>
+          <div class="ins__g" data-zh="跳过 n 次，不真取。">Skip n draws without making them.</div>
+        </div>
+        <div class="ins__row" data-item="Squares::fill">
+          <div class="ins__sig">pub fn Squares::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Squares::from_seed">
+          <div class="ins__sig">pub fn Squares::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Squares::new">
+          <div class="ins__sig">pub fn Squares::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Squares::next_u32">
+          <div class="ins__sig">pub fn Squares::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Squares::next_u64">
+          <div class="ins__sig">pub fn Squares::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Squares::seed_size">
+          <div class="ins__sig">pub fn Squares::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Squares::with_key">
+          <div class="ins__sig">pub fn Squares::with_key(UInt64, UInt64, UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以密钥起笔，计数器归零。">Start from a key, with the counter at zero.</div>
+        </div>
+        </div>
+        <div class="ins__grp"><span>moonbitstack/moonrand/classic</span><i data-zh="类型五 · 函数三十五">5 types · 35 functions</i></div>
+        <div class="ins__rows">
+        <div class="ins__row" data-item="Bbs">
+          <div class="ins__sig">pub struct Bbs {</div>
+          <div class="ins__g" data-zh="模 Blum 整数之平方。">The square modulo a Blum integer.</div>
+        </div>
+        <div class="ins__row" data-item="Bbs::fill">
+          <div class="ins__sig">pub fn Bbs::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="Bbs::from_seed">
+          <div class="ins__sig">pub fn Bbs::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="Bbs::new">
+          <div class="ins__sig">pub fn Bbs::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="Bbs::next_u32">
+          <div class="ins__sig">pub fn Bbs::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Bbs::next_u64">
+          <div class="ins__sig">pub fn Bbs::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="Bbs::seed_size">
+          <div class="ins__sig">pub fn Bbs::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="Bbs::with_params">
+          <div class="ins__sig">pub fn Bbs::with_params(UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以参数与种子起笔。">Start from the parameters and a seed.</div>
+        </div>
+        <div class="ins__row" data-item="CollatzWeyl">
+          <div class="ins__sig">pub struct CollatzWeyl {</div>
+          <div class="ins__g" data-zh="Collatz 映射与 Weyl 序列异或。">The Collatz map xored with a Weyl sequence.</div>
+        </div>
+        <div class="ins__row" data-item="CollatzWeyl::fill">
+          <div class="ins__sig">pub fn CollatzWeyl::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="CollatzWeyl::from_seed">
+          <div class="ins__sig">pub fn CollatzWeyl::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="CollatzWeyl::new">
+          <div class="ins__sig">pub fn CollatzWeyl::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="CollatzWeyl::next_u32">
+          <div class="ins__sig">pub fn CollatzWeyl::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="CollatzWeyl::next_u64">
+          <div class="ins__sig">pub fn CollatzWeyl::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="CollatzWeyl::seed_size">
+          <div class="ins__sig">pub fn CollatzWeyl::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="CollatzWeyl::with_state">
+          <div class="ins__sig">pub fn CollatzWeyl::with_state(UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleProduct">
+          <div class="ins__sig">pub struct MiddleProduct {</div>
+          <div class="ins__g" data-zh="乘常数取中。">Multiply by a constant, keep the middle bits.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleProduct::fill">
+          <div class="ins__sig">pub fn MiddleProduct::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleProduct::from_seed">
+          <div class="ins__sig">pub fn MiddleProduct::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleProduct::new">
+          <div class="ins__sig">pub fn MiddleProduct::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleProduct::next_u32">
+          <div class="ins__sig">pub fn MiddleProduct::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleProduct::next_u64">
+          <div class="ins__sig">pub fn MiddleProduct::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleProduct::seed_size">
+          <div class="ins__sig">pub fn MiddleProduct::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleProduct::with_params">
+          <div class="ins__sig">pub fn MiddleProduct::with_params(UInt64, UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以参数与种子起笔。">Start from the parameters and a seed.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquare">
+          <div class="ins__sig">pub struct MiddleSquare {</div>
+          <div class="ins__g" data-zh="平方取中。">Square the word, keep the middle bits.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquare::fill">
+          <div class="ins__sig">pub fn MiddleSquare::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquare::from_seed">
+          <div class="ins__sig">pub fn MiddleSquare::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquare::new">
+          <div class="ins__sig">pub fn MiddleSquare::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquare::next_u32">
+          <div class="ins__sig">pub fn MiddleSquare::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquare::next_u64">
+          <div class="ins__sig">pub fn MiddleSquare::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquare::seed_size">
+          <div class="ins__sig">pub fn MiddleSquare::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquare::with_state">
+          <div class="ins__sig">pub fn MiddleSquare::with_state(UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquareWeyl">
+          <div class="ins__sig">pub struct MiddleSquareWeyl {</div>
+          <div class="ins__g" data-zh="平方取中加 Weyl 序列。">Middle square plus a Weyl sequence.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquareWeyl::fill">
+          <div class="ins__sig">pub fn MiddleSquareWeyl::fill(Self, FixedArray[Byte]) -&gt; Unit</div>
+          <div class="ins__g" data-zh="以流填一段字节。">Fill a byte array from the stream.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquareWeyl::from_seed">
+          <div class="ins__sig">pub fn MiddleSquareWeyl::from_seed(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以 seed_size 字节之种子重建。">Rebuild from a seed of seed_size bytes.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquareWeyl::new">
+          <div class="ins__sig">pub fn MiddleSquareWeyl::new(BytesView) -&gt; Self</div>
+          <div class="ins__g" data-zh="以种子起笔：字节过 SplitMix64，短则补零。">Seed it: the bytes go through SplitMix64, a short seed padded.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquareWeyl::next_u32">
+          <div class="ins__sig">pub fn MiddleSquareWeyl::next_u32(Self) -&gt; UInt32</div>
+          <div class="ins__g" data-zh="契约之取：一字。">The contract's draw: one 32-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquareWeyl::next_u64">
+          <div class="ins__sig">pub fn MiddleSquareWeyl::next_u64(Self) -&gt; UInt64</div>
+          <div class="ins__g" data-zh="契约之取：一长字。">The contract's draw: one 64-bit word.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquareWeyl::seed_size">
+          <div class="ins__sig">pub fn MiddleSquareWeyl::seed_size() -&gt; Int32</div>
+          <div class="ins__g" data-zh="种子几何字节。">How many bytes a seed is.</div>
+        </div>
+        <div class="ins__row" data-item="MiddleSquareWeyl::with_state">
+          <div class="ins__sig">pub fn MiddleSquareWeyl::with_state(UInt64) -&gt; Self</div>
+          <div class="ins__g" data-zh="以已有之状态起笔，一字不改。">Start from a state you already have, unchanged.</div>
         </div>
         </div>
         <!-- api:end -->
