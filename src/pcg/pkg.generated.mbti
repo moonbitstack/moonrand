@@ -21,6 +21,7 @@ pub fn Pcg32::next_u32(Self) -> UInt32
 pub fn Pcg32::next_u64(Self) -> UInt64
 pub fn Pcg32::seed_size() -> Int32
 pub fn Pcg32::with_state(UInt64, UInt64) -> Self
+pub fn Pcg32::with_stream(UInt64, UInt64) -> Self
 pub impl @contract.Rng for Pcg32
 pub impl @contract.Seeded for Pcg32
 

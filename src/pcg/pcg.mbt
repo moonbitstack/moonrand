@@ -14,7 +14,7 @@ pub struct Pcg32 {
 /// A generator over the LCG state `state` and the stream `inc`. The reference
 /// makes `inc` odd, and so does this.
 pub fn Pcg32::with_state(state : UInt64, inc : UInt64) -> Pcg32 {
-  { s: [state, inc | 1UL] }
+  { s: [state, inc | 1UL], }
 }
 
 ///|
@@ -114,7 +114,9 @@ fn pcg64_step(w : FixedArray[UInt64]) -> Unit {
   let lo = w[0]
   let hi = w[1]
   let new_lo = lo * PCG64_MULT_LO
-  let new_hi = @bits.mul_hi(lo, PCG64_MULT_LO) + lo * PCG64_MULT_HI + hi * PCG64_MULT_LO
+  let new_hi = @bits.mul_hi(lo, PCG64_MULT_LO) +
+    lo * PCG64_MULT_HI +
+    hi * PCG64_MULT_LO
   let (sum_lo, carry) = {
     let s = new_lo + w[2]
     (s, if s < new_lo { 1UL } else { 0UL })
@@ -139,7 +141,7 @@ pub fn Pcg64::with_state(
   inc_lo : UInt64,
   inc_hi : UInt64,
 ) -> Pcg64 {
-  { s: [state_lo, state_hi, inc_lo | 1UL, inc_hi] }
+  { s: [state_lo, state_hi, inc_lo | 1UL, inc_hi], }
 }
 
 ///|
@@ -233,7 +235,7 @@ pub fn Pcg64Dxsm::with_state(
   inc_lo : UInt64,
   inc_hi : UInt64,
 ) -> Pcg64Dxsm {
-  { s: [state_lo, state_hi, inc_lo | 1UL, inc_hi] }
+  { s: [state_lo, state_hi, inc_lo | 1UL, inc_hi], }
 }
 
 ///|
