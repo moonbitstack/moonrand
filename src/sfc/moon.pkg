@@ -1,4 +1,8 @@
-// SFC: a chaotic counting generator, four words of state.
+// The sfc generators.
 import {
   "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
 }
