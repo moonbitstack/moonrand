@@ -1,4 +1,0 @@
-// Shift-register generators: LFSR, GFSR and the combined Taus and LFSR families.
-import {
-  "moonbitstack/moonrand/contract",
-}

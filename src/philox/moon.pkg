@@ -1,4 +1,0 @@
-// Philox: counter-based, a key and a counter through multiply-xorshift rounds.
-import {
-  "moonbitstack/moonrand/contract",
-}

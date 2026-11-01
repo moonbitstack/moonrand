@@ -1,5 +1,0 @@
-// The middle-square family and Blum Blum Shub: the historical beginnings,
-// and the Weyl-corrected forms that work.
-import {
-  "moonbitstack/moonrand/contract",
-}

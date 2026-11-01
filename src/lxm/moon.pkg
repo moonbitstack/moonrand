@@ -1,5 +1,0 @@
-// LXM: a linear congruential generator and an xoroshiro generator,
-// their outputs added.
-import {
-  "moonbitstack/moonrand/contract",
-}
