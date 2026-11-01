@@ -1,105 +1,56 @@
 ///|
-/// Logistic: x := r x (1 - x).
+/// Chaotic maps. Each one iterates a continuous map and hands out the bits of
+/// the result. They are here to reproduce a map — a logistic sequence, a tent
+/// sequence — not to draw numbers for a simulation: a float has 53 bits and a
+/// chaotic orbit loses its own entropy, so the stream repeats at a far shorter
+/// distance than the state suggests.
+
+///|
+/// A double in (0, 1) from a byte seed, kept off the endpoints where the maps
+/// are stationary.
+fn chaos_start(seed : BytesView) -> Double {
+  let w = @bits.seed_words(seed, 1)[0]
+  let x = (w >> 11).to_double() / 9007199254740992.0
+  if x < 1.0e-9 {
+    1.0e-9
+  } else if x > 1.0 - 1.0e-9 {
+    1.0 - 1.0e-9
+  } else {
+    x
+  }
+}
+
+///|
+/// The bits of the current orbit point: what a map hands to a generator
+/// interface.
+fn chaos_word(x : Double) -> UInt64 {
+  x.reinterpret_as_uint64()
+}
+
+///|
+/// Logistic: x := r x (1 - x). The parameters that give a full-looking orbit are
+/// r near 4; the map is chaotic there and nowhere else.
 pub struct Logistic {
   priv s : FixedArray[Double]
 }
 
 ///|
-/// A generator with the parameter `r` and the starting `x`.
+/// A generator with the parameter `r` and the starting point `x`.
 pub fn Logistic::with_params(r : Double, x : Double) -> Logistic {
-  ignore((r, x))
-  { s: FixedArray::make(2, 0.0), }
+  { s: [x, r], }
 }
 
 ///|
-/// A generator seeded from a byte seed.
+/// A generator seeded from eight bytes, at r = 4.
 pub fn Logistic::new(seed : BytesView) -> Logistic {
-  ignore(seed)
-  { s: FixedArray::make(2, 0.0), }
+  Logistic::with_params(4.0, chaos_start(seed))
 }
 
 ///|
 pub impl @contract.Rng for Logistic with fn next_u64(self) -> UInt64 {
-  ignore(self.s)
-  abort("Logistic: no implementation yet")
-}
-
-///|
-/// Tent: the tent map, with the slope `mu`.
-pub struct Tent {
-  priv s : FixedArray[Double]
-}
-
-///|
-/// A generator with the parameter `mu` and the starting `x`.
-pub fn Tent::with_params(mu : Double, x : Double) -> Tent {
-  ignore((mu, x))
-  { s: FixedArray::make(2, 0.0), }
-}
-
-///|
-/// A generator seeded from a byte seed.
-pub fn Tent::new(seed : BytesView) -> Tent {
-  ignore(seed)
-  { s: FixedArray::make(2, 0.0), }
-}
-
-///|
-pub impl @contract.Rng for Tent with fn next_u64(self) -> UInt64 {
-  ignore(self.s)
-  abort("Tent: no implementation yet")
-}
-
-///|
-/// Sine: x := sin(pi x).
-pub struct Sine {
-  priv s : FixedArray[Double]
-}
-
-///|
-/// A generator over the starting `x` in (0, 1).
-pub fn Sine::with_state(x : Double) -> Sine {
-  ignore(x)
-  { s: FixedArray::make(1, 0.0), }
-}
-
-///|
-/// A generator seeded from a byte seed.
-pub fn Sine::new(seed : BytesView) -> Sine {
-  ignore(seed)
-  { s: FixedArray::make(1, 0.0), }
-}
-
-///|
-pub impl @contract.Rng for Sine with fn next_u64(self) -> UInt64 {
-  ignore(self.s)
-  abort("Sine: no implementation yet")
-}
-
-///|
-/// Chebyshev: x := cos(n acos(x)).
-pub struct Chebyshev {
-  priv s : FixedArray[Double]
-}
-
-///|
-/// A generator with the degree `n` and the starting `x` in (-1, 1).
-pub fn Chebyshev::with_params(n : Double, x : Double) -> Chebyshev {
-  ignore((n, x))
-  { s: FixedArray::make(2, 0.0), }
-}
-
-///|
-/// A generator seeded from a byte seed.
-pub fn Chebyshev::new(seed : BytesView) -> Chebyshev {
-  ignore(seed)
-  { s: FixedArray::make(2, 0.0), }
-}
-
-///|
-pub impl @contract.Rng for Chebyshev with fn next_u64(self) -> UInt64 {
-  ignore(self.s)
-  abort("Chebyshev: no implementation yet")
+  let x = self.s[1] * self.s[0] * (1.0 - self.s[0])
+  self.s[0] = x
+  chaos_word(x)
 }
 
 ///|
@@ -113,6 +64,34 @@ pub impl @contract.Seeded for Logistic with fn seed_size() -> Int32 {
 }
 
 ///|
+/// Tent: x := mu x when x < 1/2, mu (1 - x) otherwise; mu near 2 is the chaotic
+/// case.
+pub struct Tent {
+  priv s : FixedArray[Double]
+}
+
+///|
+/// A generator with the parameter `mu` and the starting point `x`.
+pub fn Tent::with_params(mu : Double, x : Double) -> Tent {
+  { s: [x, mu], }
+}
+
+///|
+/// A generator seeded from eight bytes, at mu = 2.
+pub fn Tent::new(seed : BytesView) -> Tent {
+  Tent::with_params(2.0, chaos_start(seed))
+}
+
+///|
+pub impl @contract.Rng for Tent with fn next_u64(self) -> UInt64 {
+  let x = self.s[0]
+  let mu = self.s[1]
+  let next = if x < 0.5 { mu * x } else { mu * (1.0 - x) }
+  self.s[0] = next
+  chaos_word(next)
+}
+
+///|
 pub impl @contract.Seeded for Tent with fn from_seed(seed : BytesView) -> Tent {
   Tent::new(seed)
 }
@@ -123,6 +102,31 @@ pub impl @contract.Seeded for Tent with fn seed_size() -> Int32 {
 }
 
 ///|
+/// Sine: x := sin(pi x), which is chaotic on (0, 1) and never leaves it.
+pub struct Sine {
+  priv s : FixedArray[Double]
+}
+
+///|
+/// A generator over the starting point `x` in (0, 1).
+pub fn Sine::with_state(x : Double) -> Sine {
+  { s: [x], }
+}
+
+///|
+/// A generator seeded from eight bytes.
+pub fn Sine::new(seed : BytesView) -> Sine {
+  Sine::with_state(chaos_start(seed))
+}
+
+///|
+pub impl @contract.Rng for Sine with fn next_u64(self) -> UInt64 {
+  let x = @math.sin(@math.PI * self.s[0])
+  self.s[0] = x
+  chaos_word(x)
+}
+
+///|
 pub impl @contract.Seeded for Sine with fn from_seed(seed : BytesView) -> Sine {
   Sine::new(seed)
 }
@@ -130,6 +134,31 @@ pub impl @contract.Seeded for Sine with fn from_seed(seed : BytesView) -> Sine {
 ///|
 pub impl @contract.Seeded for Sine with fn seed_size() -> Int32 {
   8
+}
+
+///|
+/// Chebyshev: x := cos(n acos(x)), chaotic for n at or above 2.
+pub struct Chebyshev {
+  priv s : FixedArray[Double]
+}
+
+///|
+/// A generator with the degree `n` and the starting point `x` in (-1, 1).
+pub fn Chebyshev::with_params(n : Double, x : Double) -> Chebyshev {
+  { s: [x, n], }
+}
+
+///|
+/// A generator seeded from eight bytes, at n = 3, mapped into (-1, 1).
+pub fn Chebyshev::new(seed : BytesView) -> Chebyshev {
+  Chebyshev::with_params(3.0, chaos_start(seed) * 2.0 - 1.0)
+}
+
+///|
+pub impl @contract.Rng for Chebyshev with fn next_u64(self) -> UInt64 {
+  let x = @math.cos(self.s[1] * @math.acos(self.s[0]))
+  self.s[0] = x
+  chaos_word(x)
 }
 
 ///|

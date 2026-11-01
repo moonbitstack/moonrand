@@ -1,5 +1,12 @@
-// Chaotic maps. They look random and are not; use them to reproduce a map, not
-// to draw numbers for a simulation.
+// Chaotic maps, for reproducing a map rather than for drawing numbers.
 import {
   "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
+}
+
+import {
+  "moonbitlang/core/math",
 }
