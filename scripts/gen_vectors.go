@@ -84,6 +84,16 @@ func main() {
 	xorshiftVectors()
 	wellVectors()
 	lcgVectors()
+	lfsrVectors()
+	fibVectors()
+	mrgVectors()
+	lxmVectors()
+	philoxVectors()
+	threefryVectors()
+	well1024Vectors()
+	sfmtVectors()
+	classicVectors()
+	squaresVectors()
 
 	byPkg := map[string][]case_{}
 	order := []string{}
@@ -799,4 +809,685 @@ func invMod(x, m int64) int64 {
 		t += m
 	}
 	return t
+}
+
+// ---------------------------------------------------------------------------
+// lfsr
+// ---------------------------------------------------------------------------
+
+func lfsrVectors() {
+	st := seedWords(1, 1)[0]
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		if st&1 != 0 {
+			st = (st >> 1) ^ 0xd800000000000000
+		} else {
+			st >>= 1
+		}
+		w = append(w, st)
+	}
+	add("lfsr", "lfsr64_state", []uint64{seedWords(1, 1)[0]})
+	add("lfsr", "lfsr64_first", w)
+
+	t := seedWords(1, 2)
+	s1, s2, s3 := uint32(t[0]), uint32(t[0]>>32), uint32(t[1])
+	state3 := []uint64{uint64(s1), uint64(s2), uint64(s3)}
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		s1 = ((s1 & 0xfffffffe) << 12) ^ (((s1 << 13) ^ s1) >> 19)
+		s2 = ((s2 & 0xfffffff8) << 4) ^ (((s2 << 2) ^ s2) >> 25)
+		s3 = ((s3 & 0xfffffff0) << 17) ^ (((s3 << 3) ^ s3) >> 11)
+		w = append(w, uint64(s1^s2^s3))
+	}
+	add("lfsr", "taus88_state", state3)
+	add("lfsr", "taus88_first", w)
+
+	u := seedWords(1, 2)
+	z1, z2, z3, z4 := uint32(u[0]), uint32(u[0]>>32), uint32(u[1]), uint32(u[1]>>32)
+	state4 := []uint64{uint64(z1), uint64(z2), uint64(z3), uint64(z4)}
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		z1 = ((z1 & 0xfffffffe) << 18) ^ (((z1 << 6) ^ z1) >> 13)
+		z2 = ((z2 & 0xfffffff8) << 2) ^ (((z2 << 2) ^ z2) >> 27)
+		z3 = ((z3 & 0xfffffff0) << 7) ^ (((z3 << 13) ^ z3) >> 21)
+		z4 = ((z4 & 0xffffff80) << 13) ^ (((z4 << 3) ^ z4) >> 12)
+		w = append(w, uint64(z1^z2^z3^z4))
+	}
+	add("lfsr", "lfsr113_state", state4)
+	add("lfsr", "lfsr113_first", w)
+
+	v := seedWords(1, 5)
+	e1, e2, e3, e4, e5 := v[0], v[1], v[2], v[3], v[4]
+	state5 := append([]uint64(nil), v...)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		e1 = ((e1 & 0xfffffffffffffffe) << 10) ^ (((e1 << 1) ^ e1) >> 53)
+		e2 = ((e2 & 0xfffffffffffffe00) << 5) ^ (((e2 << 24) ^ e2) >> 50)
+		e3 = ((e3 & 0xfffffffffffff000) << 29) ^ (((e3 << 3) ^ e3) >> 23)
+		e4 = ((e4 & 0xfffffffffffe0000) << 23) ^ (((e4 << 5) ^ e4) >> 24)
+		e5 = ((e5 & 0xffffffffff800000) << 8) ^ (((e5 << 3) ^ e5) >> 33)
+		w = append(w, e1^e2^e3^e4^e5)
+	}
+	add("lfsr", "lfsr258_state", state5)
+	add("lfsr", "lfsr258_first", w)
+}
+
+// ---------------------------------------------------------------------------
+// fib
+// ---------------------------------------------------------------------------
+
+func fibVectors() {
+	st := seedWords(1, 28)
+	s := make([]uint32, 55)
+	for i := 0; i < 27; i++ {
+		s[i*2] = uint32(st[i])
+		s[i*2+1] = uint32(st[i] >> 32)
+	}
+	state := make([]uint64, 0, 55)
+	for _, v := range s {
+		state = append(state, uint64(v))
+	}
+	w := make([]uint64, 0, 8)
+	idx := 0
+	for i := 0; i < 8; i++ {
+		j := (idx + 31) % 55
+		s[idx] += s[j]
+		v := s[idx]
+		idx = j
+		w = append(w, uint64(v))
+	}
+	add("fib", "additive_state", state)
+	add("fib", "additive_first", w)
+
+	// add with carry over the same state
+	s2 := make([]uint32, 55)
+	for i := 0; i < 27; i++ {
+		s2[i*2] = uint32(st[i])
+		s2[i*2+1] = uint32(st[i] >> 32)
+	}
+	w = make([]uint64, 0, 8)
+	idx = 0
+	carry := uint32(0)
+	for i := 0; i < 8; i++ {
+		j := (idx + 31) % 55
+		sum := uint64(s2[idx]) + uint64(s2[j]) + uint64(carry)
+		s2[idx] = uint32(sum)
+		carry = uint32(sum >> 32)
+		v := s2[idx]
+		idx = j
+		w = append(w, uint64(v))
+	}
+	add("fib", "add_with_carry_first", w)
+
+	// subtract with borrow
+	s3 := make([]uint32, 55)
+	for i := 0; i < 27; i++ {
+		s3[i*2] = uint32(st[i])
+		s3[i*2+1] = uint32(st[i] >> 32)
+	}
+	w = make([]uint64, 0, 8)
+	idx = 0
+	borrow := uint32(0)
+	for i := 0; i < 8; i++ {
+		j := (idx + 31) % 55
+		diff := int64(s3[idx]) - int64(s3[j]) - int64(borrow)
+		if diff < 0 {
+			s3[idx] = uint32(diff + 4294967296)
+			borrow = 1
+		} else {
+			s3[idx] = uint32(diff)
+			borrow = 0
+		}
+		v := s3[idx]
+		idx = j
+		w = append(w, uint64(v))
+	}
+	add("fib", "subtract_with_borrow_first", w)
+}
+
+// ---------------------------------------------------------------------------
+// mrg
+// ---------------------------------------------------------------------------
+
+func mrgVectors() {
+	const m1 = int64(4294967087)
+	const m2 = int64(4294944443)
+	seedv := seedWords(1, 6)
+	s := make([]int64, 6)
+	for i := 0; i < 3; i++ {
+		s[i] = int64(seedv[i] % 4294967087)
+		s[3+i] = int64(seedv[3+i] % 4294944443)
+	}
+	state := make([]uint64, 0, 6)
+	for _, v := range s {
+		state = append(state, uint64(v))
+	}
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		p1 := (1403580*s[1] - 810728*s[0]) % m1
+		p2 := (527612*s[5] - 1370589*s[3]) % m2
+		s[0], s[1] = s[1], s[2]
+		if p1 < 0 {
+			p1 += m1
+		}
+		s[2] = p1
+		s[3], s[4] = s[4], s[5]
+		if p2 < 0 {
+			p2 += m2
+		}
+		s[5] = p2
+		z := s[2] - s[5]
+		if z < 0 {
+			z += m1
+		}
+		if z == 0 {
+			z = m1 - 1
+		}
+		w = append(w, uint64(z))
+	}
+	add("mrg", "mrg32k3a_state", state)
+	add("mrg", "mrg32k3a_first", w)
+}
+
+// ---------------------------------------------------------------------------
+// lxm
+// ---------------------------------------------------------------------------
+
+const lxmMult = uint64(0xd1342543de82ef95)
+
+func lxmXoroStep(s []uint64, at int) {
+	s0 := s[at]
+	s1 := s[at+1] ^ s0
+	s[at] = rotl(s0, 24) ^ s1 ^ (s1 << 16)
+	s[at+1] = rotl(s1, 37)
+}
+
+func lxmXoshiroStep(s []uint64, at int) {
+	t := s[at+1] << 17
+	s[at+2] ^= s[at]
+	s[at+3] ^= s[at+1]
+	s[at+1] ^= s[at+2]
+	s[at] ^= s[at+3]
+	s[at+2] ^= t
+	s[at+3] = rotl(s[at+3], 45)
+}
+
+func lxmJump(s []uint64, at, n int, poly []uint64, step func([]uint64, int)) {
+	acc := make([]uint64, n)
+	for _, pw := range poly {
+		for b := 0; b < 64; b++ {
+			if pw&(uint64(1)<<uint(b)) != 0 {
+				for i := 0; i < n; i++ {
+					acc[i] ^= s[at+i]
+				}
+			}
+			step(s, at)
+		}
+	}
+	for i := 0; i < n; i++ {
+		s[at+i] = acc[i]
+	}
+}
+
+func lxmLCGJump(lcg uint64, rounds int) uint64 {
+	m := lxmMult
+	a := uint64(1)
+	for i := 0; i < rounds; i++ {
+		a *= m + 1
+		m *= m
+	}
+	return a*lcg + a
+}
+
+func lxmVectors() {
+	st := seedWords(1, 3)
+	s := append([]uint64(nil), st...)
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		res := s[1] + s[2] + s[0]
+		lxmXoroStep(s, 1)
+		s[0] = s[0]*lxmMult + 1
+		w = append(w, res)
+	}
+	add("lxm", "l64x128_state", st)
+	add("lxm", "l64x128_first", w)
+
+	j := append([]uint64(nil), st...)
+	lxmJump(j, 1, 2, []uint64{0xdf900294d8f554a5, 0x170865df4b3201fc}, lxmXoroStep)
+	lxmJump(j, 1, 2, []uint64{0xdf900294d8f554a5, 0x170865df4b3201fc}, lxmXoroStep)
+	j[0] = lxmLCGJump(j[0], 128)
+	w = make([]uint64, 0, 4)
+	for i := 0; i < 4; i++ {
+		res := j[1] + j[2] + j[0]
+		lxmXoroStep(j, 1)
+		j[0] = j[0]*lxmMult + 1
+		w = append(w, res)
+	}
+	add("lxm", "l64x128_jump", w)
+
+	st5 := seedWords(1, 5)
+	t := append([]uint64(nil), st5...)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		res := t[1] + t[4] + t[0]
+		lxmXoshiroStep(t, 1)
+		t[0] = t[0]*lxmMult + 1
+		w = append(w, res)
+	}
+	add("lxm", "l64x256_state", st5)
+	add("lxm", "l64x256_first", w)
+
+	j5 := append([]uint64(nil), st5...)
+	lxmJump(j5, 1, 4, []uint64{0x180ec6d33cfd0aba, 0xd5a61266f0c9392c, 0xa9582618e03fc9aa, 0x39abdc4529b1661c}, lxmXoshiroStep)
+	j5[0] = lxmLCGJump(j5[0], 128)
+	w = make([]uint64, 0, 4)
+	for i := 0; i < 4; i++ {
+		res := j5[1] + j5[4] + j5[0]
+		lxmXoshiroStep(j5, 1)
+		j5[0] = j5[0]*lxmMult + 1
+		w = append(w, res)
+	}
+	add("lxm", "l64x256_jump", w)
+}
+
+// ---------------------------------------------------------------------------
+// philox
+// ---------------------------------------------------------------------------
+
+func mulhilo32(a, b uint32) (uint32, uint32) {
+	p := uint64(a) * uint64(b)
+	return uint32(p >> 32), uint32(p)
+}
+
+func philox4x32Block(ctr *[4]uint32, key [2]uint32) [4]uint32 {
+	c := *ctr
+	k0, k1 := key[0], key[1]
+	for r := 0; r < 10; r++ {
+		hi0, lo0 := mulhilo32(0xd2511f53, c[0])
+		hi1, lo1 := mulhilo32(0xcd9e8d57, c[2])
+		c = [4]uint32{hi1 ^ c[1] ^ k0, lo1, hi0 ^ c[3] ^ k1, lo0}
+		k0 += 0x9e3779b9
+		k1 += 0xbb67ae85
+	}
+	ctr[0]++
+	if ctr[0] == 0 {
+		ctr[1]++
+		if ctr[1] == 0 {
+			ctr[2]++
+			if ctr[2] == 0 {
+				ctr[3]++
+			}
+		}
+	}
+	return c
+}
+
+func philox4x64Block(ctr *[4]uint64, key [2]uint64) [4]uint64 {
+	c := *ctr
+	k0, k1 := key[0], key[1]
+	for r := 0; r < 10; r++ {
+		hi0, lo0 := bits.Mul64(0xd2e7470ee14c6c93, c[0])
+		hi1, lo1 := bits.Mul64(0xca5a826395121157, c[2])
+		c = [4]uint64{hi1 ^ c[1] ^ k0, lo1, hi0 ^ c[3] ^ k1, lo0}
+		k0 += 0x9e3779b97f4a7c15
+		k1 += 0xbb67ae8584caa73b
+	}
+	ctr[0]++
+	if ctr[0] == 0 {
+		ctr[1]++
+		if ctr[1] == 0 {
+			ctr[2]++
+			if ctr[2] == 0 {
+				ctr[3]++
+			}
+		}
+	}
+	return c
+}
+
+func philoxVectors() {
+	var ctr [4]uint32
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 2; i++ {
+		out := philox4x32Block(&ctr, [2]uint32{0, 0})
+		for _, v := range out {
+			w = append(w, uint64(v))
+		}
+	}
+	add("philox", "philox4x32_zero", w)
+
+	var ctr64 [4]uint64
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 2; i++ {
+		out := philox4x64Block(&ctr64, [2]uint64{0, 0})
+		for _, v := range out {
+			w = append(w, v)
+		}
+	}
+	add("philox", "philox4x64_zero", w)
+}
+
+// ---------------------------------------------------------------------------
+// threefry
+// ---------------------------------------------------------------------------
+
+var threefryRot = []int{14, 16, 52, 57, 23, 40, 5, 37, 25, 33, 46, 12, 58, 22, 32, 32}
+
+func threefry4x64Block(ctr *[4]uint64, key [2]uint64) [4]uint64 {
+	const parity = uint64(0x1bd11bdaa9fc1a22)
+	ks := [5]uint64{key[0], key[1], 0, 0, parity ^ key[0] ^ key[1]}
+	x := *ctr
+	for i := 0; i < 4; i++ {
+		x[i] += ks[i]
+	}
+	for r := 0; r < 20; r++ {
+		a := uint(threefryRot[(r%8)*2])
+		b := uint(threefryRot[(r%8)*2+1])
+		x[0] += x[1]
+		x[1] = rotl(x[1], a) ^ x[0]
+		x[2] += x[3]
+		x[3] = rotl(x[3], b) ^ x[2]
+		x[1], x[3] = x[3], x[1]
+		if (r+1)%4 == 0 {
+			s := (r + 1) / 4
+			for i := 0; i < 4; i++ {
+				x[i] += ks[(s+i)%5]
+			}
+		}
+	}
+	ctr[0]++
+	if ctr[0] == 0 {
+		ctr[1]++
+		if ctr[1] == 0 {
+			ctr[2]++
+			if ctr[2] == 0 {
+				ctr[3]++
+			}
+		}
+	}
+	return x
+}
+
+func threefry2x64Block(ctr *[2]uint64, key [2]uint64) [2]uint64 {
+	const parity = uint64(0x1bd11bdaa9fc1a22)
+	ks := [3]uint64{key[0], key[1], parity ^ key[0] ^ key[1]}
+	rot := []int{16, 42, 12, 31, 16, 32, 24, 21, 16, 32, 24, 21, 16, 32}
+	x := *ctr
+	x[0] += ks[0]
+	x[1] += ks[1]
+	for r := 0; r < 13; r++ {
+		x[0] += x[1]
+		x[1] = rotl(x[1], uint(rot[r%14])) ^ x[0]
+		if (r+1)%4 == 0 {
+			s := (r + 1) / 4
+			for i := 0; i < 2; i++ {
+				x[i] += ks[(s+i)%3]
+			}
+		}
+	}
+	ctr[0]++
+	if ctr[0] == 0 {
+		ctr[1]++
+	}
+	return x
+}
+
+func threefryVectors() {
+	var c [4]uint64
+	var all []uint64
+	for i := 0; i < 2; i++ {
+		out := threefry4x64Block(&c, [2]uint64{0, 0})
+		all = append(all, out[:]...)
+	}
+	add("threefry", "threefry4x64_zero", all)
+
+	var c2 [2]uint64
+	all = nil
+	for i := 0; i < 4; i++ {
+		out := threefry2x64Block(&c2, [2]uint64{0, 0})
+		all = append(all, out[:]...)
+	}
+	add("threefry", "threefry2x64_zero", all)
+
+	// 4x32: the same schedule over 32-bit words.
+	var c32 [4]uint32
+	all = nil
+	for i := 0; i < 2; i++ {
+		ks := [5]uint32{0, 0, 0, 0, 0x1bd11bda}
+		x := c32
+		for j := 0; j < 4; j++ {
+			x[j] += ks[j]
+		}
+		for r := 0; r < 20; r++ {
+			a := uint(threefryRot[(r%8)*2])
+			b := uint(threefryRot[(r%8)*2+1])
+			x[0] += x[1]
+			x[1] = rotl32(x[1], a%32) ^ x[0]
+			x[2] += x[3]
+			x[3] = rotl32(x[3], b%32) ^ x[2]
+			x[1], x[3] = x[3], x[1]
+			if (r+1)%4 == 0 {
+				s := (r + 1) / 4
+				for j := 0; j < 4; j++ {
+					x[j] += ks[(s+j)%5]
+				}
+			}
+		}
+		for _, v := range x {
+			all = append(all, uint64(v))
+		}
+		c32[0]++
+	}
+	add("threefry", "threefry4x32_zero", all)
+}
+
+// ---------------------------------------------------------------------------
+// well1024
+// ---------------------------------------------------------------------------
+
+func well1024Vectors() {
+	st := seedWords(1, 16)
+	s := make([]uint32, 32)
+	for i := 0; i < 16; i++ {
+		s[i*2] = uint32(st[i])
+		s[i*2+1] = uint32(st[i] >> 32)
+	}
+	state := make([]uint64, 0, 32)
+	for _, v := range s {
+		state = append(state, uint64(v))
+	}
+	idx := 0
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		a := s[idx]
+		c := s[(idx+24)&31]
+		b := a ^ c ^ (a << 8) ^ (c >> 19)
+		c2 := s[(idx+13)&31]
+		c2 ^= c2 << 4
+		a = b ^ c2
+		s[idx] = a
+		d := a ^ ((a << 14) & 0x97a5a5d8)
+		idx = (idx + 31) & 31
+		a2 := s[idx]
+		s[idx] = a2 ^ a ^ d ^ (a2 << 11) ^ (b << 23)
+		w = append(w, uint64(s[idx]))
+	}
+	add("well", "well1024_state", state)
+	add("well", "well1024_first", w)
+}
+
+// ---------------------------------------------------------------------------
+// sfmt
+// ---------------------------------------------------------------------------
+
+func sfmtRecursion(s []uint32, r, a, b, c, d int) {
+	a0, a1, a2, a3 := s[a], s[a+1], s[a+2], s[a+3]
+	c0, c1, c2, c3 := s[c], s[c+1], s[c+2], s[c+3]
+	x0 := a0 << 8
+	x1 := (a1 << 8) | (a0 >> 24)
+	x2 := (a2 << 8) | (a1 >> 24)
+	x3 := (a3 << 8) | (a2 >> 24)
+	y0 := (c0 >> 8) | (c1 << 24)
+	y1 := (c1 >> 8) | (c2 << 24)
+	y2 := (c2 >> 8) | (c3 << 24)
+	y3 := c3 >> 8
+	m := [4]uint32{0xdfffffef, 0xddfecb7f, 0xbffaffff, 0xbffffff6}
+	s[r] = a0 ^ x0 ^ ((s[b] >> 11) & m[0]) ^ y0 ^ (s[d] << 18)
+	s[r+1] = a1 ^ x1 ^ ((s[b+1] >> 11) & m[1]) ^ y1 ^ (s[d+1] << 18)
+	s[r+2] = a2 ^ x2 ^ ((s[b+2] >> 11) & m[2]) ^ y2 ^ (s[d+2] << 18)
+	s[r+3] = a3 ^ x3 ^ ((s[b+3] >> 11) & m[3]) ^ y3 ^ (s[d+3] << 18)
+}
+
+func sfmtGenAll(s []uint32) {
+	n := 156
+	r1, r2 := n-2, n-1
+	for i := 0; i < n-122; i++ {
+		sfmtRecursion(s, i*4, i*4, (i+122)*4, r1*4, r2*4)
+		r1, r2 = r2, i
+	}
+	for i := n - 122; i < n; i++ {
+		sfmtRecursion(s, i*4, i*4, (i+122-n)*4, r1*4, r2*4)
+		r1, r2 = r2, i
+	}
+}
+
+func sfmtVectors() {
+	s := make([]uint32, 624)
+	s[0] = 5489
+	for i := 1; i < 624; i++ {
+		s[i] = 1812433253*(s[i-1]^(s[i-1]>>30)) + uint32(i)
+	}
+	// period certification
+	parity := [4]uint32{0x00000001, 0, 0, 0x13c9e684}
+	inner := uint32(0)
+	for i := 0; i < 4; i++ {
+		inner ^= s[i] & parity[i]
+	}
+	for i := 16; i > 0; i >>= 1 {
+		inner ^= inner >> uint(i)
+	}
+	if inner&1 == 0 {
+		for i := 0; i < 4; i++ {
+			work := uint32(1)
+			for j := 0; j < 32; j++ {
+				if work&parity[i] != 0 {
+					s[i] ^= work
+					break
+				}
+				work <<= 1
+			}
+		}
+	}
+	w := make([]uint64, 0, 8)
+	idx := 624
+	for i := 0; i < 8; i++ {
+		if idx >= 624 {
+			sfmtGenAll(s)
+			idx = 0
+		}
+		w = append(w, uint64(s[idx]))
+		idx++
+	}
+	add("mt", "sfmt19937_5489", w)
+}
+
+// ---------------------------------------------------------------------------
+// classic
+// ---------------------------------------------------------------------------
+
+func classicVectors() {
+	// middle square, seed 0x9e3779b97f4a7c15
+	ms := uint64(0x9e3779b97f4a7c15)
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		p := ms * ms
+		ms = (p >> 16) & 0xffffffff
+		w = append(w, uint64(uint32(ms)))
+	}
+	add("classic", "middle_square_seed", []uint64{0x9e3779b97f4a7c15})
+	add("classic", "middle_square_first", w)
+
+	// middle product with the golden multiplier
+	mp := uint64(0x9e3779b97f4a7c15)
+	a := uint64(0x9e3779b97f4a7c15) | 1
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		p := mp * a
+		mp = (p >> 16) & 0xffffffff
+		w = append(w, uint64(uint32(mp)))
+	}
+	add("classic", "middle_product_first", w)
+
+	// middle square with the Weyl sequence
+	x := uint64(0x9e3779b97f4a7c15)
+	weyl := uint64(0)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		x = x*x + weyl
+		weyl += 0xb5ad4eceda1ce2a9
+		w = append(w, x)
+	}
+	add("classic", "middle_square_weyl_first", w)
+
+	// Collatz with the Weyl xor
+	c := uint64(0x9e3779b97f4a7c15)
+	weyl = 0
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		if c&1 == 1 {
+			c = 3*c + 1
+		} else {
+			c >>= 1
+		}
+		weyl += 0x9e3779b97f4a7c15
+		w = append(w, c^weyl)
+	}
+	add("classic", "collatz_weyl_first", w)
+
+	// Blum Blum Shub over the Blum integer 383 * 503
+	b := uint64(12345)
+	w = make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		b = (b * b) % 192649
+		w = append(w, uint64(uint32(b)))
+	}
+	add("classic", "bbs_first", w)
+}
+
+// ---------------------------------------------------------------------------
+// squares
+// ---------------------------------------------------------------------------
+
+func squaresVectors() {
+	key := seedWords(1, 4)
+	var ctr [4]uint64
+	w := make([]uint64, 0, 8)
+	for i := 0; i < 8; i++ {
+		x0 := ctr[0] + key[0]
+		x1 := ctr[1] + key[1]
+		x2 := ctr[2] + key[2]
+		x3 := ctr[3] + key[3]
+		a0 := x0*x0 + x1
+		a1 := x1*x1 + x2
+		a2 := x2*x2 + x3
+		a3 := x3*x3 + x0
+		b0 := a0*a0 + a3
+		b1 := a1*a1 + a0
+		b2 := a2*a2 + a1
+		b3 := a3*a3 + a2
+		out := (b0*b0 + b3) ^ (b1*b1 + b0) ^ (b2*b2 + b1) ^ (b3*b3 + b2)
+		w = append(w, out)
+		ctr[0]++
+		if ctr[0] == 0 {
+			ctr[1]++
+			if ctr[1] == 0 {
+				ctr[2]++
+				if ctr[2] == 0 {
+					ctr[3]++
+				}
+			}
+		}
+	}
+	add("squares", "squares_key", key)
+	add("squares", "squares_first", w)
 }

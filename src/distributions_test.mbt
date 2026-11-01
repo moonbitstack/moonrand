@@ -20,6 +20,14 @@ fn variance(xs : Array[Double]) -> Double {
 }
 
 ///|
+/// Whether `x` is within `tol` of `want`, in either direction: a one-sided
+/// check would pass a sampler that is off by a factor.
+fn near(x : Double, want : Double, tol : Double) -> Bool {
+  let d = x - want
+  d < tol && d > -tol
+}
+
+///|
 /// Pearson's chi-square statistic for `counts` against `expected` proportions.
 fn chi_square(
   counts : Array[Int32],
@@ -105,13 +113,13 @@ test "gamma_has_the_moments_of_a_gamma" {
   for i = 0; i < big.length(); i = i + 1 {
     big[i] = @moonrand.gammavariate(r, 2.0, 3.0)
   }
-  assert_true(mean(big) - 6.0 < 0.3)
-  assert_true(variance(big) - 18.0 < 2.0)
+  assert_true(near(mean(big), 6.0, 0.3))
+  assert_true(near(variance(big), 18.0, 2.0))
   let small = Array::make(20000, 0.0)
   for i = 0; i < small.length(); i = i + 1 {
     small[i] = @moonrand.gammavariate(r, 0.5, 2.0)
   }
-  assert_true(mean(small) - 1.0 < 0.2)
+  assert_true(near(mean(small), 1.0, 0.2))
 }
 
 ///|
@@ -121,7 +129,7 @@ test "beta_has_the_mean_of_a_beta" {
   for i = 0; i < xs.length(); i = i + 1 {
     xs[i] = @moonrand.betavariate(r, 2.0, 5.0)
   }
-  assert_true(mean(xs) - 2.0 / 7.0 < 0.02)
+  assert_true(near(mean(xs), 2.0 / 7.0, 0.02))
   for x in xs {
     assert_true(x > 0.0 && x < 1.0)
   }
@@ -134,14 +142,14 @@ test "poisson_has_the_mean_and_variance_of_a_poisson" {
   for i = 0; i < small.length(); i = i + 1 {
     small[i] = @moonrand.poisson(r, 4.0).to_double()
   }
-  assert_true(mean(small) - 4.0 < 0.15)
-  assert_true(variance(small) - 4.0 < 0.3)
+  assert_true(near(mean(small), 4.0, 0.15))
+  assert_true(near(variance(small), 4.0, 0.3))
   // The large-mean path, which the multiplication loop would never finish.
   let big = Array::make(5000, 0.0)
   for i = 0; i < big.length(); i = i + 1 {
     big[i] = @moonrand.poisson(r, 500.0).to_double()
   }
-  assert_true(mean(big) - 500.0 < 5.0)
+  assert_true(near(mean(big), 500.0, 5.0))
   assert_eq(@moonrand.poisson(r, 0.0), 0L)
 }
 
@@ -152,7 +160,7 @@ test "binomial_has_the_mean_of_a_binomial_and_its_edges" {
   for i = 0; i < xs.length(); i = i + 1 {
     xs[i] = @moonrand.binomialvariate(r, 10L, 0.3).to_double()
   }
-  assert_true(mean(xs) - 3.0 < 0.15)
+  assert_true(near(mean(xs), 3.0, 0.15))
   assert_eq(@moonrand.binomialvariate(r, 10L, 0.0), 0L)
   assert_eq(@moonrand.binomialvariate(r, 10L, 1.0), 10L)
   assert_eq(@moonrand.binomialvariate(r, 0L, 0.5), 0L)
@@ -165,14 +173,14 @@ test "triangular_peaks_where_it_is_told_and_spans_its_bounds" {
   for i = 0; i < mid.length(); i = i + 1 {
     mid[i] = @moonrand.triangular(r, low=0.0, high=1.0, mode=0.5)
   }
-  assert_true(mean(mid) - 0.5 < 0.02)
+  assert_true(near(mean(mid), 0.5, 0.02))
   // A triangular draw has mean (low + mode + high) / 3, so a peak at the low
   // end of [0, 4] has mean 4/3.
   let skewed = Array::make(20000, 0.0)
   for i = 0; i < skewed.length(); i = i + 1 {
     skewed[i] = @moonrand.triangular(r, low=0.0, high=4.0, mode=0.0)
   }
-  assert_true(mean(skewed) - 4.0 / 3.0 < 0.05)
+  assert_true(near(mean(skewed), 4.0 / 3.0, 0.05))
   for x in skewed {
     assert_true(x >= 0.0 && x <= 4.0)
   }
@@ -185,8 +193,8 @@ test "normal_has_the_moments_of_a_normal" {
   for i = 0; i < xs.length(); i = i + 1 {
     xs[i] = @moonrand.normalvariate(r, mu=3.0, sigma=2.0)
   }
-  assert_true(mean(xs) - 3.0 < 0.1)
-  assert_true(variance(xs) - 4.0 < 0.3)
+  assert_true(near(mean(xs), 3.0, 0.1))
+  assert_true(near(variance(xs), 4.0, 0.3))
 }
 
 ///|
@@ -197,13 +205,13 @@ test "weibull_and_pareto_have_the_moments_their_shapes_give" {
     w[i] = @moonrand.weibullvariate(r, 1.0, 2.0)
   }
   // The mean of a Weibull with shape 2 and scale 1 is Gamma(1.5) = 0.8862.
-  assert_true(mean(w) - 0.8862 < 0.02)
+  assert_true(near(mean(w), 0.8862, 0.02))
   let p = Array::make(20000, 0.0)
   for i = 0; i < p.length(); i = i + 1 {
     p[i] = @moonrand.paretovariate(r, 3.0)
   }
   // The mean of a Pareto with shape 3 is 3 / 2.
-  assert_true(mean(p) - 1.5 < 0.05)
+  assert_true(near(mean(p), 1.5, 0.05))
   for x in p {
     assert_true(x >= 1.0)
   }
@@ -221,5 +229,5 @@ test "vonmises_clusters_around_its_mean_angle" {
     assert_true(theta >= 0.0 && theta < 2.0 * 3.141592653589793)
     total = total + @math.cos(theta)
   }
-  assert_true(total / n.to_double() - 0.9018 < 0.02)
+  assert_true(near(total / n.to_double(), 0.9018, 0.02))
 }
