@@ -61,3 +61,24 @@ test "mt_seeding_is_reproducible_and_the_twist_fires" {
   }
   assert_eq(@mt.MT19937_64::seed_size(), 8)
 }
+
+///|
+/// SFMT with the same seed as the reference `init_genrand(5489)`.
+test "sfmt19937_runs_the_reference_stream" {
+  let g = @mt.Sfmt19937::with_word(5489U)
+  let out : Array[UInt64] = []
+  for _i = 0; _i < 8; _i = _i + 1 {
+    out.push(g.next_u32().to_uint64())
+  }
+  assert_eq(out, sfmt19937_5489)
+}
+
+///|
+test "sfmt19937_init_by_array_moves_and_repeats" {
+  let a = @mt.Sfmt19937::from_array([0x123U, 0x234U, 0x345U, 0x456U])
+  let b = @mt.Sfmt19937::from_array([0x123U, 0x234U, 0x345U, 0x456U])
+  for _i = 0; _i < 700; _i = _i + 1 {
+    assert_eq(a.next_u32(), b.next_u32())
+  }
+  assert_eq(@mt.Sfmt19937::seed_size(), 4)
+}
