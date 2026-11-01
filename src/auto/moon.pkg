@@ -11,3 +11,10 @@ import {
 import {
   "moonbitstack/moonseed/system",
 }
+
+options(
+  targets: {
+    "auto_test.mbt": [ "native", "js", "wasm" ],
+    "auto_wasmgc_test.mbt": [ "wasm-gc" ],
+  },
+)

@@ -1,6 +1,6 @@
-// Pseudo-random numbers and random algorithms. The default generator opens
-// from a seed you give it, or from platform entropy via `from_entropy`
-// (moonseed). Sampling and distributions themselves never touch the platform.
+// Pseudo-random numbers: the contract, the default generator, sampling and the
+// distributions. Nothing here touches the platform; `moonrand/auto` asks the
+// platform for a seed.
 import {
   "moonbitstack/moonrand/contract",
 }
@@ -11,12 +11,4 @@ import {
 
 import {
   "moonbitlang/core/math",
-}
-
-import {
-  "moonbitstack/moonseed",
-}
-
-import {
-  "moonbitstack/moonseed/system",
 }
