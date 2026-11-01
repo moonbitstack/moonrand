@@ -1,0 +1,8 @@
+// Squares: a counter-based generator with a key.
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
+}
