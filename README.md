@@ -1,7 +1,7 @@
 # moonrand
 
 Reproducible pseudo-random numbers: one default generator that needs no
-configuration, thirty-six more behind it when the algorithm matters, and the
+configuration, sixty-three more behind it when the algorithm matters, and the
 sampling and distribution functions Python's `random` names.
 
 ```moonbit nocheck
@@ -42,14 +42,22 @@ Every subpackage holds one family of algorithms, each type implementing the same
 | `moonrand/chacha` | `ChaCha8`, `ChaCha12`, `ChaCha20` |
 | `moonrand/xoshiro` | `Xoshiro256ss`, `Xoshiro256pp`, `Xoshiro256p`, `Xoshiro512ss`, `Xoshiro512pp`, `Xoshiro512p`, `Xoroshiro128p`, `Xoroshiro128pp`, `Xoroshiro128ss` |
 | `moonrand/pcg` | `Pcg32`, `Pcg64`, `Pcg64Dxsm` |
-| `moonrand/mt` | `MT19937`, `MT19937_64` |
+| `moonrand/mt` | `MT19937`, `MT19937_64`, `Sfmt19937` |
 | `moonrand/splitmix` | `SplitMix64` |
 | `moonrand/sfc` | `Sfc64` |
 | `moonrand/jsf` | `Jsf64` |
 | `moonrand/xorshift` | `Xorshift32`, `Xorshift64`, `Xorshift128`, `Xorshift128Plus`, `Xorwow` |
-| `moonrand/well` | `Well512` |
+| `moonrand/well` | `Well512`, `Well1024` |
 | `moonrand/lcg` | `Lcg64`, `Lcg48`, `MinStd`, `Qcg64`, `Ccg64`, `Icg32` |
 | `moonrand/chaos` | `Logistic`, `Tent`, `Sine`, `Chebyshev` |
+| `moonrand/lfsr` | `Lfsr64`, `Gfsr`, `Taus88`, `Lfsr113`, `Lfsr258` |
+| `moonrand/fib` | `AdditiveCongruential`, `LaggedFibonacci`, `AddWithCarry`, `SubtractWithBorrow`, `Ranlux24`, `Ranlux48` |
+| `moonrand/mrg` | `Mrg32k3a` |
+| `moonrand/lxm` | `L64X128`, `L64X256` |
+| `moonrand/philox` | `Philox4x32`, `Philox4x64` |
+| `moonrand/threefry` | `Threefry4x64`, `Threefry4x32`, `Threefry2x64` |
+| `moonrand/squares` | `Squares` |
+| `moonrand/classic` | `MiddleSquare`, `MiddleProduct`, `MiddleSquareWeyl`, `CollatzWeyl`, `Bbs` |
 
 Each type takes a seed of the size it announces, expands it through SplitMix64,
 and offers the reference constructor for a state you already have:
@@ -65,8 +73,9 @@ fn main {
 }
 ```
 
-Generators that can jump say so: `jump` and `long_jump` on the xoshiro family,
-`advance` on the counter-based ones (ChaCha, PCG, SplitMix64).
+Generators that can jump say so: `jump` and `long_jump` on the xoshiro and LXM
+families, `advance` on the counter-based ones (ChaCha, PCG, Philox, Threefry,
+Squares, SplitMix64, MRG32k3a).
 
 ## Sampling
 
