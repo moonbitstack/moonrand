@@ -1,0 +1,8 @@
+// MRG: multiple recursive generators over prime moduli.
+import {
+  "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
+}
