@@ -1,4 +1,8 @@
-// Marsaglia's xorshift generators, and the WebKit one built on them.
+// The xorshift generators.
 import {
   "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
 }
