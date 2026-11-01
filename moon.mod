@@ -8,9 +8,9 @@ repository = "https://github.com/moonbitstack/moonrand"
 
 license = "Apache-2.0"
 
-keywords = [ "random", "entropy", "csprng", "crypto", "moonbit" ]
+keywords = [ "random", "prng", "chacha", "xoshiro", "distributions", "moonbit" ]
 
-description = "Secure random bytes and unbiased sampling for MoonBit; never a seeded generator."
+description = "Reproducible pseudo-random generators, unbiased sampling and the common distributions for MoonBit."
 
 source = "src"
 
