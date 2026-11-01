@@ -26,8 +26,8 @@ pub fn SplitMix64::advance(self : SplitMix64, n : UInt64) -> Unit {
 
 ///|
 pub impl @contract.Rng for SplitMix64 with fn next_u64(self) -> UInt64 {
-  ignore(self.s)
-  abort("SplitMix64: no implementation yet")
+  self.s[0] = self.s[0] + 0x9E3779B97F4A7C15UL
+  @bits.mix64(self.s[0])
 }
 
 ///|
