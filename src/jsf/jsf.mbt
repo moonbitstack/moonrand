@@ -1,5 +1,6 @@
 ///|
-/// JSF64: four state words, a rotate and an add.
+/// JSF64: Jenkins' small fast generator — four words, one rotate per step, and
+/// a guaranteed period of at least 2^64.
 pub struct Jsf64 {
   priv s : FixedArray[UInt64]
 }
@@ -12,21 +13,28 @@ pub fn Jsf64::with_state(
   c : UInt64,
   d : UInt64,
 ) -> Jsf64 {
-  ignore((a, b, c, d))
-  { s: FixedArray::make(4, 0UL), }
+  { s: [a, b, c, d], }
 }
 
 ///|
-/// A generator seeded from a byte seed.
+/// A generator seeded from 32 bytes through SplitMix64.
 pub fn Jsf64::new(seed : BytesView) -> Jsf64 {
-  ignore(seed)
-  { s: FixedArray::make(4, 0UL), }
+  let w = @bits.seed_words(seed, 4)
+  Jsf64::with_state(w[0], w[1], w[2], w[3])
 }
 
 ///|
 pub impl @contract.Rng for Jsf64 with fn next_u64(self) -> UInt64 {
-  ignore(self.s)
-  abort("Jsf64: no implementation yet")
+  let a = self.s[0]
+  let b = self.s[1]
+  let c = self.s[2]
+  let d = self.s[3]
+  let e = a - ((b << 7) | (b >> 57))
+  self.s[0] = b ^ ((c << 13) | (c >> 51))
+  self.s[1] = c + ((d << 37) | (d >> 27))
+  self.s[2] = d + e
+  self.s[3] = e + self.s[0]
+  self.s[3]
 }
 
 ///|

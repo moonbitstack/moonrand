@@ -1,4 +1,8 @@
-// JSF: Jenkins' small fast generator, four words of state.
+// The jsf generators.
 import {
   "moonbitstack/moonrand/contract",
+}
+
+import {
+  "moonbitstack/moonrand/bits",
 }
