@@ -1,6 +1,6 @@
 name = "moonbitstack/moonrand"
 
-version = "0.1.1"
+version = "0.1.2"
 
 readme = "README.md"
 
@@ -8,7 +8,36 @@ repository = "https://github.com/moonbitstack/moonrand"
 
 license = "Apache-2.0"
 
-keywords = [ "random", "prng", "chacha", "xoshiro", "distributions", "moonbit" ]
+keywords = [
+  "random",
+  "rng",
+  "prng",
+  "pseudo-random",
+  "chacha",
+  "xoshiro",
+  "xorshift",
+  "pcg",
+  "mersenne-twister",
+  "mt19937",
+  "philox",
+  "threefry",
+  "splitmix",
+  "sfc",
+  "jsf",
+  "lcg",
+  "lfsr",
+  "lxm",
+  "mrg",
+  "well",
+  "squares",
+  "distributions",
+  "sampling",
+  "normal-distribution",
+  "shuffle",
+  "reproducible",
+  "seed",
+  "moonbit",
+]
 
 description = "Reproducible pseudo-random generators, unbiased sampling and the common distributions for MoonBit."
 
