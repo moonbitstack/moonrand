@@ -91,7 +91,7 @@ body::after{
 .hero{ position:relative; z-index:1; margin-top:10px; overflow:hidden }
 .hero__in{
   max-width:var(--maxw); margin:0 auto; padding:0 var(--gut);
-  display:grid; grid-template-columns:1fr auto; gap:40px; align-items:center;
+  display:grid; grid-template-columns:minmax(0,1fr) auto; gap:40px; align-items:center;
   min-height:min(70vh,600px);
 }
 .hero__tx{ max-width:540px; padding:22px 0 }
@@ -189,7 +189,7 @@ h2 small{
 /* ── Five tones ─────────────────────────────── */
 .tones{ margin:30px 0 0; border-top:.5px solid var(--k6) }
 .tone{
-  display:grid; grid-template-columns:74px 1fr 94px; gap:22px; align-items:center;
+  display:grid; grid-template-columns:74px minmax(0,1fr) 94px; gap:22px; align-items:center;
   padding:15px 0; border-bottom:.5px solid var(--k6);
 }
 .tone__chip{ display:block; width:74px; height:22px }
@@ -202,11 +202,11 @@ h2 small{
 .tone__u{ grid-column:2 / 4; margin-top:2px; font-size:13px; line-height:1.8; color:var(--k4) }
 
 /* ── Anatomy of the vessel ──────────────────── */
-.anat{ display:grid; grid-template-columns:1fr minmax(300px,430px); gap:64px; align-items:center; margin-top:34px }
+.anat{ display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,430px); gap:64px; align-items:center; margin-top:34px }
 .anat .dish{ width:100%; margin:0 }
 .anat__list{ list-style:none; margin:0; padding:0; counter-reset:n }
 .anat__list li{
-  display:grid; grid-template-columns:34px 1fr; gap:16px;
+  display:grid; grid-template-columns:34px minmax(0,1fr); gap:16px;
   padding:14px 0 15px; border-top:.5px solid var(--k6);
   font-size:14px; line-height:1.85; color:var(--k2);
 }
@@ -221,7 +221,7 @@ h2 small{
 }
 
 /* ── Three dishes ───────────────────────────── */
-.plates{ display:grid; grid-template-columns:repeat(3,1fr); gap:44px 34px; margin-top:38px }
+.plates{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:44px 34px; margin-top:38px }
 .plate{ display:block; text-align:center }
 .plate svg{ display:block; width:100%; height:auto }
 .plate__s{
@@ -233,7 +233,7 @@ h2 small{
 /* ── Colophon ───────────────────────────────── */
 .ins{ margin:30px 0 0 }
 .ins__row{
-  display:grid; grid-template-columns:1.16fr 1fr; gap:18px; align-items:baseline;
+  display:grid; grid-template-columns:1.16fr minmax(0,1fr); gap:18px; align-items:baseline;
   padding:13px 0 14px; border-bottom:.5px solid var(--k6);
   transition:background .12s linear;
 }
@@ -253,6 +253,7 @@ h2 small{
   letter-spacing:.14em; color:var(--k5); text-transform:uppercase;
 }
 .ins__row:hover{ background:rgba(198,210,223,.26) }
+.ins__g, .ins__sig{ overflow-wrap:anywhere }
 .ins__sig{ font-family:var(--mono); font-size:12px; color:var(--k1); line-height:1.75; letter-spacing:-.01em;
   text-indent:-1.1em; padding-left:1.1em }
 .ins__g{ font-family:var(--kai); font-size:14px; letter-spacing:.10em; color:var(--k3); line-height:1.8 }
@@ -287,7 +288,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 .tassel:focus-visible{ outline:.5px solid var(--k3); outline-offset:2px }
 .tassel.is-live{ cursor:grabbing }
 .tassel svg{ display:block; width:18px; height:54px; overflow:visible }
-.two{ display:grid; grid-template-columns:1fr 1.04fr; gap:48px; align-items:start }
+.two{ display:grid; grid-template-columns:minmax(0,1fr) 1.04fr; gap:48px; align-items:start }
 
 /* ── Inscription ────────────────────────────── */
 .foot{ padding:0 0 58px }
@@ -321,20 +322,20 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 .foot__next a{ display:block; margin-top:5px; color:var(--k2); text-decoration:none;
   border-bottom:.5px solid var(--k6); font-family:var(--mono); font-size:10.5px; letter-spacing:.12em }
 @media (max-width:1080px){
-  .hero__in{ grid-template-columns:1fr; gap:8px; min-height:0 }
+  .hero__in{ grid-template-columns:minmax(0,1fr); gap:8px; min-height:0 }
   .dish{ width:min(70vw,400px); margin:10px auto 0 }
-  .anat{ grid-template-columns:1fr; gap:34px }
+  .anat{ grid-template-columns:minmax(0,1fr); gap:34px }
   .anat .dish{ width:min(72vw,380px); margin:0 auto }
-  .two{ grid-template-columns:1fr; gap:32px }
-  .ins__row{ grid-template-columns:1fr; gap:5px }
+  .two{ grid-template-columns:minmax(0,1fr); gap:32px }
+  .ins__row{ grid-template-columns:minmax(0,1fr); gap:5px }
 }
 @media (max-width:760px){
   body{ font-size:15px }
   .bar .r{ display:none }
   .sec{ padding:52px 0 }
-  .plates{ grid-template-columns:1fr; gap:34px }
+  .plates{ grid-template-columns:minmax(0,1fr); gap:34px }
   .plate{ max-width:320px; margin:0 auto }
-  .tone{ grid-template-columns:56px 1fr 80px; gap:16px }
+  .tone{ grid-template-columns:56px minmax(0,1fr) 80px; gap:16px }
   .tone__chip{ width:56px; height:20px }
   .hero__tx{ padding:14px 0 0 }
 }
@@ -346,7 +347,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   font-family:var(--mono); font-size:12px; letter-spacing:.02em; color:var(--k2);
 }
 .install span{ color:var(--k5); letter-spacing:.16em; text-transform:uppercase; font-size:9.5px }
-.cols{ display:grid; grid-template-columns:repeat(3,1fr); gap:44px; margin-top:34px }
+.cols{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:44px; margin-top:34px }
 .col b{
   display:block; font-family:var(--mono); font-size:9.5px; font-weight:400;
   letter-spacing:.12em; color:var(--cin); margin-bottom:12px;
@@ -358,14 +359,14 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 .col p, .lim p{ margin:0; font-size:14px; line-height:1.95; color:var(--k3) }
 .limits{ margin-top:30px; border-top:.5px solid var(--k2) }
 .lim{
-  display:grid; grid-template-columns:230px 1fr; gap:34px; align-items:baseline;
+  display:grid; grid-template-columns:230px minmax(0,1fr); gap:34px; align-items:baseline;
   padding:16px 0 17px; border-bottom:.5px solid var(--k6);
 }
 .lim b{ font-weight:400; font-size:15px; letter-spacing:.10em; color:var(--k1) }
 .lim em{ font-style:normal; color:var(--k2); border-bottom:.5px solid var(--k5) }
 @media (max-width:900px){
-  .cols{ grid-template-columns:1fr; gap:26px }
-  .lim{ grid-template-columns:1fr; gap:6px }
+  .cols{ grid-template-columns:minmax(0,1fr); gap:26px }
+  .lim{ grid-template-columns:minmax(0,1fr); gap:6px }
 }
 </style>
 </head>
