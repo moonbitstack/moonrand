@@ -374,7 +374,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 <div class="sheet">
 
   <header class="bar">
-    <div><b>moonrand</b> <span class="bar__v"><span id="rev-value">0.1.2</span> · Apache-2.0</span></div>
+    <div><b data-zh="MoonRand">moonrand</b> <span class="bar__v"><span id="rev-value">0.1.2</span> · Apache-2.0</span></div>
     <div class="r">
       <a href="https://moonbitstack.github.io/moonseed/" id="x-link" data-zh="moonseed · 取熵">moonseed · entropy</a>
       <a href="#what" data-zh="概览">overview</a>
@@ -394,7 +394,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
     <div class="hero__in">
       <div class="hero__tx">
         <div class="eyebrow">moonbitstack / moonrand</div>
-        <h1>moonrand</h1>
+        <h1 data-zh="MoonRand">moonrand</h1>
         <p class="sub" data-zh="可播种的伪随机数发生器。">A seedable pseudo-random number generator.</p>
         <p class="lede" data-zh="核心是 ChaCha12，取样和分布都建在它上面，共用一个 &lt;b&gt;Rng&lt;/b&gt; 契约。三十二字节定下整条流；同一个种子在 native、JS、wasm、wasm-gc 上给出&lt;b&gt;同一串数&lt;/b&gt;。">
           ChaCha12 at the core, the sampling and distributions on top, all of it held to one
@@ -3174,7 +3174,7 @@ const I18N = (function(){
     document.documentElement.lang = (next === 'zh') ? 'zh-Hans' : 'en-US';
     document.body.setAttribute('data-lang', (next === 'zh') ? 'zh' : 'en');
     document.title = (next === 'zh')
-      ? 'moonrand — 可播种的伪随机数发生器'
+      ? 'MoonRand — 可播种的伪随机数发生器'
       : 'moonrand — a seedable stream';
     document.querySelectorAll('#lang button').forEach(function(b){
       b.classList.toggle('is-on', b.getAttribute('data-lang') === next);
