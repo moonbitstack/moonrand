@@ -271,43 +271,21 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 .code .k{ color:var(--k3) }
 .code .s{ color:var(--k3) }
 
-/* 代码横过界时，不装横杆：一支青花流苏挂在册页边上，往下拉即往后看。
-   绳一丝，结一粒，缚一道，裙幅自束处散开，锋梢渐隐。 */
+/* When the code runs past the edge there is no bar to drag: a tassel hangs at the
+   binding and pulls the page along. One cord, one bead, one bound waist, then the
+   fringe lets go of it and fades at the tips. */
 .code{ scrollbar-width:none; -ms-overflow-style:none }
 .code::-webkit-scrollbar{ display:none; width:0; height:0 }
 .tassel{
-  position:absolute; left:5px; top:12px; z-index:3;
-  width:14px; height:42px; padding:0; border:0; background:none;
-  cursor:ns-resize; touch-action:none;
-  transition:filter .12s linear;
+  position:absolute; left:3px; top:13px; z-index:3;
+  width:18px; height:54px; padding:0; border:0; background:none;
+  cursor:ns-resize; touch-action:none; opacity:.9;
+  transition:filter .12s linear, opacity .12s linear;
 }
-.tassel:hover{ filter:brightness(1.1) }
+.tassel:hover{ filter:brightness(1.09); opacity:1 }
 .tassel:focus-visible{ outline:.5px solid var(--k3); outline-offset:2px }
 .tassel.is-live{ cursor:grabbing }
-.tassel__cord{
-  position:absolute; left:50%; top:0; width:1px; height:11px; margin-left:-.5px;
-  background:linear-gradient(180deg, rgba(35,71,127,.12), rgba(35,71,127,.66));
-}
-.tassel__bead{
-  position:absolute; left:50%; top:9px; width:3.5px; height:3.5px; margin-left:-1.75px;
-  border-radius:50%;
-  background:radial-gradient(62% 58% at 34% 26%, #8AA5C8, #23477F 74%);
-  box-shadow:0 0 0 .5px rgba(35,71,127,.5);
-}
-.tassel__collar{
-  position:absolute; left:50%; top:13px; width:5px; height:2.5px; margin-left:-2.5px;
-  background:linear-gradient(180deg,#3A5F9B,#1D3D6E);
-  border-radius:.5px .5px 1px 1px;
-  box-shadow:0 0 0 .5px rgba(35,71,127,.35), 0 1px 1px rgba(24,40,60,.3);
-}
-.tassel__skirt{
-  position:absolute; left:50%; top:16px; width:15px; height:26px; margin-left:-7.5px;
-  background-image:repeating-linear-gradient(90deg,
-    rgba(35,71,127,.92) 0 .72px, rgba(35,71,127,0) .72px 1.55px);
-  clip-path:polygon(31% 0, 69% 0, 100% 100%, 0 100%);
-  -webkit-mask-image:linear-gradient(180deg, #000 0, #000 78%, rgba(0,0,0,.06) 100%);
-  mask-image:linear-gradient(180deg, #000 0, #000 78%, rgba(0,0,0,.06) 100%);
-}
+.tassel svg{ display:block; width:18px; height:54px; overflow:visible }
 .two{ display:grid; grid-template-columns:1fr 1.04fr; gap:48px; align-items:start }
 
 /* ── 款识 ─────────────────────────────────────── */
@@ -3054,8 +3032,62 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 /* ══════════════════════════════════════════════════════════════
    0. 语言：英文为默认，中文按需切换（与 moonseed 页同一套办法）
    ══════════════════════════════════════════════════════════════ */
-/* 流苏：挂在代码边上，往下拖即左右（或上下）看。
-   不另包一层 div —— 一包就改了栅格，代码自己会胀开。 */
+/* The tassel hangs at the edge of the code; drag it down and the rest comes into view.
+   It adds no wrapper element — a wrapper would change the grid and the code box would
+   grow. The fringe is drawn as SVG rather than a striped background: threads crowd at
+   the bound waist, then hang before they let go, no two the same length, all of them
+   fading along one gradient at the tips. */
+const TASSEL_W = 18;
+const TASSEL_H = 54;
+
+function tasselMarkup(){
+  let threads = "";
+  const n = 11;
+  const cx = TASSEL_W / 2;
+  const y1 = 10.4;
+  for (let i = 0; i < n; i++){
+    const t = i / (n - 1);                       /* 0 left tip → 1 right tip */
+    const jitter = ((i * 7) % 5) / 4;            /* a little apart, so it is not a comb */
+    const x1 = cx + (t - 0.5) * 4.4;             /* at the waist: tucked under the collar */
+    const x2 = cx + (t - 0.5) * (13.6 + jitter * 1.5);
+    const y2 = 44.6 + jitter * 4.0 - Math.abs(t - 0.5) * 1.6;
+    /* hang first, splay later: the control points hug the centre line */
+    const c = "C" + (x1 + (x2 - x1) * 0.26).toFixed(2) + " " + (y1 + (y2 - y1) * 0.38).toFixed(2) + " " +
+      (x1 + (x2 - x1) * 0.68).toFixed(2) + " " + (y1 + (y2 - y1) * 0.76).toFixed(2) + " ";
+    threads += '<path d="M' + x1.toFixed(2) + ' ' + y1 + ' ' + c +
+      x2.toFixed(2) + " " + y2.toFixed(2) + '" stroke="url(#tS)" stroke-width="' +
+      (0.56 + jitter * 0.12).toFixed(2) + '" stroke-linecap="round" fill="none"/>';
+  }
+  return '<svg viewBox="0 0 ' + TASSEL_W + ' ' + TASSEL_H + '" aria-hidden="true">' +
+    '<defs>' +
+      '<linearGradient id="tC" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="5">' +
+        '<stop offset="0" stop-color="#2E5887" stop-opacity=".05"/>' +
+        '<stop offset="1" stop-color="#2E5887" stop-opacity=".5"/>' +
+      '</linearGradient>' +
+      '<radialGradient id="tB" cx=".36" cy=".26" r=".8">' +
+        '<stop offset="0" stop-color="#B9CDE5"/>' +
+        '<stop offset=".55" stop-color="#3C639B"/>' +
+        '<stop offset="1" stop-color="#16283F"/>' +
+      '</radialGradient>' +
+      '<linearGradient id="tS" gradientUnits="userSpaceOnUse" x1="0" y1="10" x2="0" y2="48">' +
+        '<stop offset="0" stop-color="#22446F" stop-opacity=".84"/>' +
+        '<stop offset=".42" stop-color="#2A4E82" stop-opacity=".82"/>' +
+        '<stop offset=".72" stop-color="#38609A" stop-opacity=".70"/>' +
+        '<stop offset=".90" stop-color="#4270A4" stop-opacity=".40"/>' +
+        '<stop offset="1" stop-color="#4270A4" stop-opacity=".04"/>' +
+      '</linearGradient>' +
+    '</defs>' +
+    /* the cord: down from the top edge, gaining colour only near the knot */
+    '<path d="M' + cx + ' 0V5" stroke="url(#tC)" stroke-width=".9" fill="none"/>' +
+    /* the bead: one porcelain bead, its highlight up and to the left */
+    '<circle cx="' + cx + '" cy="6.5" r="1.9" fill="url(#tB)"/>' +
+    /* the collar: one pressed line, holding the fringe at the waist */
+    '<rect x="' + (cx - 2.5) + '" y="8.8" width="5" height="1.9" rx=".5" fill="#23477F"/>' +
+    '<path d="M' + (cx - 2.35) + ' 9.22h4.7" stroke="#9BB8DA" stroke-width=".36" stroke-opacity=".5"/>' +
+    threads +
+  '</svg>';
+}
+
 function wireTassels(){
   document.querySelectorAll(".tassel").forEach(function(t){ t.remove(); });
   document.querySelectorAll(".code").forEach(function(code){
@@ -3073,14 +3105,13 @@ function wireTassels(){
     t.setAttribute("role", "slider");
     t.setAttribute("aria-orientation", "vertical");
     t.setAttribute("aria-label", "pull to read the rest");
-    t.innerHTML = '<i class="tassel__cord"></i><i class="tassel__bead"></i>' +
-                  '<i class="tassel__collar"></i><i class="tassel__skirt"></i>';
+    t.innerHTML = tasselMarkup();
     host.appendChild(t);
 
-    const left = code.offsetLeft + 5;
-    const top0 = code.offsetTop + 12;
+    const left = code.offsetLeft - 6;
+    const top0 = code.offsetTop + 14;
     let p = 0;
-    const travel = function(){ return Math.max(1, code.clientHeight - 24 - 42); };
+    const travel = function(){ return Math.max(1, code.clientHeight - 26 - TASSEL_H); };
     const paint = function(){
       t.style.left = left + "px";
       t.style.top = (top0 + p * travel()) + "px";
