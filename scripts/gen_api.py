@@ -33,7 +33,7 @@ ROWS = [
         "kind": "fn",
         "key": "seeded",
         "sig": ["pub fn seeded(seed : BytesView) -> StdRng"],
-        "zh": "从三十二字节开始。字节相同，流就相同，四个后端逐位一致。",
+        "zh": "从三十二字节开始。字节相同，流就相同；四个后端上逐位一致。",
         "en": "Start from thirty-two bytes. The same bytes give the same stream, bit for bit on all four backends.",
     },
     {
@@ -41,7 +41,7 @@ ROWS = [
         "kind": "fn",
         "key": "random",
         "sig": ["random(rng : R) -> Double"],
-        "zh": "[0, 1) 之间的实数，正好五十三位。取法同 Python 的 random()。",
+        "zh": "[0, 1) 之间的实数，五十三位精度，取法与 Python 的 random() 相同。",
         "en": "A real in [0, 1) with exactly fifty-three bits, the same draw as Python's random().",
     },
     {
@@ -49,7 +49,7 @@ ROWS = [
         "kind": "fn",
         "key": "uniform",
         "sig": ["uniform(rng : R, low : Double, high : Double) -> Double"],
-        "zh": "[low, high) 之间，处处一样密。low 比 high 大也照收，两头自己换。",
+        "zh": "[low, high) 上的均匀实数。low 比 high 大也照收，两端自行调换。",
         "en": "Anywhere in [low, high), equally thick. Reversed ends are taken as given.",
     },
     {
@@ -57,7 +57,7 @@ ROWS = [
         "kind": "fn",
         "key": "randint",
         "sig": ["randint(rng : R, low : Int64, high : Int64) -> Int64"],
-        "zh": "整数，两端都算。high 小于 low 时返回 low。",
+        "zh": "闭区间 [low, high] 上的整数。high 小于 low 时原样返回 low。",
         "en": "An integer, both ends included. A high below low returns low.",
     },
     {
@@ -65,7 +65,7 @@ ROWS = [
         "kind": "fn",
         "key": "randrange",
         "sig": ["randrange(rng : R, stop : Int64, start~ : Int64 = 0, step? : Int64) -> Int64"],
-        "zh": "整数，右端不算；起点和步长可选。空范围或步长为零就中止。",
+        "zh": "左闭右开的整数，起点和步长可选。范围为空或步长为零则中止。",
         "en": "An integer, right end excluded, with an optional start and step. An empty range or a zero step aborts.",
     },
     {
@@ -73,7 +73,7 @@ ROWS = [
         "kind": "fn",
         "key": "getrandbits",
         "sig": ["getrandbits(rng : R, k : Int32) -> UInt64"],
-        "zh": "取低 k 位，一位不多。k 超过六十四就把整字给你。",
+        "zh": "取低 k 位。k 超过 64 时返回整个字。",
         "en": "The low k bits, not one more. Above sixty-four, the whole word comes back.",
     },
     {
@@ -81,7 +81,7 @@ ROWS = [
         "kind": "fn",
         "key": "choice",
         "sig": ["choice(rng : R, items : ArrayView[T]) -> T?"],
-        "zh": "抽一个；空的就返回 None，不编一个出来。",
+        "zh": "从中抽一个；数组为空则返回 None，不凭空造一个。",
         "en": "Take one, or None when there is nothing to take.",
     },
     {
@@ -89,7 +89,7 @@ ROWS = [
         "kind": "fn",
         "key": "choices",
         "sig": ["choices(rng : R, items : ArrayView[T], k~ : Int32 = 1, weights? : ArrayView[Double]) -> Array[T]"],
-        "zh": "有放回地抽 k 次；给了权重就按权重抽。权重全零当作没给。",
+        "zh": "有放回地抽 k 次；给了权重就按权重抽，权重全为零视同未给。",
         "en": "Take k with replacement; give weights and the draws follow them. All-zero weights are read as none.",
     },
     {
@@ -97,7 +97,7 @@ ROWS = [
         "kind": "fn",
         "key": "sample",
         "sig": ["sample(rng : R, items : ArrayView[T], k : Int32) -> Array[T]"],
-        "zh": "不放回地抽 k 个，不重复。k 超过元素个数就全取。",
+        "zh": "不放回地抽 k 个，互不重复。k 超过元素个数时全部取出。",
         "en": "Take k without replacement, no repeats. A k past the end takes all of them.",
     },
     {
@@ -105,7 +105,7 @@ ROWS = [
         "kind": "fn",
         "key": "shuffle",
         "sig": ["shuffle(rng : R, a : Array[T]) -> Unit"],
-        "zh": "就地打乱。元素一个不少，位置全换。",
+        "zh": "就地打乱顺序，元素一个不少。",
         "en": "Shuffle in place. Every element stays, no position does.",
     },
     {
@@ -113,7 +113,7 @@ ROWS = [
         "kind": "fn",
         "key": "gauss",
         "sig": ["gauss(rng : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -> Double"],
-        "zh": "一次正态，Box–Muller 法，中心在 mu，宽为 sigma。",
+        "zh": "一次正态抽样，Box–Muller 法；均值为 mu，标准差为 sigma。",
         "en": "One normal draw by Box–Muller, centred on mu, as wide as sigma.",
     },
     {
@@ -121,7 +121,7 @@ ROWS = [
         "kind": "fn",
         "key": "expovariate",
         "sig": ["expovariate(rng : R, lambd : Double) -> Double"],
-        "zh": "一次指数，率为 lambda，均值是它的倒数。lambda 不为正就中止。",
+        "zh": "一次指数抽样，比率为 lambda，均值为其倒数。lambda 不为正时中止。",
         "en": "One exponential draw at rate lambda, mean its reciprocal. A non-positive rate aborts.",
     },
     {
@@ -129,7 +129,7 @@ ROWS = [
         "kind": "fn",
         "key": "lognormvariate",
         "sig": ["lognormvariate(rng : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -> Double"],
-        "zh": "一次对数正态：取正态，再取指数。",
+        "zh": "一次对数正态抽样：先取正态，再取指数。",
         "en": "One lognormal draw: a normal draw, exponentiated.",
     },
     {
@@ -137,7 +137,7 @@ ROWS = [
         "kind": "alias",
         "key": "StdRng",
         "sig": ["pub type StdRng = @chacha.ChaCha12"],
-        "zh": "默认生成器的名字。要换默认，改这一行，全库跟着换。",
+        "zh": "默认生成器的别名。换掉这一行，全库的默认算法随之改变。",
         "en": "The default generator's name. Change this line and the whole library follows.",
     },
     {
@@ -151,7 +151,7 @@ ROWS = [
             "  fn fill(Self, buf : FixedArray[Byte]) -> Unit = _",
             "}",
         ],
-        "zh": "每个生成器都要守的约：交出均匀的机器字。只要自己实现 next_u64，另外两个有默认。",
+        "zh": "所有生成器共守的约定：交出均匀的机器字。自己实现 next_u64 即可，另外两个方法有默认实现。",
         "en": "The contract every generator keeps: uniform machine words. Only next_u64 is yours to write; the other two have defaults.",
     },
     {
@@ -159,7 +159,7 @@ ROWS = [
         "kind": "trait",
         "key": "Secure",
         "sig": ["pub(open) trait Secure : Rng {}"],
-        "zh": "「可用于密码学」的标记。Philox 和 PCG 统计上过关，不带这个标记。",
+        "zh": "标记「可用于密码学」。Philox 和 PCG 的统计性质尚可，但不带这个标记。",
         "en": "A marker for generators fit for cryptography. Philox and PCG pass the statistics and do not carry it.",
     },
     {
@@ -172,7 +172,7 @@ ROWS = [
             "  fn seed_size() -> Int32",
             "}",
         ],
-        "zh": "能从种子重建的生成器，用来复现一次运行。种子多长，由 seed_size 自己说。",
+        "zh": "能从种子重建的生成器，用于复现同一次运行。种子长度由 seed_size 说明。",
         "en": "A generator rebuilt from a seed, for reproducible runs. seed_size says how many bytes it wants.",
     },
     {
@@ -186,7 +186,7 @@ ROWS = [
             "next_u32() -> UInt32 · next_u64() -> UInt64 · fill(buf : FixedArray[Byte])",
         ],
         "covers": ["ChaCha8", "ChaCha8::new", "ChaCha8::with_nonce", "ChaCha8::next_u32", "ChaCha8::next_u64", "ChaCha8::fill"],
-        "zh": "八轮。快，余裕最薄，宜于不涉密钥之处。",
+        "zh": "八轮 ChaCha：最快，安全余量也最小，适合不涉及密钥的场合。",
         "en": "Eight rounds: fastest, thinnest margin, for places no key passes through.",
     },
     {
@@ -200,7 +200,7 @@ ROWS = [
             "next_u32() -> UInt32 · next_u64() -> UInt64 · fill(buf : FixedArray[Byte])",
         ],
         "covers": ["ChaCha12", "ChaCha12::new", "ChaCha12::with_nonce", "ChaCha12::next_u32", "ChaCha12::next_u64", "ChaCha12::fill"],
-        "zh": "十二轮，默认之选。速度与余裕之间，取其中。",
+        "zh": "十二轮，默认选择：在速度与安全余量之间折中。",
         "en": "Twelve rounds, the default: the middle of the road between speed and margin.",
     },
     {
@@ -214,7 +214,7 @@ ROWS = [
             "next_u32() -> UInt32 · next_u64() -> UInt64 · fill(buf : FixedArray[Byte])",
         ],
         "covers": ["ChaCha20", "ChaCha20::new", "ChaCha20::with_nonce", "ChaCha20::next_u32", "ChaCha20::next_u64", "ChaCha20::fill"],
-        "zh": "二十轮，RFC 8439 之数。余裕最厚，速度最让。",
+        "zh": "二十轮，即 RFC 8439 的轮数：安全余量最大，速度最慢。",
         "en": "Twenty rounds, RFC 8439's count: the widest margin, the least speed.",
     },
 ]
@@ -227,7 +227,7 @@ ROWS += [
         "kind": "fn",
         "key": "gammavariate",
         "sig": ["gammavariate(rng : R, alpha : Double, beta : Double) -> Double"],
-        "zh": "一次伽马，Marsaglia–Tsang 法：形状 alpha，尺度 beta。",
+        "zh": "一次伽马抽样，Marsaglia–Tsang 法；形状为 alpha，尺度为 beta。",
         "en": "One gamma draw by Marsaglia-Tsang: shape alpha, scale beta.",
     },
     {
@@ -235,7 +235,7 @@ ROWS += [
         "kind": "fn",
         "key": "betavariate",
         "sig": ["betavariate(rng : R, alpha : Double, beta : Double) -> Double"],
-        "zh": "一次贝塔：两个伽马相除，落在 (0, 1)。",
+        "zh": "一次贝塔抽样：两个伽马相除，结果落在 (0, 1)。",
         "en": "One beta draw: two gamma draws, one over their sum, in (0, 1).",
     },
     {
@@ -243,7 +243,7 @@ ROWS += [
         "kind": "fn",
         "key": "poisson",
         "sig": ["poisson(rng : R, mu : Double) -> Int64"],
-        "zh": "一次泊松，均值为 mu。小均值走乘法，大均值走变换拒绝，各走各的快路。",
+        "zh": "一次泊松抽样，均值为 mu。均值小时走乘法，均值大时走变换拒绝，各走各的快路。",
         "en": "One Poisson draw with mean mu: multiplication below thirty, transformed rejection above it.",
     },
     {
@@ -251,7 +251,7 @@ ROWS += [
         "kind": "fn",
         "key": "binomialvariate",
         "sig": ["binomialvariate(rng : R, n : Int64, p : Double) -> Int64"],
-        "zh": "n 次试验里成功几次，每次成功率 p。逐项反演，不做近似。",
+        "zh": "n 次独立试验里的成功次数，单次成功率为 p。逐项反演，不做近似。",
         "en": "The number of successes in n trials of probability p, by inverting the distribution term by term.",
     },
     {
@@ -259,7 +259,7 @@ ROWS += [
         "kind": "fn",
         "key": "triangular",
         "sig": ["triangular(rng : R, low~ : Double = 0.0, high~ : Double = 1.0, mode? : Double) -> Double"],
-        "zh": "一次三角，峰在 mode；不给就取中点。",
+        "zh": "一次三角分布抽样，峰在 mode；不给则取中点。",
         "en": "One triangular draw peaking at mode, the midpoint when it is not given.",
     },
     {
@@ -267,7 +267,7 @@ ROWS += [
         "kind": "fn",
         "key": "vonmisesvariate",
         "sig": ["vonmisesvariate(rng : R, mu : Double, kappa : Double) -> Double"],
-        "zh": "圆上的一抽，平均角 mu，聚集度 kappa，落在 [0, 2π)。",
+        "zh": "圆周上的一次抽样，平均角为 mu，聚集度为 kappa，结果在 [0, 2π) 内。",
         "en": "One draw on the circle, mean angle mu, concentration kappa, in [0, 2 pi).",
     },
     {
@@ -275,7 +275,7 @@ ROWS += [
         "kind": "fn",
         "key": "paretovariate",
         "sig": ["paretovariate(rng : R, alpha : Double) -> Double"],
-        "zh": "一次帕累托，形状 alpha；尾巴长，没有上界。",
+        "zh": "一次帕累托抽样，形状参数 alpha；尾部很长，没有上界。",
         "en": "One Pareto draw of shape alpha: a long tail with no upper bound.",
     },
     {
@@ -283,7 +283,7 @@ ROWS += [
         "kind": "fn",
         "key": "weibullvariate",
         "sig": ["weibullvariate(rng : R, alpha : Double, beta : Double) -> Double"],
-        "zh": "一次威布尔，尺度 alpha，形状 beta。",
+        "zh": "一次威布尔抽样，尺度为 alpha，形状为 beta。",
         "en": "One Weibull draw, scale alpha, shape beta.",
     },
     {
@@ -291,7 +291,7 @@ ROWS += [
         "kind": "fn",
         "key": "normalvariate",
         "sig": ["normalvariate(rng : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -> Double"],
-        "zh": "一次正态，Kinderman–Monahan 比值法；同一个种子，流和 gauss 不一样。",
+        "zh": "一次正态抽样，Kinderman–Monahan 比值法。同一个种子，走势与 gauss 不同。",
         "en": "One normal draw by Kinderman-Monahan; the same seed gives a different stream than gauss.",
     },
     {
@@ -299,7 +299,7 @@ ROWS += [
         "kind": "fn",
         "key": "ChaCha12::advance",
         "sig": ["pub fn ChaCha12::advance(self : ChaCha12, n : UInt64) -> Unit"],
-        "zh": "向前跳 n 个 64 位字：只动计数器，不逐个生成。",
+        "zh": "向前跳 n 个 64 位字：只移动计数器，不逐个生成。",
         "en": "Skip n 64-bit words by moving the counter, not by drawing them.",
     },
     {
@@ -307,7 +307,7 @@ ROWS += [
         "kind": "fn",
         "key": "ChaCha8::advance",
         "sig": ["pub fn ChaCha8::advance(self : ChaCha8, n : UInt64) -> Unit"],
-        "zh": "同 ChaCha12：跳 n 个字。",
+        "zh": "与 ChaCha12 相同：向前跳 n 个字。",
         "en": "As ChaCha12: skip n words.",
     },
     {
@@ -315,7 +315,7 @@ ROWS += [
         "kind": "fn",
         "key": "ChaCha20::advance",
         "sig": ["pub fn ChaCha20::advance(self : ChaCha20, n : UInt64) -> Unit"],
-        "zh": "同 ChaCha12：跳 n 个字。",
+        "zh": "与 ChaCha12 相同：向前跳 n 个字。",
         "en": "As ChaCha12: skip n words.",
     },
     {
@@ -323,7 +323,7 @@ ROWS += [
         "kind": "fn",
         "key": "rng",
         "sig": ["pub fn rng() -> @moonrand.StdRng raise @moonseed.Unavailable"],
-        "zh": "一次导入，一次调用：向平台要三十二字节，交给默认生成器。没有熵就 raise。",
+        "zh": "一次导入，一次调用：向平台要三十二字节，交给默认生成器。取不到熵时 raise。",
         "en": "One import, one call: ask the platform for 32 bytes and hand them to the default generator. No entropy, no stream.",
     },
     {
@@ -331,7 +331,7 @@ ROWS += [
         "kind": "fn",
         "key": "mix64",
         "sig": ["pub fn mix64(z : UInt64) -> UInt64"],
-        "zh": "SplitMix64 的收尾函数：三段异或移位，两个奇乘子，一个字进、一个字出。",
+        "zh": "SplitMix64 的收尾函数：三段异或移位，两个奇乘子，输入输出各一个字。",
         "en": "The SplitMix64 finalizer: three shifted xors and two odd multipliers, one word to one word.",
     },
     {
@@ -339,7 +339,7 @@ ROWS += [
         "kind": "fn",
         "key": "mul_hi",
         "sig": ["pub fn mul_hi(a : UInt64, b : UInt64) -> UInt64"],
-        "zh": "两个字相乘的高半，不靠 128 位类型：拆成四个半字再进位。",
+        "zh": "求两个字相乘的高半，不依赖 128 位类型：拆成四个半字再处理进位。",
         "en": "The high half of a 64-bit product, without a 128-bit type: four half-word products and a carry.",
     },
     {
@@ -355,7 +355,7 @@ ROWS += [
         "kind": "fn",
         "key": "seed_words",
         "sig": ["pub fn seed_words(seed : BytesView, n : Int32) -> FixedArray[UInt64]"],
-        "zh": "把种子摊成 n 个状态字：先折进 SplitMix64，再往前跑。每个字节都算数。",
+        "zh": "把种子摊成 n 个状态字：先折进 SplitMix64，再依次往后跑。",
         "en": "Turn a seed into n state words: fold the bytes into SplitMix64, then run it forward. Every byte counts.",
     },
 ]
@@ -390,7 +390,7 @@ GEN_PKGS = [
 ]
 
 TYPE_DOC = {
-    "ChaCha8": ("Eight rounds of ChaCha; fastest, narrowest margin.", "八轮 ChaCha，最快，安全余量也最小。"),
+    "ChaCha8": ("Eight rounds of ChaCha; fastest, narrowest margin.", "八轮 ChaCha：最快，安全余量也最小。"),
     "ChaCha12": ("Twelve rounds, the library's default.", "十二轮，本库的默认。"),
     "ChaCha20": ("Twenty rounds, the RFC's count.", "二十轮，RFC 8439 的轮数。"),
     "Xoshiro256ss": ("A 256-bit state, a scrambled product as the output.", "256 位状态，输出是两个字的打散乘积。"),
@@ -399,7 +399,7 @@ TYPE_DOC = {
     "Xoshiro512ss": ("The 512-bit form of xoshiro256**.", "xoshiro256** 的 512 位版本。"),
     "Xoshiro512pp": ("The 512-bit form of xoshiro256++.", "xoshiro256++ 的 512 位版本。"),
     "Xoshiro512p": ("The 512-bit form of xoshiro256+.", "xoshiro256+ 的 512 位版本。"),
-    "Xoroshiro128p": ("Two words of state, an addition as the output.", "两个字的状态，输出就是相加。"),
+    "Xoroshiro128p": ("Two words of state, an addition as the output.", "两个字的状态，输出为两者相加。"),
     "Xoroshiro128pp": ("Two words of state, a rotated sum as the output.", "两个字的状态，输出是旋转后相加。"),
     "Xoroshiro128ss": ("Two words of state, a scrambled product as the output.", "两个字的状态，输出是打散的乘积。"),
     "Pcg32": ("A 64-bit LCG, 32 bits of permuted output.", "64 位线性同余，输出取 32 位再打散。"),
@@ -407,13 +407,13 @@ TYPE_DOC = {
     "Pcg64Dxsm": ("A 128-bit LCG with the double-xorshift-multiply output.", "128 位线性同余，双异或乘置换。"),
     "MT19937": ("The 32-bit Mersenne Twister.", "32 位梅森旋转。"),
     "MT19937_64": ("The 64-bit Mersenne Twister.", "64 位梅森旋转。"),
-    "SplitMix64": ("A counter through the SplitMix64 finalizer.", "一个计数器过 SplitMix64 的收尾函数。"),
+    "SplitMix64": ("A counter through the SplitMix64 finalizer.", "一个计数器，过 SplitMix64 收尾。"),
     "Sfc64": ("Three words and a counter, added and shifted.", "三个字加一个计数器，相加再移位。"),
     "Jsf64": ("Jenkins' small fast generator: four words, one rotate.", "Jenkins 的小快生成器：四个字，一次旋转。"),
-    "Xorshift32": ("One 32-bit word, three xorshifts.", "32 位的一个字，三次异或移位。"),
-    "Xorshift64": ("One 64-bit word, three xorshifts.", "64 位的一个字，三次异或移位。"),
+    "Xorshift32": ("One 32-bit word, three xorshifts.", "一个 32 位字，三次异或移位。"),
+    "Xorshift64": ("One 64-bit word, three xorshifts.", "一个 64 位字，三次异或移位。"),
     "Xorshift128": ("Four 32-bit words, the original 128-bit xorshift.", "四个字，最早的 128 位 xorshift。"),
-    "Xorshift128Plus": ("Two 64-bit words, their sum as the output.", "两个 64 位字，输出就是相加。"),
+    "Xorshift128Plus": ("Two 64-bit words, their sum as the output.", "两个 64 位字，输出为两字相加。"),
     "Xorwow": ("Xorshift128 with a Weyl increment added.", "异或移位，再叠一个 Weyl 增量。"),
     "Well512": ("Sixteen words, period 2^512-1.", "十六个字，周期 2^512-1。"),
     "Lcg64": ("A linear congruential generator modulo 2^64.", "模 2^64 的线性同余。"),
@@ -428,7 +428,7 @@ TYPE_DOC = {
     "Chebyshev": ("x := cos(n acos x).", "x := cos(n arccos x)。"),
     "Lfsr64": ("A 64-bit Galois shift register.", "64 位 Galois 移位寄存器。"),
     "Gfsr": ("Generalized feedback over 250 words.", "250 个字上的广义反馈。"),
-    "Taus88": ("Three Tausworthe registers, xored.", "三个 Tausworthe 寄存器异或。"),
+    "Taus88": ("Three Tausworthe registers, xored.", "三个 Tausworthe 寄存器异或合成。"),
     "Lfsr113": ("Four linear feedback registers, period near 2^113.", "四个线性反馈寄存器，周期接近 2^113。"),
     "Lfsr258": ("Five linear feedback registers over 64-bit words.", "五个 64 位线性反馈寄存器。"),
     "AdditiveCongruential": ("x(n) = x(n-55) + x(n-24).", "x(n) = x(n-55) + x(n-24)。"),
@@ -436,12 +436,12 @@ TYPE_DOC = {
     "AddWithCarry": ("Lag 55 addition with a carry bit.", "滞后 55 的加法，带进位。"),
     "SubtractWithBorrow": ("Lag 55 subtraction with a borrow bit.", "滞后 55 的减法，带借位。"),
     "Ranlux24": ("Subtract-with-borrow over 24-bit words, discarding most.", "24 位字上的借位减法，大部分输出丢掉。"),
-    "Ranlux48": ("The same over 48-bit words.", "同样的借位减法，字宽 48 位。"),
+    "Ranlux48": ("The same over 48-bit words.", "同为借位减法，字宽 48 位。"),
     "Mrg32k3a": ("Two order-three recurrences over primes, subtracted.", "两个三阶素数递推相减。"),
-    "L64X128": ("A 64-bit LCG added to xoroshiro128+.", "64 位线性同余加 xoroshiro128+。"),
-    "L64X256": ("A 64-bit LCG added to xoshiro256+.", "64 位线性同余加 xoshiro256+。"),
+    "L64X128": ("A 64-bit LCG added to xoroshiro128+.", "64 位线性同余，与 xoroshiro128+ 相加。"),
+    "L64X256": ("A 64-bit LCG added to xoshiro256+.", "64 位线性同余，与 xoshiro256+ 相加。"),
     "Philox4x32": ("Four 32-bit counter words, ten rounds.", "四个 32 位计数器字，十轮。"),
-    "Philox4x64": ("The same round over 64-bit words.", "同样的轮，字宽 64 位。"),
+    "Philox4x64": ("The same round over 64-bit words.", "同样的轮数，字宽 64 位。"),
     "Threefry4x64": ("Four 64-bit counter words, twenty rounds, no multiply.", "四个 64 位字，二十轮，不用乘法。"),
     "Threefry4x32": ("The same schedule over 32-bit words.", "同样的轮序，字宽 32 位。"),
     "Threefry2x64": ("Two counter words, thirteen rounds.", "两个字，十三轮。"),
@@ -450,29 +450,29 @@ TYPE_DOC = {
     "MiddleProduct": ("Multiply by a constant, keep the middle bits.", "乘一个常数之后取中。"),
     "MiddleSquareWeyl": ("Middle square plus a Weyl sequence.", "平方取中，再叠一个 Weyl 序列。"),
     "CollatzWeyl": ("The Collatz map xored with a Weyl sequence.", "Collatz 映射与 Weyl 序列异或。"),
-    "Bbs": ("The square modulo a Blum integer.", "模 Blum 整数做平方。"),
+    "Bbs": ("The square modulo a Blum integer.", "对 Blum 整数取模做平方。"),
     "Sfmt19937": ("The SIMD-oriented Fast Mersenne Twister.", "面向 SIMD 的快速梅森旋转。"),
     "Well1024": ("Thirty-two words, period 2^1024-1.", "三十二个字，周期 2^1024-1。"),
 }
 
 ITEM_DOC = {
-    "new": ("Seed it: the bytes go through SplitMix64, a short seed padded.", "用种子起笔：字节过 SplitMix64 展开，种子短就补零。"),
-    "from_state": ("Start from a state you already have, unchanged.", "用已有的状态起笔，原封不动。"),
-    "with_state": ("Start from a state you already have, unchanged.", "用已有的状态起笔，原封不动。"),
-    "with_params": ("Start from the parameters and a seed.", "用参数和种子起笔。"),
-    "with_key": ("Start from a key, with the counter at zero.", "用密钥起笔，计数器从零开始。"),
-    "with_stream": ("Start where the reference seeding puts it.", "按参考实现的播种法起笔。"),
-    "with_word": ("Start from one word, the reference seeding.", "用一个字起笔，即参考实现的播种法。"),
-    "from_array": ("Start from a key array, the reference seeding.", "用键数组起笔，即参考实现的播种法。"),
-    "glibc": ("The parameters the C library uses.", "C 库用的参数。"),
+    "new": ("Seed it: the bytes go through SplitMix64, a short seed padded.", "以种子初始化：字节经 SplitMix64 展开，种子偏短则补零。"),
+    "from_state": ("Start from a state you already have, unchanged.", "直接以给定的状态初始化，不做改动。"),
+    "with_state": ("Start from a state you already have, unchanged.", "直接以给定的状态初始化，不做改动。"),
+    "with_params": ("Start from the parameters and a seed.", "以参数和种子初始化。"),
+    "with_key": ("Start from a key, with the counter at zero.", "以密钥初始化，计数器从零开始。"),
+    "with_stream": ("Start where the reference seeding puts it.", "按参考实现的播种方式初始化。"),
+    "with_word": ("Start from one word, the reference seeding.", "以一个种子字初始化，即参考实现的播种方式。"),
+    "from_array": ("Start from a key array, the reference seeding.", "以键数组初始化，即参考实现的播种方式。"),
+    "glibc": ("The parameters the C library uses.", "C 库所用的参数。"),
     "numerical_recipes": ("The parameters Numerical Recipes prints.", "Numerical Recipes 里的参数。"),
-    "jump": ("A fixed distance ahead, by the reference polynomial.", "按参考多项式向前跳一段。"),
+    "jump": ("A fixed distance ahead, by the reference polynomial.", "按参考多项式向前跳跃一段。"),
     "long_jump": ("Further ahead than jump, the same way.", "比 jump 跳得更远，方法相同。"),
-    "advance": ("Skip n draws without making them.", "跳过 n 次，不真的逐个生成。"),
-    "next_u64": ("The contract's draw: one 64-bit word.", "契约的取法：一个 64 位字。"),
-    "next_u32": ("The contract's draw: one 32-bit word.", "契约的取法：一个 32 位字。"),
+    "advance": ("Skip n draws without making them.", "跳过 n 次，不逐个真正生成。"),
+    "next_u64": ("The contract's draw: one 64-bit word.", "契约要求的一次取值：一个 64 位字。"),
+    "next_u32": ("The contract's draw: one 32-bit word.", "契约要求的一次取值：一个 32 位字。"),
     "fill": ("Fill a byte array from the stream.", "用流填满一段字节。"),
-    "from_seed": ("Rebuild from a seed of seed_size bytes.", "用 seed_size 字节的种子重建。"),
+    "from_seed": ("Rebuild from a seed of seed_size bytes.", "以 seed_size 字节的种子重建。"),
     "seed_size": ("How many bytes a seed is.", "种子的字节数。"),
 }
 
