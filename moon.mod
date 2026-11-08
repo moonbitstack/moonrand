@@ -44,5 +44,5 @@ description = "Reproducible pseudo-random generators, unbiased sampling and the 
 source = "src"
 
 import {
-  "moonbitstack/moonseed@0.1.0",
+  "moonbitstack/moonseed@0.1.1",
 }
