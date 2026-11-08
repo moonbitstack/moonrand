@@ -92,7 +92,7 @@ body::after{
 .hero__in{
   max-width:var(--maxw); margin:0 auto; padding:0 var(--gut);
   display:grid; grid-template-columns:minmax(0,1fr) auto; gap:40px; align-items:center;
-  min-height:min(70vh,600px);
+  min-height:min(84vh,720px);
 }
 .hero__tx{ max-width:540px; padding:22px 0 }
 .eyebrow{
@@ -140,7 +140,7 @@ body[data-lang="zh"] .btn span::after{
 .hero__seal-t{ font-family:var(--kai); font-size:13px; letter-spacing:.24em; color:var(--k4) }
 
 /* ── The vessel: the dish ───────────────────── */
-.dish{ position:relative; width:min(42vw,470px); aspect-ratio:1; margin-right:-2vw }
+.dish{ position:relative; width:min(46vw,520px); aspect-ratio:1; margin-right:-3vw; margin-top:-14px }
 .dish svg{ display:block; width:100%; height:100%; overflow:visible }
 .dish::after{           /* One raking light: a window reflected in the glaze */
   content:''; position:absolute; inset:4%; pointer-events:none;
@@ -170,10 +170,16 @@ html[lang="zh-Hans"] .kicker{
   font-family:var(--mono); font-size:10px; letter-spacing:.32em; color:var(--k4);
   text-transform:uppercase; margin:0 0 14px;
 }
-h2{ margin:0; font-weight:400; font-size:clamp(23px,2.9vw,31px); line-height:1.5; letter-spacing:.10em; color:var(--k1) }
+/* The heading and its slug share one baseline: the slug sits at the far right,
+   so the row is a rule across the page rather than a label on a blank. */
+h2{
+  margin:0; font-weight:400; font-size:clamp(23px,2.9vw,31px); line-height:1.5;
+  letter-spacing:.10em; color:var(--k1);
+  display:flex; align-items:baseline; gap:14px 32px; flex-wrap:wrap;
+}
 h2 small{
-  display:block; font-family:var(--mono); font-size:10px; letter-spacing:.28em;
-  color:var(--k4); margin-top:10px; text-transform:uppercase;
+  margin:0 0 0 auto; font-family:var(--mono); font-size:10px; letter-spacing:.28em;
+  color:var(--k4); text-transform:uppercase; white-space:nowrap;
 }
 .prose{ margin:20px 0 0; max-width:34em; color:var(--k2) }
 .prose p{ margin:0 0 1.05em }
@@ -279,15 +285,15 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 .code{ scrollbar-width:none; -ms-overflow-style:none }
 .code::-webkit-scrollbar{ display:none; width:0; height:0 }
 .tassel{
-  position:absolute; left:3px; top:13px; z-index:3;
-  width:18px; height:54px; padding:0; border:0; background:none;
+  position:absolute; left:3px; top:13px; z-index:30;
+  width:20px; height:58px; padding:0; border:0; background:none;
   cursor:ns-resize; touch-action:none; opacity:.9;
   transition:filter .12s linear, opacity .12s linear;
 }
 .tassel:hover{ filter:brightness(1.09); opacity:1 }
 .tassel:focus-visible{ outline:.5px solid var(--k3); outline-offset:2px }
 .tassel.is-live{ cursor:grabbing }
-.tassel svg{ display:block; width:18px; height:54px; overflow:visible }
+.tassel svg{ display:block; width:20px; height:58px; overflow:visible }
 .two{ display:grid; grid-template-columns:minmax(0,1fr) 1.04fr; gap:48px; align-items:start }
 
 /* ── Inscription ────────────────────────────── */
@@ -421,8 +427,8 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <section class="sec" id="what">
     <div class="wrap two">
       <div>
-        <p class="kicker" data-zh="一 · 概览">01 / overview</p>
-        <h2 data-zh="种子进去，流出来&lt;small&gt;一句话&lt;/small&gt;">One seed in, one stream out<small>what it does</small></h2>
+        <p class="kicker" data-zh="一 · 它做什么">01 / overview</p>
+        <h2 data-zh="从一个种子开始&lt;small&gt;三十二字节的事&lt;/small&gt;">It starts with a seed<small>what it does</small></h2>
         <p class="prose" data-zh="moonrand 只做一件事：把种子变成一条可以复现的流，再把这条流变成你要的形状——均匀、正态、伽马、泊松、整数、比特。默认的生成器不用配置；想指定算法的，十九个子包里挑一个。">
           moonrand does one thing: it turns a seed into a reproducible stream, and the stream
           into the shape you asked for — uniform, normal, gamma, Poisson, integers, bits. The
@@ -457,8 +463,8 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <!-- ══ start ═══════════════════════════════════ -->
   <section class="sec" id="start">
     <div class="wrap">
-      <p class="kicker" data-zh="二 · 开始">02 / start</p>
-      <h2 data-zh="先跑起来&lt;small&gt;装好之后&lt;/small&gt;">Two lines to begin<small>quick start</small></h2>
+      <p class="kicker" data-zh="二 · 怎么用">02 / start</p>
+      <h2 data-zh="先跑起来&lt;small&gt;装好之后&lt;/small&gt;">Install, then draw<small>quick start</small></h2>
       <div class="two" style="margin-top:30px">
         <div class="code"><span class="c" data-zh="// 三十二字节的种子；从哪来随你：常量、文件、平台熵">// thirty-two bytes. Where they come from is your business</span>
 <span class="k">let</span> rng = <span class="k">@moonrand</span>.seeded(<span class="k">b</span><span class="s">"a seed"</span>)
@@ -491,7 +497,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <section class="sec" id="promise">
     <div class="wrap">
       <p class="kicker" data-zh="三 · 保证">03 / guarantees</p>
-      <h2 data-zh="三条&lt;small&gt;它保证什么&lt;/small&gt;">Three, no more<small>what it guarantees</small></h2>
+      <h2 data-zh="三条保证&lt;small&gt;它保证什么&lt;/small&gt;">Three, stated plainly<small>what it guarantees</small></h2>
       <div class="cols">
         <div class="col">
           <b>01</b>
@@ -2954,8 +2960,8 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <!-- ══ demo ════════════════════════════════════ -->
   <section class="sec" id="plates">
     <div class="wrap">
-      <p class="kicker" data-zh="五 · 一条流的三种样子">05 / one stream, three looks</p>
-      <h2 data-zh="同一组字节，同一只盘&lt;small&gt;由这一页的流画出来&lt;/small&gt;">Same bytes, same dish<small>drawn by this page's stream</small></h2>
+      <p class="kicker" data-zh="五 · 演示">05 / demo</p>
+      <h2 data-zh="这一页的三只盘&lt;small&gt;由同一个种子画出来&lt;/small&gt;">Three dishes on this page<small>drawn by one seed</small></h2>
       <p class="prose" data-zh="下面三只盘不是画好的图。回纹折几道、盘心写哪个字，都是从各自那条流里现取的，三只盘的字不重样。刷新页面，它们换一副样子；把盘下的种子写进代码，就固定成这三只，一瓣不差。">
         These three dishes are not illustrations. How many times the fret band folds, which
         character sits in the well — both came out of their own stream, just now, and no
@@ -3037,55 +3043,60 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
    grow. The fringe is drawn as SVG rather than a striped background: threads crowd at
    the bound waist, then hang before they let go, no two the same length, all of them
    fading along one gradient at the tips. */
-const TASSEL_W = 18;
-const TASSEL_H = 54;
+const TASSEL_W = 20;
+const TASSEL_H = 58;
 
 function tasselMarkup(){
-  let threads = "";
-  const n = 11;
   const cx = TASSEL_W / 2;
-  const y1 = 10.4;
+  const y1 = 15.2;
+  let threads = "";
+  const n = 13;
   for (let i = 0; i < n; i++){
-    const t = i / (n - 1);                       /* 0 left tip → 1 right tip */
-    const jitter = ((i * 7) % 5) / 4;            /* a little apart, so it is not a comb */
-    const x1 = cx + (t - 0.5) * 4.4;             /* at the waist: tucked under the collar */
-    const x2 = cx + (t - 0.5) * (13.6 + jitter * 1.5);
-    const y2 = 44.6 + jitter * 4.0 - Math.abs(t - 0.5) * 1.6;
+    const t = i / (n - 1);                        /* 0 left tip → 1 right tip */
+    const jitter = ((i * 7) % 5) / 4;             /* a little apart, so it is not a comb */
+    const x1 = cx + (t - 0.5) * 5.2;              /* at the waist: tucked under the collar */
+    const x2 = cx + (t - 0.5) * (15.4 + jitter * 1.8);
+    const y2 = 47.6 + jitter * 5.2 - Math.abs(t - 0.5) * 2.4;
     /* hang first, splay later: the control points hug the centre line */
-    const c = "C" + (x1 + (x2 - x1) * 0.26).toFixed(2) + " " + (y1 + (y2 - y1) * 0.38).toFixed(2) + " " +
-      (x1 + (x2 - x1) * 0.68).toFixed(2) + " " + (y1 + (y2 - y1) * 0.76).toFixed(2) + " ";
-    threads += '<path d="M' + x1.toFixed(2) + ' ' + y1 + ' ' + c +
+    const c = "C" + (x1 + (x2 - x1) * 0.24).toFixed(2) + " " + (y1 + (y2 - y1) * 0.36).toFixed(2) + " " +
+      (x1 + (x2 - x1) * 0.66).toFixed(2) + " " + (y1 + (y2 - y1) * 0.74).toFixed(2) + " ";
+    threads += '<path d="M' + x1.toFixed(2) + " " + y1 + " " + c +
       x2.toFixed(2) + " " + y2.toFixed(2) + '" stroke="url(#tS)" stroke-width="' +
-      (0.56 + jitter * 0.12).toFixed(2) + '" stroke-linecap="round" fill="none"/>';
+      (0.6 + jitter * 0.12).toFixed(2) + '" stroke-linecap="round" fill="none"/>';
   }
-  return '<svg viewBox="0 0 ' + TASSEL_W + ' ' + TASSEL_H + '" aria-hidden="true">' +
-    '<defs>' +
-      '<linearGradient id="tC" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="5">' +
-        '<stop offset="0" stop-color="#2E5887" stop-opacity=".05"/>' +
-        '<stop offset="1" stop-color="#2E5887" stop-opacity=".5"/>' +
-      '</linearGradient>' +
-      '<radialGradient id="tB" cx=".36" cy=".26" r=".8">' +
-        '<stop offset="0" stop-color="#B9CDE5"/>' +
-        '<stop offset=".55" stop-color="#3C639B"/>' +
-        '<stop offset="1" stop-color="#16283F"/>' +
-      '</radialGradient>' +
-      '<linearGradient id="tS" gradientUnits="userSpaceOnUse" x1="0" y1="10" x2="0" y2="48">' +
-        '<stop offset="0" stop-color="#22446F" stop-opacity=".84"/>' +
+  return '<svg viewBox="0 0 ' + TASSEL_W + " " + TASSEL_H + '" aria-hidden="true">' +
+    "<defs>" +
+      '<linearGradient id="tC" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="6.4">' +
+        '<stop offset="0" stop-color="#2E5887" stop-opacity=".12"/>' +
+        '<stop offset="1" stop-color="#2E5887" stop-opacity=".62"/>' +
+      "</linearGradient>" +
+      '<radialGradient id="tB" cx=".34" cy=".26" r=".82">' +
+        '<stop offset="0" stop-color="#C2D4E8"/>' +
+        '<stop offset=".5" stop-color="#3C639B"/>' +
+        '<stop offset="1" stop-color="#14253B"/>' +
+      "</radialGradient>" +
+      '<linearGradient id="tS" gradientUnits="userSpaceOnUse" x1="0" y1="14" x2="0" y2="52">' +
+        '<stop offset="0" stop-color="#1B3A63" stop-opacity=".86"/>' +
         '<stop offset=".42" stop-color="#2A4E82" stop-opacity=".82"/>' +
-        '<stop offset=".72" stop-color="#38609A" stop-opacity=".70"/>' +
-        '<stop offset=".90" stop-color="#4270A4" stop-opacity=".40"/>' +
-        '<stop offset="1" stop-color="#4270A4" stop-opacity=".04"/>' +
-      '</linearGradient>' +
-    '</defs>' +
+        '<stop offset=".72" stop-color="#38609A" stop-opacity=".68"/>' +
+        '<stop offset=".90" stop-color="#4270A4" stop-opacity=".34"/>' +
+        '<stop offset="1" stop-color="#4270A4" stop-opacity=".02"/>' +
+      "</linearGradient>" +
+      '<filter id="tD" x="-60%" y="-40%" width="220%" height="200%">' +
+        '<feDropShadow dx="0" dy=".7" stdDeviation=".55" flood-color="#16283F" flood-opacity=".22"/>' +
+      "</filter>" +
+    "</defs>" +
+    '<g filter="url(#tD)">' +
     /* the cord: down from the top edge, gaining colour only near the knot */
-    '<path d="M' + cx + ' 0V5" stroke="url(#tC)" stroke-width=".9" fill="none"/>' +
+    '<path d="M' + cx + ' 0V7" stroke="url(#tC)" stroke-width=".9" fill="none"/>' +
     /* the bead: one porcelain bead, its highlight up and to the left */
-    '<circle cx="' + cx + '" cy="6.5" r="1.9" fill="url(#tB)"/>' +
+    '<circle cx="' + cx + '" cy="9.2" r="2.4" fill="url(#tB)"/>' +
     /* the collar: one pressed line, holding the fringe at the waist */
-    '<rect x="' + (cx - 2.5) + '" y="8.8" width="5" height="1.9" rx=".5" fill="#23477F"/>' +
-    '<path d="M' + (cx - 2.35) + ' 9.22h4.7" stroke="#9BB8DA" stroke-width=".36" stroke-opacity=".5"/>' +
+    '<rect x="' + (cx - 3) + '" y="12.3" width="6" height="2.3" rx=".6" fill="#23477F"/>' +
+    '<path d="M' + (cx - 2.6) + ' 12.9h5.2" stroke="#A8C0DC" stroke-width=".38" stroke-opacity=".55"/>' +
     threads +
-  '</svg>';
+    "</g>" +
+  "</svg>";
 }
 
 function wireTassels(){
@@ -3095,7 +3106,9 @@ function wireTassels(){
     const my = code.scrollHeight - code.clientHeight;
     if (mx < 4 && my < 4) return;
 
-    const host = code.parentElement;
+    /* Hang it from the section, not from the code's own box: a box that scrolls
+       clips what is inside it, and half the tassel lies to the left of the binding. */
+    const host = code.closest("section") || code.parentElement;
     if (getComputedStyle(host).position === "static") host.style.position = "relative";
     const horizontal = mx >= my;
 
@@ -3108,8 +3121,10 @@ function wireTassels(){
     t.innerHTML = tasselMarkup();
     host.appendChild(t);
 
-    const left = code.offsetLeft - 6;
-    const top0 = code.offsetTop + 14;
+    const cr = code.getBoundingClientRect();
+    const hr = host.getBoundingClientRect();
+    const left = cr.left - hr.left - 20;
+    const top0 = cr.top - hr.top + 12;
     let p = 0;
     const travel = function(){ return Math.max(1, code.clientHeight - 26 - TASSEL_H); };
     const paint = function(){
