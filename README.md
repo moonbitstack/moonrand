@@ -1,24 +1,50 @@
+<p align="right">
+  <a href="https://moonbitstack.github.io/moonrand/">home</a> &nbsp;·&nbsp;
+  <a href="https://moonbitstack.github.io/moonrand/#start">guide</a> &nbsp;·&nbsp;
+  <a href="https://moonbitstack.github.io/moonrand/#api">api</a> &nbsp;·&nbsp;
+  <a href="https://mooncakes.io/docs/moonbitstack/moonrand">mooncakes</a>
+</p>
+
 # moonrand
 
 Reproducible pseudo-random numbers: one default generator that needs no
-configuration, sixty-three more behind it when the algorithm matters, and the
+configuration, sixty-two more behind it when the algorithm matters, and the
 sampling and distribution functions Python's `random` names.
 
-```moonbit nocheck
-import { "moonbitstack/moonrand", "moonbitstack/moonrand/auto" }
-
-fn main {
-  let rng = @auto.rng() catch { _ => @moonrand.seeded(b"a fixed seed") }
-  let roll = @moonrand.randint(rng, 1L, 6L)
-  let noise = @moonrand.gauss(rng, mu=0.0, sigma=1.0)
-  println("\{roll} \{noise}")
+```moonbit
+import {
+  "moonbitstack/moonrand",
+  "moonbitstack/moonrand/auto",
 }
 ```
 
-`@auto.rng()` asks the operating system for 32 bytes and hands them to the
-default generator. On a host without an entropy source it raises
-`Unavailable` instead of guessing; `@moonrand.seeded` takes any seed you give
-it, and the same seed always draws the same numbers.
+```moonbit
+test {
+  let rng = @moonrand.seeded(b"a seed")
+  let roll = @moonrand.randint(rng, 1L, 6L)
+  let noise = @moonrand.gauss(rng)
+  assert_eq(roll, 5L)
+  assert_eq(noise.to_string(), "0.03498079073290354")
+}
+```
+
+`@moonrand.seeded` takes any bytes you give it. The same bytes always draw the
+same numbers, on every backend, so a run that goes wrong can be replayed.
+
+`@auto.rng()` asks the operating system for thirty-two bytes and hands them to
+the same generator, for runs that should not repeat:
+
+```moonbit
+test {
+  let rng = @auto.rng() catch { _ => return }
+  let x = @moonrand.random(rng)
+  assert_true(x >= 0.0 && x < 1.0)
+}
+```
+
+A host with no entropy source raises `Unavailable` rather than falling back to a
+fixed or clock-derived seed, which would hand out a generator that looks random
+and is not.
 
 ## The default
 
@@ -29,8 +55,9 @@ it, and the same seed always draws the same numbers.
 | `@auto.rng()` | a generator over 32 bytes of platform entropy |
 
 A stream cipher is the default because its output is indistinguishable from
-uniform under a secret key, it carries the `Secure` marker, and seeking a
-million numbers ahead costs one addition to its counter.
+uniform, it carries the `Secure` marker, and seeking a million numbers ahead
+costs one addition to its counter. A stream runs for 2^32 blocks of 64 bytes;
+past that, seed it again — it never returns to the start on its own.
 
 ## Generators
 
@@ -60,22 +87,29 @@ Every subpackage holds one family of algorithms, each type implementing the same
 | `moonrand/classic` | `MiddleSquare`, `MiddleProduct`, `MiddleSquareWeyl`, `CollatzWeyl`, `Bbs` |
 
 Each type takes a seed of the size it announces, expands it through SplitMix64,
-and offers the reference constructor for a state you already have:
+and offers the reference constructor for a state you already have. The words
+below are the ones each published algorithm produces from that seed:
 
-```moonbit nocheck
-import { "moonbitstack/moonrand/xoshiro" }
-
-fn main {
+```moonbit
+test {
   let rng = @xoshiro.Xoshiro256ss::new(b"any number of bytes")
-  let from_state = @xoshiro.Xoshiro256ss::from_state([1UL, 2UL, 3UL, 4UL])
-  rng.jump() // 2^128 draws ahead
-  from_state.long_jump() // 2^192 ahead
+  assert_eq(rng.next_u64(), 3805413477191604227UL)
+  assert_eq(rng.next_u64(), 4654090004589171931UL)
 }
 ```
 
 Generators that can jump say so: `jump` and `long_jump` on the xoshiro and LXM
-families, `advance` on the counter-based ones (ChaCha, PCG, Philox, Threefry,
-Squares, SplitMix64, MRG32k3a).
+families, `advance` on the counter-based ones — ChaCha, PCG, Philox, Threefry,
+Squares, SplitMix64, MRG32k3a. Jumping moves the state forward without drawing
+the words in between:
+
+```moonbit
+test {
+  let rng = @xoshiro.Xoshiro256ss::new(b"any number of bytes")
+  rng.jump()
+  assert_eq(rng.next_u64(), 1157340615618982128UL)
+}
+```
 
 ## Sampling
 
@@ -95,6 +129,17 @@ Over any `Rng`, with Python's names:
 
 `randint` and `randrange` reject out-of-range draws rather than taking a
 remainder, so no value is more likely than another, whatever the range.
+
+```moonbit
+test {
+  let rng = @moonrand.seeded(b"deal")
+  let deck = ["A", "K", "Q", "J"]
+  assert_eq(@moonrand.choice(rng, deck), Some("A"))
+  @moonrand.shuffle(rng, deck)
+  assert_eq(deck, ["A", "J", "Q", "K"])
+  assert_eq(@moonrand.sample(rng, deck, 2), ["K", "J"])
+}
+```
 
 ## Distributions
 
@@ -117,30 +162,39 @@ remainder, so no value is more likely than another, whatever the range.
 from the same generator differently, and a run that swaps one for the other does
 not reproduce.
 
+```moonbit
+test {
+  let rng = @moonrand.seeded(b"dist")
+  assert_eq(@moonrand.gauss(rng).to_string(), "-0.0045334408825839735")
+  let other = @moonrand.seeded(b"dist")
+  assert_eq(@moonrand.normalvariate(other).to_string(), "0.41874563942799287")
+}
+```
+
 ## Writing your own generator
 
 The contract is three methods, one of which has a body:
 
-```moonbit nocheck
-import { "moonbitstack/moonrand/contract", "moonbitstack/moonrand" }
-
+```moonbit
 struct Counter {
-  priv n : UInt64
+  mut n : UInt64
 }
 
-pub impl @contract.Rng for Counter with fn next_u64(self) -> UInt64 {
+impl @contract.Rng for Counter with fn next_u64(self) -> UInt64 {
   self.n = self.n + 1UL
   self.n * 6364136223846793005UL
 }
+```
 
-fn main {
+```moonbit
+test {
   let rng : Counter = { n: 0UL }
-  let x = @moonrand.random(rng)
-  println(x)
+  assert_eq(@moonrand.random(rng).to_string(), "0.3450005159944193")
+  assert_eq(@moonrand.randint(rng, 0L, 9L), 7L)
 }
 ```
 
-`next_u32`, `fill` and everything above them follow. Add
+`next_u32`, `fill` and everything above them follow from `next_u64`. Add
 `impl @contract.Seeded for Counter` to rebuild it from a seed, or
 `impl @contract.Secure for Counter` when its output is fit for cryptography —
 Philox and PCG pass statistical tests and are not, so they do not carry it.
