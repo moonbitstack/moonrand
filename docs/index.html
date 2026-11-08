@@ -427,8 +427,8 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <section class="sec" id="what">
     <div class="wrap two">
       <div>
-        <p class="kicker" data-zh="一 · 它做什么">01 / overview</p>
-        <h2 data-zh="从一个种子开始&lt;small&gt;三十二字节的事&lt;/small&gt;">It starts with a seed<small>what it does</small></h2>
+        <p class="kicker" data-zh="一 · 概览">01 / overview</p>
+        <h2 data-zh="一粒种子，一条流&lt;small&gt;它做什么&lt;/small&gt;">It starts with a seed<small>what it does</small></h2>
         <p class="prose" data-zh="moonrand 只做一件事：把种子变成一条可以复现的流，再把这条流变成你要的形状——均匀、正态、伽马、泊松、整数、比特。默认的生成器不用配置；想指定算法的，十九个子包里挑一个。">
           moonrand does one thing: it turns a seed into a reproducible stream, and the stream
           into the shape you asked for — uniform, normal, gamma, Poisson, integers, bits. The
@@ -463,8 +463,8 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <!-- ══ start ═══════════════════════════════════ -->
   <section class="sec" id="start">
     <div class="wrap">
-      <p class="kicker" data-zh="二 · 怎么用">02 / start</p>
-      <h2 data-zh="先跑起来&lt;small&gt;装好之后&lt;/small&gt;">Install, then draw<small>quick start</small></h2>
+      <p class="kicker" data-zh="二 · 开始">02 / start</p>
+      <h2 data-zh="一装即用&lt;small&gt;三步之内&lt;/small&gt;">Install, then draw<small>quick start</small></h2>
       <div class="two" style="margin-top:30px">
         <div class="code"><span class="c" data-zh="// 三十二字节的种子；从哪来随你：常量、文件、平台熵">// thirty-two bytes. Where they come from is your business</span>
 <span class="k">let</span> rng = <span class="k">@moonrand</span>.seeded(<span class="k">b</span><span class="s">"a seed"</span>)
@@ -497,7 +497,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <section class="sec" id="promise">
     <div class="wrap">
       <p class="kicker" data-zh="三 · 保证">03 / guarantees</p>
-      <h2 data-zh="三条保证&lt;small&gt;它保证什么&lt;/small&gt;">Three, stated plainly<small>what it guarantees</small></h2>
+      <h2 data-zh="三条&lt;small&gt;不多不少&lt;/small&gt;">Three, stated plainly<small>what it guarantees</small></h2>
       <div class="cols">
         <div class="col">
           <b>01</b>
@@ -532,7 +532,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <section class="sec" id="api">
     <div class="wrap">
       <p class="kicker" data-zh="四 · 接口">04 / api</p>
-      <h2 data-zh="全部接口&lt;small&gt;根包、契约、核心&lt;/small&gt;">The whole surface<small>root, contract, core</small></h2>
+      <h2 data-zh="接口全貌&lt;small&gt;根包、契约、核&lt;/small&gt;">The whole surface<small>root, contract, core</small></h2>
       <p class="prose" data-zh="左边是签名，右边是它给出的承诺。取样函数都以 &lt;em&gt;Rng&lt;/em&gt; 开头，类型和契约列在后面。">
         Left is the signature, right is the shape it promises. Functions take <em>Rng</em> first;
         the types and contracts follow.
@@ -2961,7 +2961,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <section class="sec" id="plates">
     <div class="wrap">
       <p class="kicker" data-zh="五 · 演示">05 / demo</p>
-      <h2 data-zh="这一页的三只盘&lt;small&gt;由同一个种子画出来&lt;/small&gt;">Three dishes on this page<small>drawn by one seed</small></h2>
+      <h2 data-zh="三只盘&lt;small&gt;由一条流画出&lt;/small&gt;">Three dishes on this page<small>drawn by one seed</small></h2>
       <p class="prose" data-zh="下面三只盘不是画好的图。回纹折几道、盘心写哪个字，都是从各自那条流里现取的，三只盘的字不重样。刷新页面，它们换一副样子；把盘下的种子写进代码，就固定成这三只，一瓣不差。">
         These three dishes are not illustrations. How many times the fret band folds, which
         character sits in the well — both came out of their own stream, just now, and no
@@ -2979,7 +2979,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   <section class="sec" id="limits">
     <div class="wrap">
       <p class="kicker" data-zh="六 · 边界">06 / limits</p>
-      <h2 data-zh="它做不到什么&lt;small&gt;短板写在这里&lt;/small&gt;">What it is not<small>the honest side</small></h2>
+      <h2 data-zh="做不到的事&lt;small&gt;一并写下&lt;/small&gt;">What it is not<small>the honest side</small></h2>
       <div class="limits">
         <div class="lim">
           <b data-zh="不是密码学安全的">Not cryptographically secure</b>
