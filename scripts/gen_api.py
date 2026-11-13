@@ -349,7 +349,8 @@ def source_facts(pkg_dir: Path) -> tuple[dict[str, str], dict[str, str]]:
             if s.startswith("#["):
                 i += 1
                 continue
-            m = re.match(r"pub (?:fn|struct|\(open\) trait|trait|type|let|enum)\b", s) or re.match(
+            m = re.match(
+                r"pub(?:\(open\))?\s+(?:fn|struct|trait|type|let|enum)\b", s) or re.match(
                 r"pub impl .* for \w+ with fn \w+", s)
             if not m:
                 if s and not s.startswith("//"):
@@ -375,7 +376,8 @@ def source_facts(pkg_dir: Path) -> tuple[dict[str, str], dict[str, str]]:
             elif mk:
                 name = mk.group(1)
             else:
-                mk = re.match(r"pub (?:struct|enum|\(open\) trait|trait|type|let) (\w+)", text)
+                mk = re.match(
+                    r"pub(?:\(open\))?\s+(?:struct|enum|trait|type|let)\s+(\w+)", text)
                 if mk:
                     name = mk.group(1)
             if name:

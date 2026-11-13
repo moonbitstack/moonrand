@@ -229,7 +229,7 @@
         <span class="ref__implements">trait</span>
       </header>
       <div class="ref__sig"><code>pub(open) trait Rng</code></div>
-      <div class="ref__doc"><p>A contract a generator keeps.</p></div>
+      <div class="ref__doc"><p>The contract every generator satisfies: produce uniform machine words. The algorithms in subpackages implement the one required method <code>next_u64</code>; the other two are shared defaults. The sampling and distribution functions in <code>moonrand</code> are generic over any <code>Rng</code>.</p><p>Methods take <code>Self</code> by value and keep their state in interior-mutable fields (<code>Array</code> buffers and <code>priv mut</code> scalars), so a draw advances the caller&#x27;s generator without a mutable reference. That is also why a generator is a handle rather than a value: <code>let b = a</code> copies the handle and shares its buffer, so both draws advance one state. For two independent streams, build two generators from the seed.</p></div>
       <div class="ref__methods">
       <div class="ref__item" data-item="moonbitstack/moonrand/contract::Rng::next_u64">
         <div class="ref__sig"><code>fn next_u64(Self) -&gt; UInt64</code></div>
@@ -250,8 +250,8 @@
         <h3><code>Secure</code></h3>
         <span class="ref__implements">trait</span>
       </header>
-      <div class="ref__sig"><code>pub(open) trait Secure : Rng</code></div>
-      <div class="ref__doc"><p>A contract a generator keeps.</p></div>
+      <div class="ref__sig"><code>pub(open) trait Secure : Rng {} ///| /// A generator rebuilt from a seed, for reproducible runs. pub(open) trait Seeded : Rng</code></div>
+      <div class="ref__doc"><p>A generator fit for cryptography: ChaCha and the like. Philox and PCG pass statistical tests but are not, so they do not carry this marker.</p></div>
     </article>
     <article class="ref__type" id="i-contract-seeded" data-item="moonbitstack/moonrand/contract::Seeded">
       <header class="ref__head">
