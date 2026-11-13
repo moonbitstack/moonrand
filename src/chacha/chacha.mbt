@@ -18,6 +18,7 @@ pub struct ChaCha8 {
 }
 
 ///|
+/// Twelve rounds of ChaCha: the default generator, `StdRng`.
 pub struct ChaCha12 {
   priv key : Array[UInt32]
   priv nonce0 : UInt32
@@ -29,6 +30,7 @@ pub struct ChaCha12 {
 }
 
 ///|
+/// Twenty rounds of ChaCha, the count RFC 8439 specifies.
 pub struct ChaCha20 {
   priv key : Array[UInt32]
   priv nonce0 : UInt32
@@ -162,6 +164,8 @@ fn new_chacha(seed : BytesView) -> (Array[UInt32], Array[UInt32]) {
 }
 
 ///|
+/// Start from a seed, a 96-bit nonce in three words, and a block counter: one
+/// key can feed several streams that never meet.
 pub fn ChaCha8::with_nonce(
   seed : BytesView,
   nonce0 : UInt32,
@@ -179,6 +183,8 @@ pub fn ChaCha8::new(seed : BytesView) -> ChaCha8 {
 }
 
 ///|
+/// Start from a seed, a 96-bit nonce in three words, and a block counter: one
+/// key can feed several streams that never meet.
 pub fn ChaCha12::with_nonce(
   seed : BytesView,
   nonce0 : UInt32,
@@ -196,6 +202,8 @@ pub fn ChaCha12::new(seed : BytesView) -> ChaCha12 {
 }
 
 ///|
+/// Start from a seed, a 96-bit nonce in three words, and a block counter: one
+/// key can feed several streams that never meet.
 pub fn ChaCha20::with_nonce(
   seed : BytesView,
   nonce0 : UInt32,
