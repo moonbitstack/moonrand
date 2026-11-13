@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>moonrand — the guide</title>
+<meta name="description" content="A walk through moonrand: from a seed to a distribution, ten steps, each with the output it prints.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F7F5ED'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%231E3A5C' stroke-width='1.2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23A83A2B'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="site.css">
+</head>
+<body class="page-guide">
+<div class="sheet">
+
+  <header class="bar">
+    <div><b>moonrand</b> <span class="bar__v"><span id="rev-value">0.1.3</span> · Apache-2.0</span></div>
+    <div class="r">
+      <a href="https://moonbitstack.github.io/moonseed/">moonseed · entropy</a>
+      <a href="index.html">overview</a>
+      <a href="guide.html" aria-current="page">guide</a>
+      <a href="index.html#plates">demo</a>
+      <a href="api.html">api</a>
+      <a href="https://github.com/moonbitstack/moonrand">GitHub</a>
+    </div>
+  </header>
+
+  <main class="guide">
+    <nav class="guide__toc" aria-label="contents">
+      <p class="ref__sideh">contents</p>
+      <ol>
+        <li><a href="#install"><i>01</i>it starts with a seed</a></li>
+        <li><a href="#seed"><i>02</i>the seed decides the stream</a></li>
+        <li><a href="#handle"><i>03</i>a generator is a handle</a></li>
+        <li><a href="#algorithms"><i>04</i>when the algorithm matters</a></li>
+        <li><a href="#integers"><i>05</i>integers, without a thumb on the scale</a></li>
+        <li><a href="#collections"><i>06</i>choosing from a collection</a></li>
+        <li><a href="#distributions"><i>07</i>the shapes</a></li>
+        <li><a href="#jumping"><i>08</i>jumping ahead</a></li>
+        <li><a href="#entropy"><i>09</i>when it must not repeat</a></li>
+        <li><a href="#own"><i>10</i>writing your own</a></li>
+      </ol>
+    </nav>
+    <article class="guide__body">
+      <div class="guide__top">
+        <p class="kicker">guide</p>
+        <h1 class="ref__t">From a seed to a distribution<small>ten steps</small></h1>
+        <p class="ref__lede">Every block below was run against this version, and the
+        line under it is what it printed. Read it in order, or take the section you
+        came for.</p>
+      </div>
+  <section class="gx" id="install">
+    <p class="kicker">step 01 / install</p>
+    <h2>it starts with a seed<small>install</small></h2>
+    <div class="gx__prose">
+<p>Add the module and the generator comes with it. There is nothing to configure:
+<code>seeded</code> takes any bytes and gives back a generator, and every draw
+after that is a function that takes the generator first.</p>
+<p>Thirty-two bytes fix the whole stream. Where they come from is your business —
+a constant, a file, a hash, a row id. The same bytes always draw the same
+numbers, which is what makes a run that went wrong replayable.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let rng = @moonrand.seeded(b"a seed")
+let roll = @moonrand.randint(rng, 1L, 6L)
+let noise = @moonrand.gauss(rng)
+println(roll)
+println(noise)</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>5
+0.03498079073290354</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="seed">
+    <p class="kicker">step 02 / seeds</p>
+    <h2>the seed decides the stream<small>seed</small></h2>
+    <div class="gx__prose">
+<p>A seed is not a number that picks a starting point; it is the whole state. Two
+generators seeded alike are the same generator, and one changed byte is a
+different stream from the first draw — not a related one that drifts.</p>
+<p><code>randbytes</code> writes the stream out as bytes, which is the plainest
+way to see that. Every backend — native, JS, wasm, wasm-gc — writes the same
+eight bytes here.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let first = @moonrand.seeded(b"a seed")
+let same = @moonrand.seeded(b"a seed")
+let other = @moonrand.seeded(b"a seeD")
+println(@moonrand.randbytes(first, 8))
+println(@moonrand.randbytes(same, 8))
+println(@moonrand.randbytes(other, 8))</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>b"\x87\x9d\x02R\xadn@O"
+b"\x87\x9d\x02R\xadn@O"
+b"2\xf4\xea\x89\xec\x0c)A"</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="handle">
+    <p class="kicker">step 03 / state</p>
+    <h2>a generator is a handle<small>handle</small></h2>
+    <div class="gx__prose">
+<p>There is no global generator and no thread-local one: a generator carries its
+own state, and the functions that draw are generic over it. Two generators built
+from the same seed walk the same numbers, side by side, without touching each
+other.</p>
+<p>The state itself lives in a buffer the handle points at, so <code>let b = a</code>
+gives you a second name for one state rather than a second stream. Seed another
+generator when you want two streams to be independent — or use <code>jump</code>,
+below, to move one of them far away.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let left = @moonrand.seeded(b"two streams")
+let right = @moonrand.seeded(b"two streams")
+println(@moonrand.randint(left, 0L, 999L))
+println(@moonrand.randint(right, 0L, 999L))</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>630
+630</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="algorithms">
+    <p class="kicker">step 04 / algorithms</p>
+    <h2>when the algorithm matters<small>algorithms</small></h2>
+    <div class="gx__prose">
+<p>The default is ChaCha12, and most code should keep it. When a published
+algorithm is the point — reproducing someone else's stream, matching a paper,
+fitting a hardware budget — pick the type out of the subpackage that holds that
+family. Every one of them satisfies the same contract, so <code>randint</code>
+and the rest do not change.</p>
+<p>The same seed across three families gives three different numbers, and the
+same family on another machine gives the same one.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let x = @xoshiro.Xoshiro256ss::new(b"algebra")
+println(@moonrand.randint(x, 0L, 99L))
+let p = @pcg.Pcg64::new(b"algebra")
+println(@moonrand.randint(p, 0L, 99L))
+let m = @mt.MT19937::new(b"algebra")
+println(@moonrand.randint(m, 0L, 99L))</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>64
+89
+68</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="integers">
+    <p class="kicker">step 05 / integers</p>
+    <h2>integers, without a thumb on the scale<small>integers</small></h2>
+    <div class="gx__prose">
+<p><code>randint</code> takes both ends, <code>randrange</code> leaves the right one
+out and allows a start and a step, and <code>getrandbits</code> returns the low
+bits of a word. None of them takes a remainder: a draw outside the range is
+rejected and drawn again, so no value is more likely than another however ragged
+the range is.</p>
+<p>An inverted range is answered, not punished — <code>high</code> below
+<code>low</code> returns <code>low</code> — while a range with no integers in it
+aborts, because there is no honest number to return.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let r = @moonrand.seeded(b"ranges")
+println(@moonrand.randint(r, -3L, 3L))
+println(@moonrand.randrange(r, 100L, start=90L, step=5L))
+println(@moonrand.getrandbits(r, 12))
+println(@moonrand.randbytes(r, 4))</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>-3
+90
+692
+b"\xf4\xef\xf2\x00"</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="collections">
+    <p class="kicker">step 06 / collections</p>
+    <h2>choosing from a collection<small>collections</small></h2>
+    <div class="gx__prose">
+<p>Five functions cover the deck: <code>choice</code> takes one,
+<code>choices</code> takes several with replacement, <code>sample</code> takes
+several without, <code>shuffle</code> reorders in place, and
+<code>permutation</code> hands back the order as indices.</p>
+<p>Give <code>choices</code> weights and the draws follow them. Give
+<code>sample</code> weights and each place is filled from what is still left, in
+proportion — a heavier element tends to come out earlier, and nothing repeats.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let r = @moonrand.seeded(b"deck")
+let deck = ["A", "K", "Q", "J", "10"]
+println(@moonrand.choice(r, deck))
+println(@moonrand.choices(r, deck, k=3))
+println(@moonrand.sample(r, deck, 2))
+@moonrand.shuffle(r, deck)
+println(deck)
+println(@moonrand.permutation(r, 6))</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>Some(10)
+[K, A, 10]
+[K, 10]
+[10, Q, J, A, K]
+[0, 1, 4, 5, 3, 2]</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="distributions">
+    <p class="kicker">step 07 / distributions</p>
+    <h2>the shapes<small>distributions</small></h2>
+    <div class="gx__prose">
+<p>One draw each, over the same generator, named as Python's <code>random</code>
+names them. Gamma, beta, chi-squared, Student's t and Fisher's F are one family:
+each is built from a gamma or a normal draw by its own definition, so a beta is
+two gammas and a t is a normal over a chi-squared.</p>
+<p><code>gauss</code> and <code>normalvariate</code> are two algorithms, not two
+spellings — Box-Muller against ratio of uniforms. A run that swaps one for the
+other does not reproduce, and neither caches a spare draw, so the stream stays in
+step with the calls you make.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let r = @moonrand.seeded(b"shapes")
+println(@moonrand.gauss(r, mu=10.0, sigma=2.0))
+println(@moonrand.normalvariate(r))
+println(@moonrand.gammavariate(r, 2.0, 3.0))
+println(@moonrand.betavariate(r, 2.0, 5.0))
+println(@moonrand.chi_squared(r, 5.0))
+println(@moonrand.student_t(r, 10.0))
+println(@moonrand.fisher_f(r, 6.0, 10.0))
+let parts = @moonrand.dirichlet(r, [1.0, 2.0, 3.0])
+println(parts[0])
+println(parts[1])
+println(parts[2])
+println(@moonrand.poisson(r, 4.0))
+println(@moonrand.binomialvariate(r, 10L, 0.3))
+println(@moonrand.triangular(r, low=0.0, high=1.0, mode=0.2))
+println(@moonrand.vonmisesvariate(r, 0.0, 2.0))
+println(@moonrand.expovariate(r, 1.5))
+println(@moonrand.lognormvariate(r))
+println(@moonrand.weibullvariate(r, 1.0, 2.0))
+println(@moonrand.paretovariate(r, 3.0))</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>8.113666721484485
+0.3617346781734278
+7.777457291235741
+0.06833245340410213
+3.0586760418166508
+0.33356405740751544
+0.8286047251522426
+0.15726360321301575
+0.2714849683542949
+0.5712514284326893
+1
+1
+0.6461219406157481
+5.556735066875801
+0.9475801878667874
+0.4936908827545176
+1.4418699334614764
+1.030161657701656</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="jumping">
+    <p class="kicker">step 08 / jumping</p>
+    <h2>jumping ahead<small>jumping</small></h2>
+    <div class="gx__prose">
+<p>Counter-based generators can be moved instead of drawn. <code>advance</code>
+adds to the counter, and <code>jump</code> sends a shift-register generator a
+fixed distance along its own cycle by the polynomial its authors published — two
+hundred bits ahead for <code>long_jump</code>. Both cost a fixed handful of
+operations, however far they move.</p>
+<p>That is how one seed becomes many streams: seed once, then jump each worker
+into its own stretch of the cycle, where the stretches do not overlap.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let r = @xoshiro.Xoshiro256ss::new(b"streams")
+r.jump()
+println(@moonrand.randint(r, 0L, 999L))
+let c = @moonrand.seeded(b"streams")
+c.advance(1000000UL)
+println(@moonrand.randint(c, 0L, 999L))</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>869
+800</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="entropy">
+    <p class="kicker">step 09 / entropy</p>
+    <h2>when it must not repeat<small>entropy</small></h2>
+    <div class="gx__prose">
+<p>Everything so far is reproducible on purpose. For a run that should not repeat
+— a session id, a jitter, a salt — ask the platform for the seed instead:
+<code>@auto.rng()</code> takes thirty-two bytes from the operating system through
+moonseed and hands them to the same generator.</p>
+<p>It raises when there is no entropy source, rather than falling back to a clock
+or a constant. A machine that cannot give you randomness is a thing you want to
+hear about. On wasm-gc, where the host decides whether a source exists, that
+error is expected.</p>
+<p>The block below prints <code>true</code> on every run; the number it drew on
+the way is different each time, which is the point.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>let rng = @auto.rng() catch { _ =&gt; return }
+let roll = @moonrand.randint(rng, 0L, 999L)
+println(roll &gt;= 0L &amp;&amp; roll &lt;= 999L)</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>true</pre></div>
+    </figure>
+  </section>
+  <section class="gx" id="own">
+    <p class="kicker">step 10 / your own</p>
+    <h2>writing your own<small>own</small></h2>
+    <div class="gx__prose">
+<p>The contract is three methods, and only one of them has to be written:
+<code>next_u64</code>. <code>next_u32</code> and <code>fill</code> follow from it,
+and so does everything above — the sampling, the distributions, the lot.</p>
+<p>State lives in the type, so a struct with a <code>mut</code> field is enough.
+Add <code>impl Seeded for Counter</code> to rebuild it from a seed, and
+<code>impl Secure</code> only when the output is fit for cryptography: Philox and
+PCG pass statistical tests and are not.</p>
+    </div>
+    <figure class="run">
+      <pre class="gcode"><code>struct Counter {
+  mut n : UInt64
+}
+
+impl @contract.Rng for Counter with fn next_u64(self) -&gt; UInt64 {
+  self.n = self.n + 1UL
+  self.n * 6364136223846793005UL
+}</code></pre>
+      <pre class="gcode"><code>let mine : Counter = { n: 0UL }
+println(@moonrand.randint(mine, 0L, 9L))
+println(@moonrand.random(mine))</code></pre>
+      <div class="out"><span class="out__k">prints</span><pre>7
+0.38000206397767744</pre></div>
+    </figure>
+  </section>
+      <p class="guide__end"><a href="api.html">The reference lists every item →</a></p>
+    </article>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot__row">
+        <div><span class="seal">掷</span></div>
+        <div class="foot__meta">
+          <b>moonrand · Apache-2.0</b>
+          <a href="https://github.com/moonbitstack/moonrand">github.com/moonbitstack/moonrand</a><br>
+          <span>the blocks compile · the output was run</span>
+        </div>
+        <div class="foot__next">
+          <span>next</span>
+          <a href="api.html">the reference</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+<script src="site.js"></script>
+</body>
+</html>

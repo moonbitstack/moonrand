@@ -1,4 +1,4 @@
-"""Compile every MoonBit block in README.md and docs/skills/*/SKILL.md against this module's source.
+"""Compile every MoonBit block in the docs against this module's source.
 
 A reader pastes these blocks into a project, so each one has to compile as written. The blocks of
 one file are read in order, the way the page reads: a block may use a name that an earlier block of
@@ -9,6 +9,7 @@ Usage: python scripts/check_snippets.py [--moon moon] [file ...]
 """
 
 import argparse
+import html as htmllib
 import re
 import shutil
 import subprocess
@@ -65,6 +66,14 @@ def blocks(path):
         yield text[: m.start(4)].count("\n") + 1, "native" in m.group(3), m.group(4)
 
 
+def html_blocks(path):
+    """The `gcode` panels of a page: plain text inside <code>, escaped for HTML."""
+    text = path.read_text(encoding="utf-8")
+    for m in re.finditer(r'<pre class="gcode"><code>(.*?)</code></pre>', text, re.S):
+        body = htmllib.unescape(re.sub(r"<[^>]+>", "", m.group(1)))
+        yield text[: m.start(1)].count("\n") + 1, False, body.rstrip("\n") + "\n"
+
+
 def program(items):
     """One package for one file and target: top-level blocks as they are, statement blocks each in a
     function that also holds the statement blocks before it, so a name defined earlier is in scope."""
@@ -95,13 +104,17 @@ def main():
         return 0
     subprocess.run([args.moon, "update"], cwd=ROOT, capture_output=True)
     aliases = packages(module, src, deps)
-    files = [Path(f) for f in args.files] or [ROOT / "README.md", *sorted((ROOT / "docs" / "skills").glob("*/SKILL.md"))]
+    files = [Path(f) for f in args.files] or [
+        ROOT / "README.md",
+        *sorted((ROOT / "docs" / "skills").glob("*/SKILL.md")),
+        ROOT / "docs" / "guide.html",
+    ]
     failed = 0
     for file in files:
         file = file if file.is_absolute() else ROOT / file
         if not file.exists():
             continue
-        found = list(blocks(file))
+        found = list(html_blocks(file) if file.suffix in (".html", ".htm") else blocks(file))
         for native in (False, True):
             items = [(line, body) for line, nat, body in found if nat == native]
             if not items:
