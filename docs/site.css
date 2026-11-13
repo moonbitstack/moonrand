@@ -1,0 +1,597 @@
+:root{
+  /* One firing, one colour: the blue of cobalt is never pure — it carries grey.
+   Hue 212°, sampled from a photograph of a real piece. */
+  --k1:#16283F;  /* head-strong: titles, the maker's mark */
+  --k2:#1E3A5C;  /* full-strong: outlines, contours */
+  --k3:#2E5887;  /* second-strong: body text, the washes */
+  --k4:#557EAC;  /* full-pale: annotations */
+  --k5:#8FA8C4;  /* shadow-pale: rules, borders */
+  --k6:#C6D2DF;  /* the boundary */
+  --porc:#F7F5ED;
+  --cin:#A83A2B;
+  --serif:"Songti SC","STSong","SimSun","Source Han Serif SC","Noto Serif CJK SC",serif;
+  --kai:"Kaiti SC","KaiTi","STKaiti","FangSong",serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  --gut:clamp(22px,6vw,110px);
+  --maxw:1120px;
+}
+*{ box-sizing:border-box }
+
+/* ── Scrollbar: a stroke of cobalt, not the system's grey ── */
+html{ -webkit-text-size-adjust:100% }
+::-webkit-scrollbar{ width:11px; height:11px }
+::-webkit-scrollbar-button{ display:none; width:0; height:0 }
+::-webkit-scrollbar-track{
+  background:#EFECE2;
+  box-shadow:inset .5px 0 0 rgba(46,88,135,.10);
+}
+::-webkit-scrollbar-thumb{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,0) 46%),
+    linear-gradient(180deg,#A2B6CE,#6E8CB6);
+  box-shadow:
+    inset 0 0 0 .5px rgba(30,58,92,.30),
+    inset 0 1px 0 rgba(255,255,255,.5);
+}
+::-webkit-scrollbar-thumb:hover{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0) 46%),
+    linear-gradient(180deg,#ADC0D6,#7C99C0);
+}
+::-webkit-scrollbar-corner{ background:#EFECE2 }
+@supports not selector(::-webkit-scrollbar){
+  html{ scrollbar-width:thin; scrollbar-color:#8FA8C4 #EFECE2 }
+}
+a:focus-visible, button:focus-visible{
+  outline:.5px solid var(--k2); outline-offset:3px;
+}
+body{
+  margin:0; background:var(--porc); color:var(--k2);
+  font-family:var(--serif); font-size:15.5px; line-height:1.95;
+  letter-spacing:.02em; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(66% 48% at 18% 2%, rgba(255,255,251,.92), rgba(255,255,251,0) 62%),
+    radial-gradient(54% 40% at 94% 100%, rgba(150,166,178,.13), rgba(255,255,255,0) 72%),
+    linear-gradient(176deg, rgba(255,255,252,.5), rgba(238,236,226,.24) 58%, rgba(255,255,250,.3));
+}
+/* Brocade ground: a hair-thin lattice of linked pearls, so the paper stops looking like paper */
+body::after{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cg fill='none' stroke='%238FA8C4' stroke-width='.5' opacity='.30'%3E%3Cpath d='M13 2.5 L23.5 13 L13 23.5 L2.5 13 Z'/%3E%3Ccircle cx='13' cy='13' r='2.1'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:26px 26px;
+}
+.sheet{ position:relative; z-index:1 }
+
+/* ── Masthead ───────────────────────────────── */
+.bar{
+  position:relative; z-index:3;
+  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+  padding:20px var(--gut) 0;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.22em;
+  color:var(--k4); text-transform:uppercase;
+}
+.bar b{ font-weight:400; color:var(--k2); letter-spacing:.22em; text-transform:none }
+.bar .r{ display:flex; gap:22px }
+.bar a{ color:inherit; text-decoration:none; border-bottom:.5px solid var(--k6); padding-bottom:2px }
+.bar a:hover{ color:var(--k1); border-color:var(--k3) }
+
+/* ── Hero ───────────────────────────────────── */
+.hero{ position:relative; z-index:1; margin-top:10px; overflow:hidden }
+.hero__in{
+  max-width:var(--maxw); margin:0 auto; padding:0 var(--gut);
+  display:grid; grid-template-columns:minmax(0,1fr) auto; gap:40px; align-items:center;
+  min-height:min(84vh,720px);
+}
+.hero__tx{ max-width:540px; padding:22px 0 }
+.eyebrow{
+  font-family:var(--mono); font-size:10px; letter-spacing:.34em; color:var(--k4);
+  text-transform:uppercase; margin-bottom:22px;
+}
+h1{
+  margin:0; font-weight:400; line-height:1; letter-spacing:.05em;
+  color:var(--k1); font-size:clamp(46px,6.6vw,84px);
+  display:flex; align-items:baseline; gap:.24em; flex-wrap:wrap;
+}
+h1 em{
+  font-style:normal; font-family:var(--mono);
+  font-size:clamp(11px,1.2vw,13px); letter-spacing:.30em; color:var(--k4); text-transform:lowercase;
+}
+.lede{ margin:26px 0 0; max-width:25em; font-size:16px; line-height:2.1; color:var(--k2) }
+.lede b{ font-weight:400; color:var(--k1); border-bottom:.5px solid var(--k5); padding-bottom:1px }
+.sub{ margin:14px 0 0; font-family:var(--kai); font-size:17px; letter-spacing:.14em; color:var(--k3) }
+.acts{ display:flex; flex-wrap:wrap; gap:14px; margin-top:36px }
+.btn{
+  display:inline-flex; align-items:center; gap:12px;
+  padding:12px 22px 13px; border:.5px solid var(--k3); border-radius:0;
+  background:transparent; color:var(--k2);
+  font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase;
+  text-decoration:none; cursor:pointer;
+  transition:background .12s linear, color .12s linear, border-color .12s linear;
+}
+/* The rule always leads the word: the same hand as the moonseed page, so English reads as “— REPOSITORY” too */
+.btn i{ display:block; order:-1; width:18px; height:.5px; background:currentColor; opacity:.55 }
+/* Chinese takes a rule on both sides of the word */
+body[data-lang="zh"] .btn span{ display:inline-flex; align-items:center; gap:12px }
+body[data-lang="zh"] .btn span::after{
+  content:''; display:block; width:18px; height:.5px;
+  background:currentColor; opacity:.55;
+}
+.btn:hover{ background:var(--k2); color:var(--porc); border-color:var(--k2) }
+.btn--solid{ background:var(--k2); color:var(--porc); border-color:var(--k2) }
+.btn--solid:hover{ background:var(--k1); border-color:var(--k1) }
+.hero__seal{ display:flex; align-items:center; gap:14px; margin-top:28px }
+.seal{
+  display:inline-block; width:34px; height:34px; background:var(--cin); color:#fff;
+  font-family:var(--kai); font-size:20px; line-height:34px; text-align:center;
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.34);
+}
+.hero__seal-t{ font-family:var(--kai); font-size:13px; letter-spacing:.24em; color:var(--k4) }
+
+/* ── The vessel: the dish ───────────────────── */
+.dish{ position:relative; width:min(46vw,520px); aspect-ratio:1; margin-right:-3vw; margin-top:-14px }
+.dish svg{ display:block; width:100%; height:100%; overflow:visible }
+.dish::after{           /* One raking light: a window reflected in the glaze */
+  content:''; position:absolute; inset:4%; pointer-events:none;
+  background:linear-gradient(126deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.5) 47%, rgba(255,255,255,0) 57%);
+  mix-blend-mode:soft-light; opacity:.9;
+}
+.dish-num{
+  font-family:var(--mono); font-size:7.5px; letter-spacing:0;
+  fill:#A83A2B; opacity:.72;
+}
+
+/* ── Bands ──────────────────────────────────── */
+.band{ display:block; width:100%; color:var(--k5) }
+.band svg{ display:block; width:100%; height:auto }
+.band--top{ margin:2px 0 0 }
+.band--sea{ margin:30px 0 0 }
+.band--quiet{ opacity:.5 }
+
+/* ── Skeleton ───────────────────────────────── */
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 var(--gut) }
+.sec{ padding:76px 0 }
+.sec + .sec{ padding-top:58px }
+html[lang="zh-Hans"] .kicker{
+  font-family:var(--kai); font-size:12px; letter-spacing:.26em; color:var(--cin);
+}
+.kicker{
+  font-family:var(--mono); font-size:10px; letter-spacing:.32em; color:var(--k4);
+  text-transform:uppercase; margin:0 0 14px;
+}
+/* The heading and its slug share one baseline: the slug sits at the far right,
+   so the row is a rule across the page rather than a label on a blank. */
+h2{
+  margin:0; font-weight:400; font-size:clamp(23px,2.9vw,31px); line-height:1.5;
+  letter-spacing:.10em; color:var(--k1);
+  display:flex; align-items:baseline; gap:14px 32px; flex-wrap:wrap;
+}
+h2 small{
+  margin:0 0 0 auto; font-family:var(--mono); font-size:10px; letter-spacing:.28em;
+  color:var(--k4); text-transform:uppercase; white-space:nowrap;
+}
+.prose{ margin:20px 0 0; max-width:34em; color:var(--k2) }
+.prose p{ margin:0 0 1.05em }
+.prose em{ font-style:normal; color:var(--k1); border-bottom:.5px solid var(--k5) }
+
+.pull{
+  margin:0; padding:4px 0;
+  font-family:var(--kai); font-size:clamp(20px,2.5vw,27px); line-height:2;
+  letter-spacing:.10em; color:var(--k2); max-width:27em;
+}
+.pull span{ display:block; color:var(--k1) }
+
+/* ── Five tones ─────────────────────────────── */
+.tones{ margin:30px 0 0; border-top:.5px solid var(--k6) }
+.tone{
+  display:grid; grid-template-columns:74px minmax(0,1fr) 94px; gap:22px; align-items:center;
+  padding:15px 0; border-bottom:.5px solid var(--k6);
+}
+.tone__chip{ display:block; width:74px; height:22px }
+.tone__n{ font-family:var(--kai); font-size:17px; letter-spacing:.18em; color:var(--k2); line-height:1.5 }
+.tone__n i{
+  display:block; font-style:normal; font-family:var(--mono); font-size:9px;
+  letter-spacing:.18em; color:var(--k5); margin-top:3px;
+}
+.tone__hex{ font-family:var(--mono); font-size:10.5px; letter-spacing:.10em; text-align:right; color:var(--k4) }
+.tone__u{ grid-column:2 / 4; margin-top:2px; font-size:13px; line-height:1.8; color:var(--k4) }
+
+/* ── Anatomy of the vessel ──────────────────── */
+.anat{ display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,430px); gap:64px; align-items:center; margin-top:34px }
+.anat .dish{ width:100%; margin:0 }
+.anat__list{ list-style:none; margin:0; padding:0; counter-reset:n }
+.anat__list li{
+  display:grid; grid-template-columns:34px minmax(0,1fr); gap:16px;
+  padding:14px 0 15px; border-top:.5px solid var(--k6);
+  font-size:14px; line-height:1.85; color:var(--k2);
+}
+.anat__list li:last-child{ border-bottom:.5px solid var(--k6) }
+.anat__list b{
+  font-family:var(--mono); font-size:9.5px; font-weight:400; letter-spacing:.06em;
+  color:var(--cin); padding-top:4px;
+}
+.anat__list span i{
+  display:block; font-style:normal; font-family:var(--mono); font-size:9.5px;
+  letter-spacing:.16em; color:var(--k5); margin-top:3px; text-transform:uppercase;
+}
+
+/* ── Three dishes ───────────────────────────── */
+.plates{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:44px 34px; margin-top:38px }
+.plate{ display:block; text-align:center }
+.plate svg{ display:block; width:100%; height:auto }
+.plate__s{
+  margin-top:12px; padding-top:10px; border-top:.5px solid var(--k6);
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.10em; color:var(--k4);
+}
+.plate__s b{ display:block; font-weight:400; color:var(--k1); font-size:11px; letter-spacing:.08em; margin-bottom:3px }
+
+/* ── Colophon ───────────────────────────────── */
+.ins{ margin:30px 0 0 }
+.ins__row{
+  display:grid; grid-template-columns:1.16fr minmax(0,1fr); gap:18px; align-items:baseline;
+  padding:13px 0 14px; border-bottom:.5px solid var(--k6);
+  transition:background .12s linear;
+}
+.ins__grp{
+  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+  padding:26px 0 9px; border-bottom:.5px solid var(--k2);
+}
+.ins__rows{ border-bottom:.5px solid var(--k2) }
+.ins__pkg > summary{ list-style:none; cursor:pointer }
+.ins__pkg > summary::-webkit-details-marker{ display:none }
+.ins__pkg > summary span::before{ content:'+'; display:inline-block; width:1.4em; color:var(--k4) }
+.ins__pkg[open] > summary span::before{ content:'\2212' }
+.ins__pkg > summary:hover span{ color:var(--k1) }
+.ins__grp span{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; color:var(--k2) }
+.ins__grp i{
+  font-style:normal; font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; color:var(--k5); text-transform:uppercase;
+}
+.ins__row:hover{ background:rgba(198,210,223,.26) }
+.ins__g, .ins__sig{ overflow-wrap:anywhere }
+.ins__sig{ font-family:var(--mono); font-size:12px; color:var(--k1); line-height:1.75; letter-spacing:-.01em;
+  text-indent:-1.1em; padding-left:1.1em }
+.ins__g{ font-family:var(--kai); font-size:14px; letter-spacing:.10em; color:var(--k3); line-height:1.8 }
+html[lang="en-US"] .ins__g,
+html[lang="en"] .ins__g,
+html[lang="en-US"] .hero__seal-t,
+html[lang="en"] .hero__seal-t{ font-family:var(--serif); letter-spacing:.05em }
+html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5px }
+.code{
+  margin:26px 0 0; padding:20px 22px 22px;
+  border:.5px solid var(--k6); border-left:2px solid var(--k3);
+  background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(244,242,234,.44));
+  font-family:var(--mono); font-size:12.5px; line-height:2.05;
+  color:var(--k2); overflow-x:auto; white-space:pre;
+}
+.code .c{ color:var(--k5) }
+.code .k{ color:var(--k3) }
+.code .s{ color:var(--k3) }
+
+/* When the code runs past the edge there is no bar to drag: a tassel hangs at the
+   binding and pulls the page along. One cord, one bead, one bound waist, then the
+   fringe lets go of it and fades at the tips. */
+.code::-webkit-scrollbar{ display:none; width:0; height:0 }
+.tassel{
+  position:absolute; left:3px; top:13px; z-index:30;
+  width:20px; height:58px; padding:0; border:0; background:none;
+  cursor:ns-resize; touch-action:none; opacity:.9;
+  transition:filter .12s linear, opacity .12s linear;
+}
+.tassel:hover{ filter:brightness(1.09); opacity:1 }
+.tassel:focus-visible{ outline:.5px solid var(--k3); outline-offset:2px }
+.tassel.is-live{ cursor:grabbing }
+.tassel svg{ display:block; width:20px; height:58px; overflow:visible }
+.two{ display:grid; grid-template-columns:minmax(0,1fr) 1.04fr; gap:48px; align-items:start }
+
+/* ── Inscription ────────────────────────────── */
+.foot{ padding:0 0 58px }
+.foot__row{
+  display:flex; flex-wrap:wrap; gap:36px; justify-content:space-between;
+  align-items:flex-end; padding-top:24px;
+}
+.foot__meta{
+  font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:var(--k4);
+  line-height:2.3; text-transform:uppercase;
+}
+.foot__meta b{ display:block; font-weight:400; color:var(--k2) }
+.foot__meta a{ color:inherit; text-decoration:none; border-bottom:.5px solid var(--k6) }
+
+.bar .r{ margin-left:auto }
+.bar__v{ color:var(--k5); letter-spacing:.18em }
+.lang{ display:flex; margin-left:2px }
+.lang button{
+  appearance:none; -webkit-appearance:none; background:none; border:0; border-bottom:.5px solid transparent;
+  cursor:pointer; padding:2px 9px 3px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--k4);
+}
+.lang button:hover{ color:var(--k2) }
+.lang button.is-on{ color:var(--k1); border-bottom-color:var(--k3) }
+.lang button + button{ border-left:.5px solid var(--k6) }
+.foot__next{
+  font-family:var(--kai); font-size:13px; letter-spacing:.14em; color:var(--k4);
+  text-align:right;
+}
+.foot__next a{ display:block; margin-top:5px; color:var(--k2); text-decoration:none;
+  border-bottom:.5px solid var(--k6); font-family:var(--mono); font-size:10.5px; letter-spacing:.12em }
+@media (max-width:1080px){
+  .hero__in{ grid-template-columns:minmax(0,1fr); gap:8px; min-height:0 }
+  .dish{ width:min(70vw,400px); margin:10px auto 0 }
+  .anat{ grid-template-columns:minmax(0,1fr); gap:34px }
+  .anat .dish{ width:min(72vw,380px); margin:0 auto }
+  .two{ grid-template-columns:minmax(0,1fr); gap:32px }
+  .ins__row{ grid-template-columns:minmax(0,1fr); gap:5px }
+}
+@media (max-width:760px){
+  body{ font-size:15px }
+  /* The header keeps its links and wraps them: a phone loses width, not the way out. */
+  .bar{ flex-wrap:wrap; row-gap:10px }
+  .bar .r{ order:3; width:100%; flex-wrap:wrap; gap:6px 16px; margin-left:0 }
+  .sec{ padding:52px 0 }
+  .plates{ grid-template-columns:minmax(0,1fr); gap:34px }
+  .plate{ max-width:320px; margin:0 auto }
+  .tone{ grid-template-columns:56px minmax(0,1fr) 80px; gap:16px }
+  .tone__chip{ width:56px; height:20px }
+  .hero__tx{ padding:14px 0 0 }
+}
+
+.install{
+  margin:26px 0 0; display:inline-flex; align-items:baseline; gap:10px;
+  padding:10px 16px 11px; border:.5px solid var(--k6);
+  background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(244,242,234,.42));
+  font-family:var(--mono); font-size:12px; letter-spacing:.02em; color:var(--k2);
+}
+.install span{ color:var(--k5); letter-spacing:.16em; text-transform:uppercase; font-size:9.5px }
+.cols{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:44px; margin-top:34px }
+.col b{
+  display:block; font-family:var(--mono); font-size:9.5px; font-weight:400;
+  letter-spacing:.12em; color:var(--cin); margin-bottom:12px;
+}
+.col h3{
+  margin:0 0 10px; font-weight:400; font-size:17px; letter-spacing:.10em; color:var(--k1);
+  padding-bottom:10px; border-bottom:.5px solid var(--k6);
+}
+.col p, .lim p{ margin:0; font-size:14px; line-height:1.95; color:var(--k3) }
+.limits{ margin-top:30px; border-top:.5px solid var(--k2) }
+.lim{
+  display:grid; grid-template-columns:230px minmax(0,1fr); gap:34px; align-items:baseline;
+  padding:16px 0 17px; border-bottom:.5px solid var(--k6);
+}
+.lim b{ font-weight:400; font-size:15px; letter-spacing:.10em; color:var(--k1) }
+.lim em{ font-style:normal; color:var(--k2); border-bottom:.5px solid var(--k5) }
+@media (max-width:900px){
+  .cols{ grid-template-columns:minmax(0,1fr); gap:26px }
+  .lim{ grid-template-columns:minmax(0,1fr); gap:6px }
+}
+
+/* ── Reference ─────────────────────────────────
+   A page of entries: the signature on the left, what it promises on the right,
+   the packages as a standing index. The same paper and the same cobalt; nothing
+   is boxed that does not have to be. */
+.page-ref .bar, .page-guide .bar{ padding-bottom:4px }
+.ref{
+  max-width:var(--maxw); margin:0 auto; padding:34px var(--gut) 20px;
+  display:grid; grid-template-columns:196px minmax(0,1fr); gap:56px; align-items:start;
+}
+.ref__side{
+  position:sticky; top:26px; align-self:start;
+  max-height:calc(100vh - 52px); overflow-y:auto;
+  padding-right:10px; border-right:.5px solid var(--k6);
+}
+.ref__side::-webkit-scrollbar{ width:6px; height:6px }
+.ref__side::-webkit-scrollbar-thumb{
+  background:color-mix(in srgb, var(--k4) 26%, transparent); border-radius:99px;
+}
+.ref__side:hover::-webkit-scrollbar-thumb{
+  background:color-mix(in srgb, var(--k2) 46%, transparent);
+}
+@supports not selector(::-webkit-scrollbar){
+  .ref__side{
+    scrollbar-width:thin;
+    scrollbar-color:color-mix(in srgb, var(--k4) 32%, transparent) transparent;
+  }
+}
+.ref__sideh{
+  margin:0 0 12px; font-family:var(--mono); font-size:9px; letter-spacing:.26em;
+  color:var(--k5); text-transform:uppercase;
+}
+.ref__side ul{ list-style:none; margin:0; padding:0 }
+.ref__side li a{
+  display:flex; align-items:baseline; gap:8px; justify-content:space-between;
+  padding:5px 0 6px; border-bottom:.5px solid transparent;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
+  color:var(--k3); text-decoration:none;
+}
+.ref__side li a i{
+  font-style:normal; font-size:9px; color:var(--k5); letter-spacing:.06em;
+}
+.ref__side li a:hover{ color:var(--k1); border-bottom-color:var(--k5) }
+.ref__side li a.is-here{ color:var(--k1); border-bottom-color:var(--k3) }
+.ref__side li a.is-here i{ color:var(--cin) }
+
+.ref__main{ min-width:0 }
+.ref__top{ padding:0 0 26px; border-bottom:.5px solid var(--k2) }
+.ref__t{
+  margin:0; display:flex; align-items:baseline; gap:12px 28px; flex-wrap:wrap;
+  font-weight:400; font-size:clamp(28px,3.6vw,40px); line-height:1.35;
+  letter-spacing:.08em; color:var(--k1);
+}
+.ref__t small{
+  margin-left:auto; font-family:var(--mono); font-size:9.5px;
+  letter-spacing:.26em; color:var(--k4); text-transform:uppercase; white-space:nowrap;
+}
+.ref__lede{ margin:16px 0 0; max-width:40em; font-size:14.5px; line-height:2; color:var(--k3) }
+.ref__lede code{ font-family:var(--mono); font-size:12px; color:var(--k2) }
+
+.ref__pkg{ padding:34px 0 8px; scroll-margin-top:24px }
+.ref__pkg + .ref__pkg{ border-top:.5px solid var(--k6) }
+.ref__pkgh .kicker{ margin-bottom:8px }
+.ref__pkgh h2{
+  margin:0; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+  font-weight:400; font-size:17px; letter-spacing:.04em; color:var(--k1);
+}
+.ref__pkgh h2 code{ font-family:var(--mono); font-size:15px; letter-spacing:-.01em }
+.ref__pkgh h2 small{
+  margin-left:auto; font-family:var(--mono); font-size:9px; letter-spacing:.2em;
+  color:var(--k5); text-transform:uppercase;
+}
+.ref__intro{ margin:10px 0 0; max-width:38em; font-size:13.5px; line-height:1.95; color:var(--k4) }
+.ref__label{
+  margin:24px 0 6px; padding-bottom:5px; border-bottom:.5px solid var(--k2);
+  font-family:var(--mono); font-size:9px; letter-spacing:.26em;
+  color:var(--cin); text-transform:uppercase;
+}
+.ref__item{
+  display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:10px 26px;
+  align-items:baseline; padding:9px 0 10px; border-bottom:.5px solid var(--k6);
+  transition:background .12s linear;
+}
+.ref__item:hover{ background:rgba(198,210,223,.22) }
+.ref__sig{ min-width:0; overflow-wrap:anywhere }
+.ref__sig code{
+  font-family:var(--mono); font-size:12px; line-height:1.8; letter-spacing:-.01em;
+  color:var(--k1); background:none; padding:0;
+}
+.ref__doc{ min-width:0; font-size:13.5px; line-height:1.85; color:var(--k3) }
+.ref__doc p{ margin:0 0 .55em }
+.ref__doc p:last-child{ margin-bottom:0 }
+.ref__doc code{ font-family:var(--mono); font-size:11.5px; color:var(--k2); overflow-wrap:anywhere }
+.ref__list{ margin:0 }
+
+.ref__type{
+  margin:20px 0 0; padding:16px 0 6px; border-top:1px solid var(--k3);
+}
+.ref__head{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap }
+.ref__head h3{ margin:0; font-weight:400; font-size:15px; letter-spacing:.02em; color:var(--k1) }
+.ref__head h3 code{ font-family:var(--mono); font-size:14px }
+.ref__implements{
+  font-family:var(--mono); font-size:9px; letter-spacing:.16em; color:var(--k5);
+  text-transform:uppercase;
+}
+.ref__type > .ref__sig{ margin-top:8px }
+.ref__type > .ref__doc{ margin-top:8px; max-width:44em }
+.ref__methods{ margin-top:12px; padding-left:14px; border-left:.5px solid var(--k6) }
+.ref__methods .ref__item:last-child{ border-bottom:0 }
+
+.foot__next a + a{ margin-left:14px }
+
+@media (width <= 860px){
+  .ref{ grid-template-columns:minmax(0,1fr); gap:26px; padding-top:22px }
+  .ref__side{
+    position:static; max-height:none; overflow:visible; padding:0 0 12px;
+    border-right:0; border-bottom:.5px solid var(--k6);
+  }
+  .ref__side ul{ display:flex; flex-wrap:wrap; gap:0 18px }
+  .ref__side li a{ gap:6px }
+  .ref__item{ grid-template-columns:minmax(0,1fr); gap:3px }
+  .ref__t small{ margin-left:0 }
+}
+.ref__doc pre.ref__code{
+  margin:10px 0 0; padding:12px 14px; overflow-x:auto;
+  border:.5px solid var(--k6); border-left:2px solid var(--k3);
+  background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(244,242,234,.44));
+  font-family:var(--mono); font-size:11.5px; line-height:1.8; color:var(--k2);
+  white-space:pre;
+}
+.ref__doc pre.ref__code code{ font-size:11.5px; color:inherit }
+.ref__doc strong{ font-weight:400; color:var(--k1); border-bottom:.5px solid var(--k5) }
+.ins__foot{ margin:14px 0 0; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em }
+.ins__foot a{ color:var(--k3); text-decoration:none; border-bottom:.5px solid var(--k5); padding-bottom:2px }
+.ins__foot a:hover{ color:var(--k1); border-color:var(--k3) }
+.ins__foot a::after{ content:' →'; color:var(--cin) }
+
+/* ── Guide ─────────────────────────────────────
+   A reading column, the contents standing beside it, and under each block the
+   lines it printed — set apart by a red rule, the way a colophon marks a note. */
+.guide{
+  max-width:var(--maxw); margin:0 auto; padding:34px var(--gut) 20px;
+  display:grid; grid-template-columns:190px minmax(0,1fr); gap:56px; align-items:start;
+}
+.guide__toc{
+  position:sticky; top:26px; align-self:start; max-height:calc(100vh - 52px);
+  overflow-y:auto; padding-right:10px; border-right:.5px solid var(--k6);
+}
+.guide__toc::-webkit-scrollbar{ width:6px; height:6px }
+.guide__toc::-webkit-scrollbar-thumb{ background:color-mix(in srgb, var(--k4) 26%, transparent); border-radius:99px }
+.guide__toc:hover::-webkit-scrollbar-thumb{ background:color-mix(in srgb, var(--k2) 46%, transparent) }
+@supports not selector(::-webkit-scrollbar){
+  .guide__toc{ scrollbar-width:thin; scrollbar-color:color-mix(in srgb, var(--k4) 32%, transparent) transparent }
+}
+.guide__toc ol{ list-style:none; margin:0; padding:0; counter-reset:g }
+.guide__toc li a{
+  display:flex; gap:9px; padding:5px 0 6px; border-bottom:.5px solid transparent;
+  font-size:12.5px; line-height:1.6; letter-spacing:.06em; color:var(--k3); text-decoration:none;
+}
+.guide__toc li a i{
+  font-style:normal; font-family:var(--mono); font-size:9px; color:var(--k5);
+  letter-spacing:.1em; padding-top:3px;
+}
+.guide__toc li a:hover{ color:var(--k1); border-bottom-color:var(--k5) }
+.guide__toc li a.is-here{ color:var(--k1); border-bottom-color:var(--k3) }
+
+.guide__body{ min-width:0; max-width:780px }
+.guide__top{ padding:0 0 30px; border-bottom:.5px solid var(--k2) }
+.gx{ padding:38px 0 6px; scroll-margin-top:24px }
+.gx + .gx{ border-top:.5px solid var(--k6) }
+.gx h2{
+  margin:0; display:flex; align-items:baseline; gap:12px 26px; flex-wrap:wrap;
+  font-weight:400; font-size:clamp(20px,2.4vw,25px); line-height:1.5;
+  letter-spacing:.08em; color:var(--k1);
+}
+.gx h2 small{
+  margin-left:auto; font-family:var(--mono); font-size:9px; letter-spacing:.24em;
+  color:var(--k4); text-transform:uppercase;
+}
+.gx__prose{ margin:16px 0 0; max-width:35em; color:var(--k2); font-size:15px; line-height:2.05 }
+.gx__prose p{ margin:0 0 1.05em }
+.gx__prose code{
+  font-family:var(--mono); font-size:12.5px; color:var(--k1);
+  background:rgba(198,210,223,.26); padding:1px 5px; overflow-wrap:anywhere;
+}
+.gx__prose em{ font-style:normal; color:var(--k1); border-bottom:.5px solid var(--k5) }
+
+.run{ margin:22px 0 0 }
+.gcode{
+  margin:0; padding:18px 20px 19px; overflow-x:auto;
+  border:.5px solid var(--k6); border-left:2px solid var(--k3);
+  background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(244,242,234,.44));
+  font-family:var(--mono); font-size:12.5px; line-height:1.95; color:var(--k2);
+  white-space:pre; tab-size:2;
+}
+.gcode code{ font-family:inherit; font-size:inherit; background:none; padding:0 }
+.gcode::-webkit-scrollbar{ height:6px }
+.gcode::-webkit-scrollbar-thumb{ background:color-mix(in srgb, var(--k4) 30%, transparent); border-radius:99px }
+.gcode:hover::-webkit-scrollbar-thumb{ background:color-mix(in srgb, var(--k2) 46%, transparent) }
+.out{
+  margin:0; padding:11px 16px 12px; border:.5px solid var(--k6); border-left:2px solid var(--cin);
+  border-top:0; background:rgba(247,245,237,.72);
+}
+.out__k{
+  display:block; font-family:var(--mono); font-size:8.5px; letter-spacing:.26em;
+  color:var(--k5); text-transform:uppercase; margin-bottom:5px;
+}
+.out pre{
+  margin:0; font-family:var(--mono); font-size:12px; line-height:1.8;
+  color:var(--k3); white-space:pre-wrap; overflow-wrap:anywhere;
+}
+.gcode .c{ color:var(--k5) }
+.gcode .k{ color:var(--k3) }
+.gcode .s{ color:var(--cin); opacity:.86 }
+.gcode .n{ color:var(--k2) }
+.gcode .p{ color:var(--k3) }
+.guide__end{ margin:36px 0 0; padding-top:18px; border-top:.5px solid var(--k6) }
+.guide__end a{
+  font-family:var(--mono); font-size:11px; letter-spacing:.16em; color:var(--k3);
+  text-decoration:none; border-bottom:.5px solid var(--k5); padding-bottom:3px;
+}
+.guide__end a:hover{ color:var(--k1); border-color:var(--k3) }
+
+@media (width <= 860px){
+  .guide{ grid-template-columns:minmax(0,1fr); gap:24px; padding-top:22px }
+  .guide__toc{ position:static; max-height:none; overflow:visible; padding:0 0 14px; border-right:0; border-bottom:.5px solid var(--k6) }
+  .guide__toc ol{ display:flex; flex-wrap:wrap; gap:0 16px }
+}
