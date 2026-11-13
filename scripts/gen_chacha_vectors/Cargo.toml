@@ -1,0 +1,8 @@
+[package]
+name = "gen_chacha_vectors"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand_chacha = "0.9"
+rand_core = "0.9"
