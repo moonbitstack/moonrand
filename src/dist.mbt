@@ -1,192 +1,12 @@
 ///|
-/// Sampling and distributions over any `Rng`. Names follow Python's `random`
-/// where they overlap, but the receiver is always the generator `r`.
-fn bit_length(n : Int64) -> Int32 {
-  let mut b = 0
-  let mut v = n
-  while v > 0 {
-    v = v >> 1
-    b = b + 1
-  }
-  b
-}
-
-// One uniform index in `[0, range)`, unbiased by rejection. `range` is 1 or more.
-
-///|
-fn[R : @contract.Rng] uniform_index(r : R, range : Int64) -> Int64 {
-  if range <= 1 {
-    return 0
-  }
-  let needed = bit_length(range - 1)
-  let mask : UInt64 = (1UL << needed) - 1UL
-  let range_u = range.reinterpret_as_uint64()
-  let mut x = r.next_u64() & mask
-  while x >= range_u {
-    x = r.next_u64() & mask
-  }
-  x.reinterpret_as_int64()
-}
-
-///|
-/// A uniform `Double` in `[0, 1)`, with 53 bits of resolution, as Python's
-/// `random.random` draws it.
-pub fn[R : @contract.Rng] random(r : R) -> Double {
-  (r.next_u64() >> 11).to_double() / 9007199254740992.0
-}
-
-///|
-/// A uniform `Double` in `[a, b)`.
-pub fn[R : @contract.Rng] uniform(r : R, a : Double, b : Double) -> Double {
-  a + (b - a) * random(r)
-}
-
-///|
-/// A uniform integer in the closed interval `[lo, hi]`, unbiased.
-pub fn[R : @contract.Rng] randint(r : R, lo : Int64, hi : Int64) -> Int64 {
-  if hi < lo {
-    return lo
-  }
-  uniform_index(r, hi - lo + 1) + lo
-}
-
-///|
-/// A uniform integer from `range(start, stop, step)`, as Python's `randrange`.
-/// `stop` is required; `start` defaults to 0 and `step` to 1.
-pub fn[R : @contract.Rng] randrange(
-  r : R,
-  stop : Int64,
-  start~ : Int64 = 0,
-  step? : Int64,
-) -> Int64 {
-  let step = match step {
-    Some(s) => s
-    None => 1
-  }
-  if step == 0 {
-    abort("randrange: step is zero")
-  }
-  let span = stop - start
-  let count : Int64 = if step > 0 {
-    if span <= 0 {
-      0
-    } else {
-      (span + step - 1) / step
-    }
-  } else if span >= 0 {
-    0
-  } else {
-    (-span - step - 1) / -step
-  }
-  if count <= 0 {
-    abort("randrange: empty range")
-  }
-  start + uniform_index(r, count) * step
-}
-
-///|
-/// `k` low bits of the next word; `k` over 64 returns the whole word.
-pub fn[R : @contract.Rng] getrandbits(r : R, k : Int32) -> UInt64 {
-  let x = r.next_u64()
-  if k <= 0 {
-    return 0
-  } else if k >= 64 {
-    return x
-  } else {
-    x & ((1UL << k) - 1UL)
-  }
-}
-
-///|
-/// One element, or `None` for an empty view.
-pub fn[R : @contract.Rng, T] choice(r : R, items : ArrayView[T]) -> T? {
-  let n = items.length()
-  if n == 0 {
-    return None
-  }
-  Some(items[uniform_index(r, n.to_int64()).to_int()])
-}
-
-///|
-/// `k` elements with replacement; with `weights` they are drawn proportionally.
-pub fn[R : @contract.Rng, T] choices(
-  r : R,
-  items : ArrayView[T],
-  k~ : Int32 = 1,
-  weights? : ArrayView[Double],
-) -> Array[T] {
-  let n = items.length()
-  let out : Array[T] = []
-  if k <= 0 || n == 0 {
-    return out
-  }
-  match weights {
-    None =>
-      for _i = 0; _i < k; _i = _i + 1 {
-        out.push(items[uniform_index(r, n.to_int64()).to_int()])
-      }
-    Some(w) => {
-      let cum = FixedArray::make(n, 0.0)
-      let mut total = 0.0
-      for i = 0; i < n; i = i + 1 {
-        total = total + w[i]
-        cum[i] = total
-      }
-      if total <= 0.0 {
-        for _i = 0; _i < k; _i = _i + 1 {
-          out.push(items[uniform_index(r, n.to_int64()).to_int()])
-        }
-      } else {
-        for _i = 0; _i < k; _i = _i + 1 {
-          let u = random(r) * total
-          let mut lo = 0
-          let mut hi = n
-          while lo < hi {
-            let mid = (lo + hi) / 2
-            if cum[mid] < u {
-              lo = mid + 1
-            } else {
-              hi = mid
-            }
-          }
-          out.push(items[if lo >= n { n - 1 } else { lo }])
-        }
-      }
-    }
-  }
-  out
-}
-
-///|
-/// `k` distinct elements, by a Fisher-Yates partial shuffle.
-pub fn[R : @contract.Rng, T] sample(
-  r : R,
-  items : ArrayView[T],
-  k : Int32,
-) -> Array[T] {
-  let n = items.length()
-  let kk = if k < 0 { 0 } else if k > n { n } else { k }
-  let a = items.to_owned()
-  for i = 0; i < kk; i = i + 1 {
-    let j = i + uniform_index(r, (n - i).to_int64()).to_int()
-    let t = a[i]
-    a[i] = a[j]
-    a[j] = t
-  }
-  a[0:kk].to_owned()
-}
-
-///|
-/// Shuffle `a` in place, Fisher-Yates.
-pub fn[R : @contract.Rng, T] shuffle(r : R, a : Array[T]) -> Unit {
-  let n = a.length()
-  for i = n - 1; i > 0; i = i - 1 {
-    let j = uniform_index(r, (i + 1).to_int64()).to_int()
-    let t = a[i]
-    a[i] = a[j]
-    a[j] = t
-  }
-}
+/// The distributions, one draw each, over any `Rng`. Names follow Python's
+/// `random` where they overlap; several more are built from those by the
+/// definition of the distribution.
+///
+/// A draw takes as many words from the stream as its algorithm needs, so two
+/// distributions asked of the same generator interleave in the order you ask.
+/// Nothing is cached between calls: a normal draw is one draw, not one of a
+/// stored pair.
 
 ///|
 /// A normal draw, scaled to `mu` and `sigma` (Box-Muller).
@@ -305,6 +125,65 @@ pub fn[R : @contract.Rng] betavariate(
   let x = gammavariate(r, alpha, 1.0)
   let y = gammavariate(r, beta, 1.0)
   x / (x + y)
+}
+
+///|
+/// A chi-squared draw with `k` degrees of freedom: a gamma draw of shape
+/// `k/2` and scale two, which is what the chi-squared distribution is.
+pub fn[R : @contract.Rng] chi_squared(r : R, df : Double) -> Double {
+  if df <= 0.0 {
+    abort("chi_squared: the degrees of freedom must be positive")
+  }
+  gammavariate(r, df / 2.0, 2.0)
+}
+
+///|
+/// A Student's t draw with `nu` degrees of freedom: a normal draw over the
+/// square root of a chi-squared draw divided by its own degrees of freedom.
+pub fn[R : @contract.Rng] student_t(r : R, nu : Double) -> Double {
+  if nu <= 0.0 {
+    abort("student_t: nu must be positive")
+  }
+  gauss(r) / (chi_squared(r, nu) / nu).sqrt()
+}
+
+///|
+/// An F draw with `d1` and `d2` degrees of freedom: the ratio of two
+/// chi-squared draws, each divided by its own degrees of freedom.
+pub fn[R : @contract.Rng] fisher_f(r : R, d1 : Double, d2 : Double) -> Double {
+  if d1 <= 0.0 || d2 <= 0.0 {
+    abort("fisher_f: the degrees of freedom must be positive")
+  }
+  let a = chi_squared(r, d1) / d1
+  let b = chi_squared(r, d2) / d2
+  a / b
+}
+
+///|
+/// A Dirichlet draw of concentration `alpha`: one gamma draw per component,
+/// each scaled down by their sum, so the result adds up to one. Every
+/// component of `alpha` must be positive.
+pub fn[R : @contract.Rng] dirichlet(
+  r : R,
+  alpha : ArrayView[Double],
+) -> Array[Double] {
+  let n = alpha.length()
+  let out : Array[Double] = []
+  if n == 0 {
+    return out
+  }
+  let mut total = 0.0
+  for i = 0; i < n; i = i + 1 {
+    let x = gammavariate(r, alpha[i], 1.0)
+    total = total + x
+    out.push(x)
+  }
+  if total > 0.0 {
+    for i = 0; i < n; i = i + 1 {
+      out[i] = out[i] / total
+    }
+  }
+  out
 }
 
 ///|

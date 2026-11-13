@@ -7,15 +7,23 @@ import {
 }
 
 // Values
+pub fn[R : @contract.Rng] bernoulli(R, p? : Double) -> Bool
+
 pub fn[R : @contract.Rng] betavariate(R, Double, Double) -> Double
 
 pub fn[R : @contract.Rng] binomialvariate(R, Int64, Double) -> Int64
+
+pub fn[R : @contract.Rng] chi_squared(R, Double) -> Double
 
 pub fn[R : @contract.Rng, T] choice(R, ArrayView[T]) -> T?
 
 pub fn[R : @contract.Rng, T] choices(R, ArrayView[T], k? : Int32, weights? : ArrayView[Double]) -> Array[T]
 
+pub fn[R : @contract.Rng] dirichlet(R, ArrayView[Double]) -> Array[Double]
+
 pub fn[R : @contract.Rng] expovariate(R, Double) -> Double
+
+pub fn[R : @contract.Rng] fisher_f(R, Double, Double) -> Double
 
 pub fn[R : @contract.Rng] gammavariate(R, Double, Double) -> Double
 
@@ -29,7 +37,11 @@ pub fn[R : @contract.Rng] normalvariate(R, mu? : Double, sigma? : Double) -> Dou
 
 pub fn[R : @contract.Rng] paretovariate(R, Double) -> Double
 
+pub fn[R : @contract.Rng] permutation(R, Int32) -> Array[Int32]
+
 pub fn[R : @contract.Rng] poisson(R, Double) -> Int64
+
+pub fn[R : @contract.Rng] randbytes(R, Int32) -> Bytes
 
 pub fn[R : @contract.Rng] randint(R, Int64, Int64) -> Int64
 
@@ -37,11 +49,13 @@ pub fn[R : @contract.Rng] random(R) -> Double
 
 pub fn[R : @contract.Rng] randrange(R, Int64, start? : Int64, step? : Int64) -> Int64
 
-pub fn[R : @contract.Rng, T] sample(R, ArrayView[T], Int32) -> Array[T]
+pub fn[R : @contract.Rng, T] sample(R, ArrayView[T], Int32, weights? : ArrayView[Double]) -> Array[T]
 
 pub fn seeded(BytesView) -> @chacha.ChaCha12
 
 pub fn[R : @contract.Rng, T] shuffle(R, Array[T]) -> Unit
+
+pub fn[R : @contract.Rng] student_t(R, Double) -> Double
 
 pub fn[R : @contract.Rng] triangular(R, low? : Double, high? : Double, mode? : Double) -> Double
 
