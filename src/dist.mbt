@@ -187,6 +187,92 @@ pub fn[R : @contract.Rng] dirichlet(
 }
 
 ///|
+/// A Cauchy draw: the location `loc` and the scale `scale`. Its mean and
+/// variance do not exist, so the median is the only centre it has — and a
+/// sample of it will surprise anyone who expects one.
+pub fn[R : @contract.Rng] cauchy(
+  r : R,
+  loc~ : Double = 0.0,
+  scale~ : Double = 1.0,
+) -> Double {
+  if scale <= 0.0 {
+    abort("cauchy: the scale must be positive")
+  }
+  loc + scale * @math.tan(3.141592653589793 * (random(r) - 0.5))
+}
+
+///|
+/// A Laplace draw: the two-sided exponential, centred on `loc`, as wide as
+/// `scale`, with variance `2 scale^2`.
+pub fn[R : @contract.Rng] laplace(
+  r : R,
+  loc~ : Double = 0.0,
+  scale~ : Double = 1.0,
+) -> Double {
+  if scale <= 0.0 {
+    abort("laplace: the scale must be positive")
+  }
+  let u = random(r) - 0.5
+  loc -
+  scale *
+  (if u < 0.0 { -1.0 } else { 1.0 }) *
+  @math.ln(1.0 - 2.0 * (if u < 0.0 { -u } else { u }))
+}
+
+///|
+/// A logistic draw with location `loc` and scale `scale`: the log-odds of one
+/// uniform, which is what the distribution is.
+pub fn[R : @contract.Rng] logistic(
+  r : R,
+  loc~ : Double = 0.0,
+  scale~ : Double = 1.0,
+) -> Double {
+  if scale <= 0.0 {
+    abort("logistic: the scale must be positive")
+  }
+  let u = random(r)
+  loc + scale * @math.ln(u / (1.0 - u))
+}
+
+///|
+/// A Gumbel draw, the distribution of a maximum: location `loc`, scale
+/// `scale`, mean `loc + 0.5772 scale`.
+pub fn[R : @contract.Rng] gumbel(
+  r : R,
+  loc~ : Double = 0.0,
+  scale~ : Double = 1.0,
+) -> Double {
+  if scale <= 0.0 {
+    abort("gumbel: the scale must be positive")
+  }
+  loc - scale * @math.ln(-@math.ln(random(r)))
+}
+
+///|
+/// A Rayleigh draw with scale `scale`: the length of a two-dimensional normal
+/// vector whose components have that standard deviation.
+pub fn[R : @contract.Rng] rayleigh(r : R, scale~ : Double = 1.0) -> Double {
+  if scale <= 0.0 {
+    abort("rayleigh: the scale must be positive")
+  }
+  scale * (-2.0 * @math.ln(1.0 - random(r))).sqrt()
+}
+
+///|
+/// The number of trials up to and including the first success, with success
+/// probability `p`: the support is 1, 2, 3, and the mean is `1/p`.
+pub fn[R : @contract.Rng] geometric(r : R, p : Double) -> Int64 {
+  if p <= 0.0 || p > 1.0 {
+    abort("geometric: p in (0, 1]")
+  }
+  if p == 1.0 {
+    return 1L
+  }
+  let u = 1.0 - random(r)
+  (1.0 + (@math.ln(u) / @math.ln(1.0 - p)).floor()).to_int64()
+}
+
+///|
 /// A Pareto draw with shape `alpha`: one minus a uniform, raised to -1/alpha.
 pub fn[R : @contract.Rng] paretovariate(r : R, alpha : Double) -> Double {
   if alpha <= 0.0 {

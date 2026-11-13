@@ -28,7 +28,7 @@
     <nav class="ref__side" aria-label="packages">
       <p class="ref__sideh">packages</p>
       <ul>
-        <li><a href="#pkg-root"><span>root</span><i>30</i></a></li>
+        <li><a href="#pkg-root"><span>root</span><i>36</i></a></li>
         <li><a href="#pkg-contract"><span>contract</span><i>8</i></a></li>
         <li><a href="#pkg-auto"><span>auto</span><i>1</i></a></li>
         <li><a href="#pkg-bits"><span>bits</span><i>4</i></a></li>
@@ -57,12 +57,12 @@
       <div class="ref__top">
         <p class="kicker">reference</p>
         <h1 class="ref__t">Every public item<small>the compiler's own list</small></h1>
-        <p class="ref__lede">This page is generated from the interfaces <code>moon info</code> writes and the <code>///</code> prose above each declaration: 586 items over 23 packages, of which 63 are generator types. The signature is the compiler's; the paragraph under it is the source's.</p>
+        <p class="ref__lede">This page is generated from the interfaces <code>moon info</code> writes and the <code>///</code> prose above each declaration: 592 items over 23 packages, of which 63 are generator types. The signature is the compiler's; the paragraph under it is the source's.</p>
       </div>
   <section class="ref__pkg" id="pkg-root">
     <header class="ref__pkgh">
       <p class="kicker">the root</p>
-      <h2><code>moonbitstack/moonrand</code><small>30 items</small></h2>
+      <h2><code>moonbitstack/moonrand</code><small>36 items</small></h2>
       <p class="ref__intro">The default generator, the sampling functions and the distributions.</p>
     </header>
     <p class="ref__label">functions</p>
@@ -78,6 +78,10 @@
       <div class="ref__item" id="i-root-binomialvariate" data-item="moonbitstack/moonrand::binomialvariate">
         <div class="ref__sig"><code>pub fn[R : @contract.Rng] binomialvariate(r : R, n : Int64, p : Double) -&gt; Int64</code></div>
         <div class="ref__doc"><p>The number of successes in <code>n</code> trials with success probability <code>p</code>, by inverting the binomial CDF term by term: exact for any <code>n</code>, and linear in the number of successes drawn.</p></div>
+      </div>
+      <div class="ref__item" id="i-root-cauchy" data-item="moonbitstack/moonrand::cauchy">
+        <div class="ref__sig"><code>pub fn[R : @contract.Rng] cauchy(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</code></div>
+        <div class="ref__doc"><p>A Cauchy draw: the location <code>loc</code> and the scale <code>scale</code>. Its mean and variance do not exist, so the median is the only centre it has — and a sample of it will surprise anyone who expects one.</p></div>
       </div>
       <div class="ref__item" id="i-root-chi_squared" data-item="moonbitstack/moonrand::chi_squared">
         <div class="ref__sig"><code>pub fn[R : @contract.Rng] chi_squared(r : R, df : Double) -&gt; Double</code></div>
@@ -111,9 +115,25 @@
         <div class="ref__sig"><code>pub fn[R : @contract.Rng] gauss(r : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</code></div>
         <div class="ref__doc"><p>The distributions, one draw each, over any <code>Rng</code>. Names follow Python&#x27;s <code>random</code> where they overlap; several more are built from those by the definition of the distribution.</p><p>A draw takes as many words from the stream as its algorithm needs, so two distributions asked of the same generator interleave in the order you ask. Nothing is cached between calls: a normal draw is one draw, not one of a stored pair.</p><p>A normal draw, scaled to <code>mu</code> and <code>sigma</code> (Box-Muller).</p></div>
       </div>
+      <div class="ref__item" id="i-root-geometric" data-item="moonbitstack/moonrand::geometric">
+        <div class="ref__sig"><code>pub fn[R : @contract.Rng] geometric(r : R, p : Double) -&gt; Int64</code></div>
+        <div class="ref__doc"><p>The number of trials up to and including the first success, with success probability <code>p</code>: the support is 1, 2, 3, and the mean is <code>1/p</code>.</p></div>
+      </div>
       <div class="ref__item" id="i-root-getrandbits" data-item="moonbitstack/moonrand::getrandbits">
         <div class="ref__sig"><code>pub fn[R : @contract.Rng] getrandbits(r : R, k : Int32) -&gt; UInt64</code></div>
         <div class="ref__doc"><p><code>k</code> low bits of the next word; <code>k</code> over 64 returns the whole word.</p></div>
+      </div>
+      <div class="ref__item" id="i-root-gumbel" data-item="moonbitstack/moonrand::gumbel">
+        <div class="ref__sig"><code>pub fn[R : @contract.Rng] gumbel(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</code></div>
+        <div class="ref__doc"><p>A Gumbel draw, the distribution of a maximum: location <code>loc</code>, scale <code>scale</code>, mean <code>loc + 0.5772 scale</code>.</p></div>
+      </div>
+      <div class="ref__item" id="i-root-laplace" data-item="moonbitstack/moonrand::laplace">
+        <div class="ref__sig"><code>pub fn[R : @contract.Rng] laplace(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</code></div>
+        <div class="ref__doc"><p>A Laplace draw: the two-sided exponential, centred on <code>loc</code>, as wide as <code>scale</code>, with variance <code>2 scale^2</code>.</p></div>
+      </div>
+      <div class="ref__item" id="i-root-logistic" data-item="moonbitstack/moonrand::logistic">
+        <div class="ref__sig"><code>pub fn[R : @contract.Rng] logistic(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</code></div>
+        <div class="ref__doc"><p>A logistic draw with location <code>loc</code> and scale <code>scale</code>: the log-odds of one uniform, which is what the distribution is.</p></div>
       </div>
       <div class="ref__item" id="i-root-lognormvariate" data-item="moonbitstack/moonrand::lognormvariate">
         <div class="ref__sig"><code>pub fn[R : @contract.Rng] lognormvariate(r : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</code></div>
@@ -150,6 +170,10 @@
       <div class="ref__item" id="i-root-randrange" data-item="moonbitstack/moonrand::randrange">
         <div class="ref__sig"><code>pub fn[R : @contract.Rng] randrange(r : R, stop : Int64, start~ : Int64 = 0, step? : Int64) -&gt; Int64</code></div>
         <div class="ref__doc"><p>A uniform integer from <code>range(start, stop, step)</code>, as Python&#x27;s <code>randrange</code>. <code>stop</code> is required; <code>start</code> defaults to 0 and <code>step</code> to 1.</p></div>
+      </div>
+      <div class="ref__item" id="i-root-rayleigh" data-item="moonbitstack/moonrand::rayleigh">
+        <div class="ref__sig"><code>pub fn[R : @contract.Rng] rayleigh(r : R, scale~ : Double = 1.0) -&gt; Double</code></div>
+        <div class="ref__doc"><p>A Rayleigh draw with scale <code>scale</code>: the length of a two-dimensional normal vector whose components have that standard deviation.</p></div>
       </div>
       <div class="ref__item" id="i-root-sample" data-item="moonbitstack/moonrand::sample">
         <div class="ref__sig"><code>pub fn[R : @contract.Rng, T] sample(r : R, items : ArrayView[T], k : Int32, weights? : ArrayView[Double]) -&gt; Array[T]</code></div>

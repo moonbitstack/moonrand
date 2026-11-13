@@ -13,6 +13,8 @@ pub fn[R : @contract.Rng] betavariate(R, Double, Double) -> Double
 
 pub fn[R : @contract.Rng] binomialvariate(R, Int64, Double) -> Int64
 
+pub fn[R : @contract.Rng] cauchy(R, loc? : Double, scale? : Double) -> Double
+
 pub fn[R : @contract.Rng] chi_squared(R, Double) -> Double
 
 pub fn[R : @contract.Rng, T] choice(R, ArrayView[T]) -> T?
@@ -29,7 +31,15 @@ pub fn[R : @contract.Rng] gammavariate(R, Double, Double) -> Double
 
 pub fn[R : @contract.Rng] gauss(R, mu? : Double, sigma? : Double) -> Double
 
+pub fn[R : @contract.Rng] geometric(R, Double) -> Int64
+
 pub fn[R : @contract.Rng] getrandbits(R, Int32) -> UInt64
+
+pub fn[R : @contract.Rng] gumbel(R, loc? : Double, scale? : Double) -> Double
+
+pub fn[R : @contract.Rng] laplace(R, loc? : Double, scale? : Double) -> Double
+
+pub fn[R : @contract.Rng] logistic(R, loc? : Double, scale? : Double) -> Double
 
 pub fn[R : @contract.Rng] lognormvariate(R, mu? : Double, sigma? : Double) -> Double
 
@@ -48,6 +58,8 @@ pub fn[R : @contract.Rng] randint(R, Int64, Int64) -> Int64
 pub fn[R : @contract.Rng] random(R) -> Double
 
 pub fn[R : @contract.Rng] randrange(R, Int64, start? : Int64, step? : Int64) -> Int64
+
+pub fn[R : @contract.Rng] rayleigh(R, scale? : Double) -> Double
 
 pub fn[R : @contract.Rng, T] sample(R, ArrayView[T], Int32, weights? : ArrayView[Double]) -> Array[T]
 

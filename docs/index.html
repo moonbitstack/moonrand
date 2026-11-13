@@ -174,7 +174,7 @@
       <div class="ins" id="api-table">
         <!-- api:begin -->
         <details class="ins__pkg" open>
-        <summary class="ins__grp"><span>moonbitstack/moonrand</span><i data-zh="函数二十九 · 别名一">29 functions · 1 alias</i></summary>
+        <summary class="ins__grp"><span>moonbitstack/moonrand</span><i data-zh="函数三十五 · 别名一">35 functions · 1 alias</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="bernoulli">
           <div class="ins__sig">pub fn[R : @contract.Rng] bernoulli(r : R, p~ : Double = 0.5) -&gt; Bool</div>
@@ -187,6 +187,14 @@
         <div class="ins__row" data-item="binomialvariate">
           <div class="ins__sig">pub fn[R : @contract.Rng] binomialvariate(r : R, n : Int64, p : Double) -&gt; Int64</div>
           <div class="ins__g" data-zh="n 次独立试验里的成功次数，单次成功率为 p。逐项反演，不做近似。">The number of successes in n trials of probability p, by inverting the distribution term by term.</div>
+        </div>
+        <div class="ins__row" data-item="cauchy">
+          <div class="ins__sig">pub fn[R : @contract.Rng] cauchy(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__g" data-zh="A Cauchy draw: the location `loc` and the scale `scale`. Its mean and
+variance do not exist, so the median is the only centre it has — and a
+sample of it will surprise anyone who expects one.">A Cauchy draw: the location `loc` and the scale `scale`. Its mean and
+variance do not exist, so the median is the only centre it has — and a
+sample of it will surprise anyone who expects one.</div>
         </div>
         <div class="ins__row" data-item="chi_squared">
           <div class="ins__sig">pub fn[R : @contract.Rng] chi_squared(r : R, df : Double) -&gt; Double</div>
@@ -220,9 +228,33 @@
           <div class="ins__sig">pub fn[R : @contract.Rng] gauss(r : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</div>
           <div class="ins__g" data-zh="一次正态抽样，Box–Muller 法；均值为 mu，标准差为 sigma。">One normal draw by Box-Muller, centred on mu, as wide as sigma.</div>
         </div>
+        <div class="ins__row" data-item="geometric">
+          <div class="ins__sig">pub fn[R : @contract.Rng] geometric(r : R, p : Double) -&gt; Int64</div>
+          <div class="ins__g" data-zh="The number of trials up to and including the first success, with success
+probability `p`: the support is 1, 2, 3, and the mean is `1/p`.">The number of trials up to and including the first success, with success
+probability `p`: the support is 1, 2, 3, and the mean is `1/p`.</div>
+        </div>
         <div class="ins__row" data-item="getrandbits">
           <div class="ins__sig">pub fn[R : @contract.Rng] getrandbits(r : R, k : Int32) -&gt; UInt64</div>
           <div class="ins__g" data-zh="取低 k 位，不多一位。k 超过 64 时返回整个字。">The low k bits, not one more. Above sixty-four, the whole word comes back.</div>
+        </div>
+        <div class="ins__row" data-item="gumbel">
+          <div class="ins__sig">pub fn[R : @contract.Rng] gumbel(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__g" data-zh="A Gumbel draw, the distribution of a maximum: location `loc`, scale
+`scale`, mean `loc + 0.5772 scale`.">A Gumbel draw, the distribution of a maximum: location `loc`, scale
+`scale`, mean `loc + 0.5772 scale`.</div>
+        </div>
+        <div class="ins__row" data-item="laplace">
+          <div class="ins__sig">pub fn[R : @contract.Rng] laplace(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__g" data-zh="A Laplace draw: the two-sided exponential, centred on `loc`, as wide as
+`scale`, with variance `2 scale^2`.">A Laplace draw: the two-sided exponential, centred on `loc`, as wide as
+`scale`, with variance `2 scale^2`.</div>
+        </div>
+        <div class="ins__row" data-item="logistic">
+          <div class="ins__sig">pub fn[R : @contract.Rng] logistic(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__g" data-zh="A logistic draw with location `loc` and scale `scale`: the log-odds of one
+uniform, which is what the distribution is.">A logistic draw with location `loc` and scale `scale`: the log-odds of one
+uniform, which is what the distribution is.</div>
         </div>
         <div class="ins__row" data-item="lognormvariate">
           <div class="ins__sig">pub fn[R : @contract.Rng] lognormvariate(r : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</div>
@@ -259,6 +291,12 @@
         <div class="ins__row" data-item="randrange">
           <div class="ins__sig">pub fn[R : @contract.Rng] randrange(r : R, stop : Int64, start~ : Int64 = 0, step? : Int64) -&gt; Int64</div>
           <div class="ins__g" data-zh="左闭右开的整数，起点和步长可选。范围为空或步长为零则中止。">An integer, right end excluded, with an optional start and step. An empty range or a zero step aborts.</div>
+        </div>
+        <div class="ins__row" data-item="rayleigh">
+          <div class="ins__sig">pub fn[R : @contract.Rng] rayleigh(r : R, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__g" data-zh="A Rayleigh draw with scale `scale`: the length of a two-dimensional normal
+vector whose components have that standard deviation.">A Rayleigh draw with scale `scale`: the length of a two-dimensional normal
+vector whose components have that standard deviation.</div>
         </div>
         <div class="ins__row" data-item="sample">
           <div class="ins__sig">pub fn[R : @contract.Rng, T] sample(r : R, items : ArrayView[T], k : Int32, weights? : ArrayView[Double]) -&gt; Array[T]</div>
@@ -298,7 +336,7 @@
         </div>
         </div>
         </details>
-        <p class="ins__foot"><a href="api.html" data-zh="参考页 · 全部 586 项，23 个包">The reference: all 586 items, 23 packages</a></p>
+        <p class="ins__foot"><a href="api.html" data-zh="参考页 · 全部 592 项，23 个包">The reference: all 592 items, 23 packages</a></p>
         <!-- api:end -->
       </div>
     </div>

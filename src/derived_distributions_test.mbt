@@ -110,3 +110,102 @@ test "panic choices with a negative weight" {
   let r = @moonrand.seeded(b"negative")
   let _ = @moonrand.choices(r, [1, 2, 3], k=2, weights=[1.0, -1.0, 1.0])
 }
+
+///|
+/// The median of a sample, for the one distribution here that has no mean.
+fn median(xs : Array[Double]) -> Double {
+  let sorted = xs.copy()
+  sorted.sort()
+  sorted[sorted.length() / 2]
+}
+
+///|
+/// Cauchy has no mean and no variance, so the checks are on its median and its
+/// interquartile range: both are the location and twice the scale.
+test "cauchy_is_centred_where_it_is_told" {
+  let r = @moonrand.seeded(b"cauchy")
+  let xs = Array::make(20001, 0.0)
+  for i = 0; i < xs.length(); i = i + 1 {
+    xs[i] = @moonrand.cauchy(r, loc=2.0, scale=3.0)
+  }
+  assert_true(near(median(xs), 2.0, 0.06))
+  let sorted = xs.copy()
+  sorted.sort()
+  let iqr = sorted[sorted.length() * 3 / 4] - sorted[sorted.length() / 4]
+  assert_true(near(iqr, 6.0, 0.15))
+}
+
+///|
+test "laplace_has_the_moments_of_a_laplace" {
+  let r = @moonrand.seeded(b"laplace")
+  let xs = Array::make(20000, 0.0)
+  for i = 0; i < xs.length(); i = i + 1 {
+    xs[i] = @moonrand.laplace(r, loc=1.0, scale=2.0)
+  }
+  assert_true(near(mean(xs), 1.0, 0.05))
+  assert_true(near(variance(xs), 8.0, 0.25))
+}
+
+///|
+test "logistic_has_the_moments_of_a_logistic" {
+  let r = @moonrand.seeded(b"logistic")
+  let xs = Array::make(20000, 0.0)
+  for i = 0; i < xs.length(); i = i + 1 {
+    xs[i] = @moonrand.logistic(r)
+  }
+  assert_true(near(mean(xs), 0.0, 0.04))
+  assert_true(near(variance(xs), 3.289868133696453, 0.15))
+}
+
+///|
+test "gumbel_has_the_moments_of_a_gumbel" {
+  let r = @moonrand.seeded(b"gumbel")
+  let xs = Array::make(20000, 0.0)
+  for i = 0; i < xs.length(); i = i + 1 {
+    xs[i] = @moonrand.gumbel(r)
+  }
+  assert_true(near(mean(xs), 0.5772156649015329, 0.03))
+  assert_true(near(variance(xs), 1.6449340668482264, 0.08))
+}
+
+///|
+test "rayleigh_has_the_moments_of_a_rayleigh" {
+  let r = @moonrand.seeded(b"rayleigh")
+  let xs = Array::make(20000, 0.0)
+  for i = 0; i < xs.length(); i = i + 1 {
+    xs[i] = @moonrand.rayleigh(r)
+    assert_true(xs[i] > 0.0)
+  }
+  assert_true(near(mean(xs), 1.2533141373155003, 0.02))
+  assert_true(near(variance(xs), 0.4292036732051034, 0.04))
+}
+
+///|
+/// The count of trials up to the first success: never below one, and four on
+/// average when one try in four succeeds.
+test "geometric_counts_the_trials_to_the_first_success" {
+  let r = @moonrand.seeded(b"geometric")
+  let total = 20000
+  let mut sum = 0L
+  for _i = 0; _i < total; _i = _i + 1 {
+    let k = @moonrand.geometric(r, 0.25)
+    assert_true(k >= 1L)
+    sum = sum + k
+  }
+  assert_true(near(sum.to_double() / total.to_double(), 4.0, 0.15))
+}
+
+///|
+test "panic cauchy with a scale of zero" {
+  let _ = @moonrand.cauchy(@moonrand.seeded(b"c0"), scale=0.0)
+}
+
+///|
+test "panic logistic with a negative scale" {
+  let _ = @moonrand.logistic(@moonrand.seeded(b"l0"), scale=-1.0)
+}
+
+///|
+test "panic geometric with a probability of zero" {
+  let _ = @moonrand.geometric(@moonrand.seeded(b"g0"), 0.0)
+}

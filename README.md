@@ -157,6 +157,11 @@ test {
 | `normalvariate(rng, mu~, sigma~)` | normal, by ratio of uniforms |
 | `expovariate(rng, lambda)` | exponential with rate `lambda` |
 | `lognormvariate(rng, mu~, sigma~)` | log-normal |
+| `cauchy(rng, loc~, scale~)` | Cauchy, the median where it is told |
+| `laplace(rng, loc~, scale~)` | two-sided exponential |
+| `logistic(rng, loc~, scale~)` | logistic on the log-odds |
+| `gumbel(rng, loc~, scale~)` | Gumbel, for maxima |
+| `rayleigh(rng, scale~)` | Rayleigh, a radius in two dimensions |
 | `gammavariate(rng, alpha, beta)` | gamma, Marsaglia-Tsang |
 | `betavariate(rng, alpha, beta)` | beta |
 | `chi_squared(rng, df)` | chi-squared, a gamma of shape `df/2` |
@@ -165,6 +170,7 @@ test {
 | `dirichlet(rng, alpha)` | Dirichlet, gammas scaled to sum to one |
 | `poisson(rng, mu)` | Poisson, multiplication or transformed rejection |
 | `binomialvariate(rng, n, p)` | the count of successes in `n` trials |
+| `geometric(rng, p)` | trials up to the first success |
 | `triangular(rng, low~, high~, mode?)` | triangular |
 | `vonmisesvariate(rng, mu, kappa)` | von Mises on the circle |
 | `paretovariate(rng, alpha)` | Pareto |
