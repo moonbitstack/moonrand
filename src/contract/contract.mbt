@@ -6,7 +6,10 @@
 ///
 /// Methods take `Self` by value and keep their state in interior-mutable
 /// fields (`Array` buffers and `priv mut` scalars), so a draw advances the
-/// caller's generator without a mutable reference.
+/// caller's generator without a mutable reference. That is also why a
+/// generator is a handle rather than a value: `let b = a` copies the handle
+/// and shares its buffer, so both draws advance one state. For two
+/// independent streams, build two generators from the seed.
 pub(open) trait Rng {
   /// The next 64-bit word, uniformly over `[0, 2^64)`. Every algorithm
   /// implements this one method; `next_u32` and `fill` are shared defaults.

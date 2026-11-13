@@ -89,6 +89,9 @@ Import the subpackage you named: `"moonbitstack/moonrand/xoshiro"` for
   value. Two calls with the same generator give two different numbers, and there
   is no way to ask for the same one twice — build a fresh generator from the seed
   instead.
+- A generator is a handle, and `let b = a` copies the handle: the two names share
+  one state, so a draw through either advances both. Seed a second generator for
+  a second stream, or `jump` the first one away.
 - `gauss` and `normalvariate` are two algorithms, not two names for one. Swapping
   them changes the stream, so a recorded run no longer reproduces.
 - `randint` is closed and `randrange` is half-open. `randint(rng, 1L, 6L)` never

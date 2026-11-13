@@ -1,7 +1,7 @@
 <p align="right">
   <a href="https://moonbitstack.github.io/moonrand/">home</a> &nbsp;·&nbsp;
-  <a href="https://moonbitstack.github.io/moonrand/#start">guide</a> &nbsp;·&nbsp;
-  <a href="https://moonbitstack.github.io/moonrand/#api">api</a> &nbsp;·&nbsp;
+  <a href="https://moonbitstack.github.io/moonrand/guide.html">guide</a> &nbsp;·&nbsp;
+  <a href="https://moonbitstack.github.io/moonrand/api.html">api</a> &nbsp;·&nbsp;
   <a href="https://mooncakes.io/docs/moonbitstack/moonrand">mooncakes</a>
 </p>
 
@@ -98,6 +98,11 @@ test {
 }
 ```
 
+A generator is a handle: its state lives in a buffer the handle points at, so
+`let b = a` shares that state and both draws advance it. Build a second
+generator from the seed when two independent streams are wanted, or take
+`jump` to move one stream far away from the other.
+
 Generators that can jump say so: `jump` and `long_jump` on the xoshiro and LXM
 families, `advance` on the counter-based ones — ChaCha, PCG, Philox, Threefry,
 Squares, SplitMix64, MRG32k3a. Jumping moves the state forward without drawing
@@ -122,10 +127,13 @@ Over any `Rng`, with Python's names:
 | `randint(rng, lo, hi)` | an integer in [lo, hi], closed, unbiased |
 | `randrange(rng, stop, start~, step?)` | Python's `randrange` |
 | `getrandbits(rng, k)` | the low `k` bits of a word |
+| `randbytes(rng, n)` | `n` bytes off the stream |
+| `bernoulli(rng, p~)` | `true` with probability `p` |
 | `choice(rng, items)` | one element, or `None` for an empty view |
 | `choices(rng, items, k~, weights?)` | `k` elements, in proportion when weighted |
-| `sample(rng, items, k)` | `k` distinct elements |
+| `sample(rng, items, k, weights?)` | `k` distinct elements, in proportion when weighted |
 | `shuffle(rng, items)` | the array in place |
+| `permutation(rng, n)` | `0` to `n - 1` in a random order |
 
 `randint` and `randrange` reject out-of-range draws rather than taking a
 remainder, so no value is more likely than another, whatever the range.
@@ -151,6 +159,10 @@ test {
 | `lognormvariate(rng, mu~, sigma~)` | log-normal |
 | `gammavariate(rng, alpha, beta)` | gamma, Marsaglia-Tsang |
 | `betavariate(rng, alpha, beta)` | beta |
+| `chi_squared(rng, df)` | chi-squared, a gamma of shape `df/2` |
+| `student_t(rng, nu)` | Student's t, a normal over a chi-squared |
+| `fisher_f(rng, d1, d2)` | F, a ratio of two chi-squared draws |
+| `dirichlet(rng, alpha)` | Dirichlet, gammas scaled to sum to one |
 | `poisson(rng, mu)` | Poisson, multiplication or transformed rejection |
 | `binomialvariate(rng, n, p)` | the count of successes in `n` trials |
 | `triangular(rng, low~, high~, mode?)` | triangular |
@@ -160,7 +172,8 @@ test {
 
 `gauss` and `normalvariate` are two algorithms, not two spellings: they draw
 from the same generator differently, and a run that swaps one for the other does
-not reproduce.
+not reproduce. Neither keeps a draw in hand for the next call, so the stream
+stays in step with the calls you make.
 
 ```moonbit
 test {
@@ -198,6 +211,20 @@ test {
 `impl @contract.Seeded for Counter` to rebuild it from a seed, or
 `impl @contract.Secure for Counter` when its output is fit for cryptography —
 Philox and PCG pass statistical tests and are not, so they do not carry it.
+
+## Behaviour worth knowing
+
+- `randint` with `hi` below `lo` returns `lo`; `randrange` with an empty range
+  or a zero step aborts. There is no honest number to return for an empty one.
+- `getrandbits` stops at sixty-four bits and returns the whole word beyond that.
+  Bigger draws are a loop over it.
+- `sample` with weights fills each place from what is still left, so a heavier
+  element tends to come out earlier. It is the sequential reading of "without
+  replacement", not a rejection loop.
+- `choices` with weights and `sample` with weights both read an all-zero weight
+  array as no weights at all, and a negative one as an error.
+- `poisson` and `binomialvariate` are exact for any mean or trial count, and
+  cost time in proportion to the smaller of successes and failures.
 
 ## Licence
 
