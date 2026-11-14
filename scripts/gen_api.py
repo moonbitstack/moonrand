@@ -24,6 +24,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from site_parts import band
+
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
 PAGE = ROOT / "docs" / "api.html"
@@ -460,13 +463,30 @@ def tidy_sig(text: str) -> str:
     return text.strip()
 
 
+def sig_inline(text: str) -> str:
+    """One line, breaking after a comma and nowhere else.
+
+    A signature broken at an arbitrary space puts a colon at the start of a
+    line, which reads as a mistake; the segments between commas are held
+    together by `white-space:nowrap` and the breaks are the `<wbr>` after each
+    comma. Nothing is added to the text, so a copy comes out as written.
+    """
+    parts = text.split(", ")
+    out: list[str] = []
+    for i, part in enumerate(parts):
+        out.append(f'<span class="nw">{esc(part)}</span>')
+        if i < len(parts) - 1:
+            out.append("<wbr>, ")
+    return "".join(out)
+
+
 def sig_html(item: Item) -> str:
     """The declaration, one line, with the owner stripped from a method row."""
     text = item.sig
     if item.kind == "method":
         text = re.sub(r"^pub fn(?:\[[^\]]*\])?\s+", "", text)
         text = re.sub(r"^\w+::", "", text)
-    return esc(tidy_sig(text))
+    return sig_inline(tidy_sig(text))
 
 
 INLINE = re.compile(r"`([^`]+)`|\*\*([^*]+)\*\*")
@@ -552,11 +572,11 @@ def render_trait(pkg: Package, item: Item) -> list[str]:
     return out
 
 
-def render_package(pkg: Package) -> list[str]:
+def render_package(pkg: Package, n: int) -> list[str]:
     title, intro = PKG_TITLE.get(pkg.name, ("", ""))
     out = [f'  <section class="ref__pkg" id="pkg-{pkg.short.lower()}">',
            '    <header class="ref__pkgh">',
-           f'      <p class="kicker">{esc(title)}</p>',
+           f'      <p class="kicker">{n:02d} / {esc(title)}</p>',
            f'      <h2><code>{esc(pkg.name)}</code><small>{pkg.count()} item{"" if pkg.count() == 1 else "s"}</small></h2>',
            f'      <p class="ref__intro">{esc(intro)}</p>',
            "    </header>"]
@@ -611,8 +631,8 @@ def render_page(packages: list[Package]) -> str:
         f'{total_items} items over {len(packages)} packages, of which {total_types} are generator types. '
         'The signature is the compiler\'s; the paragraph under it is the source\'s.</p>')
     body.append("      </div>")
-    for pkg in packages:
-        body.extend(render_package(pkg))
+    for i, pkg in enumerate(packages, start=1):
+        body.extend(render_package(pkg, i))
     body.append("    </div>")
     version = version_of()
     return f"""<!doctype html>
@@ -640,6 +660,8 @@ def render_page(packages: list[Package]) -> str:
       <a href="https://github.com/moonbitstack/moonrand">GitHub</a>
     </div>
   </header>
+
+  {band()}
 
   <main class="ref">
 {BEGIN}
@@ -683,8 +705,13 @@ def render_index_digest(root: Package) -> str:
     out.append('        <div class="ins__rows">')
     for item in items:
         en, zh = CURATED.get(item.name, (describe(root, item), describe(root, item)))
+        # The digest shows the call; the bound every one of them shares is
+        # written out once, on the reference page.
+        sig = tidy_sig(item.sig)
+        if item.kind == "fn":
+            sig = re.sub(r"^pub fn(?:\[[^\]]*\])?\s+", "", sig)
         out.append(f'        <div class="ins__row" data-item="{esc(item.name)}">')
-        out.append(f'          <div class="ins__sig">{esc(tidy_sig(item.sig))}</div>')
+        out.append(f'          <div class="ins__sig">{sig_inline(sig)}</div>')
         out.append(f'          <div class="ins__g" data-zh="{esc(zh)}">{esc(en)}</div>')
         out.append("        </div>")
     out.append("        </div>")

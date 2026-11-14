@@ -253,7 +253,7 @@ h2 small{
 .ins__row:hover{ background:rgba(198,210,223,.26) }
 .ins__g, .ins__sig{ overflow-wrap:anywhere }
 .ins__sig{ font-family:var(--mono); font-size:12px; color:var(--k1); line-height:1.75; letter-spacing:-.01em;
-  text-indent:-1.1em; padding-left:1.1em }
+  text-indent:-1.1em; padding-left:1.1em; overflow-wrap:break-word }
 .ins__g{ font-family:var(--kai); font-size:14px; letter-spacing:.10em; color:var(--k3); line-height:1.8 }
 html[lang="en-US"] .ins__g,
 html[lang="en"] .ins__g,
@@ -373,6 +373,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
    the packages as a standing index. The same paper and the same cobalt; nothing
    is boxed that does not have to be. */
 .page-ref .bar, .page-guide .bar{ padding-bottom:4px }
+.page-ref .band--top, .page-guide .band--top{ margin:14px 0 0 }
 .ref{
   max-width:var(--maxw); margin:0 auto; padding:34px var(--gut) 20px;
   display:grid; grid-template-columns:196px minmax(0,1fr); gap:56px; align-items:start;
@@ -408,6 +409,7 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 }
 .ref__side li a i{
   font-style:normal; font-size:9px; color:var(--k5); letter-spacing:.06em;
+  font-variant-numeric:tabular-nums;
 }
 .ref__side li a:hover{ color:var(--k1); border-bottom-color:var(--k5) }
 .ref__side li a.is-here{ color:var(--k1); border-bottom-color:var(--k3) }
@@ -446,14 +448,15 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
   color:var(--cin); text-transform:uppercase;
 }
 .ref__item{
-  display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:10px 26px;
+  display:grid; grid-template-columns:minmax(0,1.18fr) minmax(0,1fr); gap:10px 26px;
   align-items:baseline; padding:9px 0 10px; border-bottom:.5px solid var(--k6);
   transition:background .12s linear;
 }
 .ref__item:hover{ background:rgba(198,210,223,.22) }
-.ref__sig{ min-width:0; overflow-wrap:anywhere }
+.ref__sig{ min-width:0; overflow-wrap:break-word }
+.ref__sig code .nw, .ins__sig .nw{ white-space:nowrap }
 .ref__sig code{
-  font-family:var(--mono); font-size:12px; line-height:1.8; letter-spacing:-.01em;
+  font-family:var(--mono); font-size:11.5px; line-height:1.85; letter-spacing:-.015em;
   color:var(--k1); background:none; padding:0;
 }
 .ref__doc{ min-width:0; font-size:13.5px; line-height:1.85; color:var(--k3) }
@@ -463,7 +466,10 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 .ref__list{ margin:0 }
 
 .ref__type{
-  margin:20px 0 0; padding:16px 0 6px; border-top:1px solid var(--k3);
+  margin:22px 0 0; padding:14px 0 6px; border-top:.5px solid var(--k2);
+}
+.ref__label + .ref__type{
+  margin-top:10px; padding-top:2px; border-top:0;
 }
 .ref__head{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap }
 .ref__head h3{ margin:0; font-weight:400; font-size:15px; letter-spacing:.02em; color:var(--k1) }
@@ -474,12 +480,13 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 }
 .ref__type > .ref__sig{ margin-top:8px }
 .ref__type > .ref__doc{ margin-top:8px; max-width:44em }
-.ref__methods{ margin-top:12px; padding-left:14px; border-left:.5px solid var(--k6) }
+.ref__methods{ margin-top:12px; padding-left:18px; border-left:.5px solid var(--k5) }
 .ref__methods .ref__item:last-child{ border-bottom:0 }
 
 .foot__next a + a{ margin-left:14px }
 
 @media (width <= 860px){
+  .ref__sig code .nw, .ins__sig .nw{ white-space:normal }
   .ref{ grid-template-columns:minmax(0,1fr); gap:26px; padding-top:22px }
   .ref__side{
     position:static; max-height:none; overflow:visible; padding:0 0 12px;
@@ -567,12 +574,14 @@ html[lang="en"] .hero__seal-t, html[lang="en-US"] .hero__seal-t{ font-size:13.5p
 .gcode::-webkit-scrollbar-thumb{ background:color-mix(in srgb, var(--k4) 30%, transparent); border-radius:99px }
 .gcode:hover::-webkit-scrollbar-thumb{ background:color-mix(in srgb, var(--k2) 46%, transparent) }
 .out{
-  margin:0; padding:11px 16px 12px; border:.5px solid var(--k6); border-left:2px solid var(--cin);
+  margin:0; padding:11px 16px 12px; border:.5px solid var(--k6);
+  border-left:1.5px solid color-mix(in srgb, var(--cin) 78%, transparent);
   border-top:0; background:rgba(247,245,237,.72);
 }
 .out__k{
   display:block; font-family:var(--mono); font-size:8.5px; letter-spacing:.26em;
-  color:var(--k5); text-transform:uppercase; margin-bottom:5px;
+  color:color-mix(in srgb, var(--cin) 62%, var(--k5)); text-transform:uppercase;
+  margin-bottom:5px;
 }
 .out pre{
   margin:0; font-family:var(--mono); font-size:12px; line-height:1.8;

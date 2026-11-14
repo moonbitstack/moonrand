@@ -61,7 +61,7 @@ function tasselMarkup(){
 
 function wireTassels(){
   document.querySelectorAll(".tassel").forEach(function(t){ t.remove(); });
-  document.querySelectorAll(".code").forEach(function(code){
+  document.querySelectorAll(".code, .gcode").forEach(function(code){
     const mx = code.scrollWidth - code.clientWidth;
     const my = code.scrollHeight - code.clientHeight;
     if (mx < 4 && my < 4) return;
@@ -164,6 +164,18 @@ function wireTassels(){
   }
 
   document.querySelectorAll('pre.gcode > code').forEach(paint);
+
+  /* The home page hangs its tassels from its own boot; the pages that have no
+     boot of their own hang theirs here. Wiring twice is harmless — the second
+     pass takes the first one down first. */
+  if (typeof wireTassels === 'function'){
+    var hang = function(){ wireTassels(); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hang);
+    else hang();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(hang);
+    var rz;
+    addEventListener('resize', function(){ clearTimeout(rz); rz = setTimeout(hang, 160); });
+  }
 
   /* ── Which section is on screen ─────────────── */
   var links = {};

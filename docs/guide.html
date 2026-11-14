@@ -24,6 +24,8 @@
     </div>
   </header>
 
+  <div class="band band--top" aria-hidden="true"><svg viewBox="0 0 1440 15" preserveAspectRatio="none"><defs><path id="band-fret" d="M1.94,13.8V1.8H24.14V9.9H11.38V5.7H17.48"/></defs><path d="M0 .6H1440M0 14.55H1440" stroke="rgba(66,107,154,.5)" stroke-width=".8" fill="none"/><g fill="none" stroke="rgba(62,103,150,.7)" stroke-width="1.5" stroke-linejoin="miter"><use href="#band-fret" transform="translate(0.00,0)"/><use href="#band-fret" transform="translate(27.75,0)"/><use href="#band-fret" transform="translate(55.50,0)"/><use href="#band-fret" transform="translate(83.25,0)"/><use href="#band-fret" transform="translate(111.00,0)"/><use href="#band-fret" transform="translate(138.75,0)"/><use href="#band-fret" transform="translate(166.50,0)"/><use href="#band-fret" transform="translate(194.25,0)"/><use href="#band-fret" transform="translate(222.00,0)"/><use href="#band-fret" transform="translate(249.75,0)"/><use href="#band-fret" transform="translate(277.50,0)"/><use href="#band-fret" transform="translate(305.25,0)"/><use href="#band-fret" transform="translate(333.00,0)"/><use href="#band-fret" transform="translate(360.75,0)"/><use href="#band-fret" transform="translate(388.50,0)"/><use href="#band-fret" transform="translate(416.25,0)"/><use href="#band-fret" transform="translate(444.00,0)"/><use href="#band-fret" transform="translate(471.75,0)"/><use href="#band-fret" transform="translate(499.50,0)"/><use href="#band-fret" transform="translate(527.25,0)"/><use href="#band-fret" transform="translate(555.00,0)"/><use href="#band-fret" transform="translate(582.75,0)"/><use href="#band-fret" transform="translate(610.50,0)"/><use href="#band-fret" transform="translate(638.25,0)"/><use href="#band-fret" transform="translate(666.00,0)"/><use href="#band-fret" transform="translate(693.75,0)"/><use href="#band-fret" transform="translate(721.50,0)"/><use href="#band-fret" transform="translate(749.25,0)"/><use href="#band-fret" transform="translate(777.00,0)"/><use href="#band-fret" transform="translate(804.75,0)"/><use href="#band-fret" transform="translate(832.50,0)"/><use href="#band-fret" transform="translate(860.25,0)"/><use href="#band-fret" transform="translate(888.00,0)"/><use href="#band-fret" transform="translate(915.75,0)"/><use href="#band-fret" transform="translate(943.50,0)"/><use href="#band-fret" transform="translate(971.25,0)"/><use href="#band-fret" transform="translate(999.00,0)"/><use href="#band-fret" transform="translate(1026.75,0)"/><use href="#band-fret" transform="translate(1054.50,0)"/><use href="#band-fret" transform="translate(1082.25,0)"/><use href="#band-fret" transform="translate(1110.00,0)"/><use href="#band-fret" transform="translate(1137.75,0)"/><use href="#band-fret" transform="translate(1165.50,0)"/><use href="#band-fret" transform="translate(1193.25,0)"/><use href="#band-fret" transform="translate(1221.00,0)"/><use href="#band-fret" transform="translate(1248.75,0)"/><use href="#band-fret" transform="translate(1276.50,0)"/><use href="#band-fret" transform="translate(1304.25,0)"/><use href="#band-fret" transform="translate(1332.00,0)"/><use href="#band-fret" transform="translate(1359.75,0)"/><use href="#band-fret" transform="translate(1387.50,0)"/><use href="#band-fret" transform="translate(1415.25,0)"/><use href="#band-fret" transform="translate(1443.00,0)"/><use href="#band-fret" transform="translate(1470.75,0)"/><use href="#band-fret" transform="translate(1498.50,0)"/><use href="#band-fret" transform="translate(1526.25,0)"/></g></svg></div>
+
   <main class="guide">
     <nav class="guide__toc" aria-label="contents">
       <p class="ref__sideh">contents</p>
@@ -49,7 +51,7 @@
         came for.</p>
       </div>
   <section class="gx" id="install">
-    <p class="kicker">step 01 / install</p>
+    <p class="kicker">step 01</p>
     <h2>it starts with a seed<small>install</small></h2>
     <div class="gx__prose">
 <p>Add the module and the generator comes with it. There is nothing to configure:
@@ -70,7 +72,7 @@ println(noise)</code></pre>
     </figure>
   </section>
   <section class="gx" id="seed">
-    <p class="kicker">step 02 / seeds</p>
+    <p class="kicker">step 02</p>
     <h2>the seed decides the stream<small>seed</small></h2>
     <div class="gx__prose">
 <p>A seed is not a number that picks a starting point; it is the whole state. Two
@@ -93,7 +95,7 @@ b"2\xf4\xea\x89\xec\x0c)A"</pre></div>
     </figure>
   </section>
   <section class="gx" id="handle">
-    <p class="kicker">step 03 / state</p>
+    <p class="kicker">step 03</p>
     <h2>a generator is a handle<small>handle</small></h2>
     <div class="gx__prose">
 <p>There is no global generator and no thread-local one: a generator carries its
@@ -115,7 +117,7 @@ println(@moonrand.randint(right, 0L, 999L))</code></pre>
     </figure>
   </section>
   <section class="gx" id="algorithms">
-    <p class="kicker">step 04 / algorithms</p>
+    <p class="kicker">step 04</p>
     <h2>when the algorithm matters<small>algorithms</small></h2>
     <div class="gx__prose">
 <p>The default is ChaCha12, and most code should keep it. When a published
@@ -139,7 +141,7 @@ println(@moonrand.randint(m, 0L, 99L))</code></pre>
     </figure>
   </section>
   <section class="gx" id="integers">
-    <p class="kicker">step 05 / integers</p>
+    <p class="kicker">step 05</p>
     <h2>integers, without a thumb on the scale<small>integers</small></h2>
     <div class="gx__prose">
 <p><code>randint</code> takes both ends, <code>randrange</code> leaves the right one
@@ -164,7 +166,7 @@ b"\xf4\xef\xf2\x00"</pre></div>
     </figure>
   </section>
   <section class="gx" id="collections">
-    <p class="kicker">step 06 / collections</p>
+    <p class="kicker">step 06</p>
     <h2>choosing from a collection<small>collections</small></h2>
     <div class="gx__prose">
 <p>Five functions cover the deck: <code>choice</code> takes one,
@@ -192,7 +194,7 @@ println(@moonrand.permutation(r, 6))</code></pre>
     </figure>
   </section>
   <section class="gx" id="distributions">
-    <p class="kicker">step 07 / distributions</p>
+    <p class="kicker">step 07</p>
     <h2>the shapes<small>distributions</small></h2>
     <div class="gx__prose">
 <p>One draw each, over the same generator, named as Python's <code>random</code>
@@ -246,7 +248,7 @@ println(@moonrand.paretovariate(r, 3.0))</code></pre>
     </figure>
   </section>
   <section class="gx" id="jumping">
-    <p class="kicker">step 08 / jumping</p>
+    <p class="kicker">step 08</p>
     <h2>jumping ahead<small>jumping</small></h2>
     <div class="gx__prose">
 <p>Counter-based generators can be moved instead of drawn. <code>advance</code>
@@ -269,7 +271,7 @@ println(@moonrand.randint(c, 0L, 999L))</code></pre>
     </figure>
   </section>
   <section class="gx" id="entropy">
-    <p class="kicker">step 09 / entropy</p>
+    <p class="kicker">step 09</p>
     <h2>when it must not repeat<small>entropy</small></h2>
     <div class="gx__prose">
 <p>Everything so far is reproducible on purpose. For a run that should not repeat
@@ -291,7 +293,7 @@ println(roll &gt;= 0L &amp;&amp; roll &lt;= 999L)</code></pre>
     </figure>
   </section>
   <section class="gx" id="own">
-    <p class="kicker">step 10 / your own</p>
+    <p class="kicker">step 10</p>
     <h2>writing your own<small>own</small></h2>
     <div class="gx__prose">
 <p>The contract is three methods, and only one of them has to be written:

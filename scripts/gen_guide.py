@@ -18,6 +18,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from site_parts import band
+
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "docs" / "guide.html"
 
@@ -360,7 +363,7 @@ def render() -> str:
         prose = sec["prose"].strip()
         note = sec.get("note")
         body.append(f'  <section class="gx" id="{sec["slug"]}">')
-        body.append(f'    <p class="kicker">step {sec["n"]} / {esc(sec["kick"])}</p>')
+        body.append(f'    <p class="kicker">step {sec["n"]}</p>')
         body.append(f'    <h2>{esc(sec["name"])}<small>{esc(sec["slug"])}</small></h2>')
         body.append(f'    <div class="gx__prose">\n{prose}\n    </div>')
         body.append("    <figure class=\"run\">")
@@ -415,6 +418,8 @@ def page() -> str:
       <a href="https://github.com/moonbitstack/moonrand">GitHub</a>
     </div>
   </header>
+
+  {band()}
 
   <main class="guide">
 {toc()}

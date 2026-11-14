@@ -166,10 +166,11 @@
     <div class="wrap">
       <p class="kicker" data-zh="四 · 接口">04 / api</p>
       <h2 data-zh="根包的接口&lt;small&gt;其余在参考页&lt;/small&gt;">The root's surface<small>the rest is on the reference page</small></h2>
-      <p class="prose" data-zh="左边是签名，右边是它给出的承诺。这里只列根包：取样、分布、默认生成器。其余二十二个包，六十三个生成器与它们的方法，都在&lt;a href=&quot;api.html&quot;&gt;参考页&lt;/a&gt;上。">
-        Left is the signature, right is the shape it promises. The root package is here — the
-        sampling, the distributions, the default generator. The other twenty-two packages, sixty-three
-        generators and their methods, are on the <a href="api.html">reference page</a>.
+      <p class="prose" data-zh="左边是怎么调它，右边是它给出的承诺。这里只列根包：取样、分布、默认生成器。取样与分布都收一个 &lt;em&gt;Rng&lt;/em&gt;，那一个约束在&lt;a href=&quot;api.html&quot;&gt;参考页&lt;/a&gt;上写全，其余二十二个包与六十三个生成器也在那里。">
+        Left is the call, right is the shape it promises. The root package is here — the sampling,
+        the distributions, the default generator. The draws take an <em>Rng</em>, a bound written
+        out in full on the <a href="api.html">reference page</a>, where the other twenty-two
+        packages and their sixty-three generators are listed.
       </p>
       <div class="ins" id="api-table">
         <!-- api:begin -->
@@ -177,19 +178,19 @@
         <summary class="ins__grp"><span>moonbitstack/moonrand</span><i data-zh="函数三十五 · 别名一">35 functions · 1 alias</i></summary>
         <div class="ins__rows">
         <div class="ins__row" data-item="bernoulli">
-          <div class="ins__sig">pub fn[R : @contract.Rng] bernoulli(r : R, p~ : Double = 0.5) -&gt; Bool</div>
+          <div class="ins__sig"><span class="nw">bernoulli(r : R</span><wbr>, <span class="nw">p~ : Double = 0.5) -&gt; Bool</span></div>
           <div class="ins__g" data-zh="以 p 的概率为真，其余为假；p 超出 [0, 1] 时按近的那一端答。">True with probability p, false the rest of the time; p outside [0, 1] is answered by the nearer end.</div>
         </div>
         <div class="ins__row" data-item="betavariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] betavariate(r : R, alpha : Double, beta : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">betavariate(r : R</span><wbr>, <span class="nw">alpha : Double</span><wbr>, <span class="nw">beta : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次贝塔抽样：两个伽马相除，结果落在 (0, 1)。">One beta draw: two gamma draws, one over their sum, in (0, 1).</div>
         </div>
         <div class="ins__row" data-item="binomialvariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] binomialvariate(r : R, n : Int64, p : Double) -&gt; Int64</div>
+          <div class="ins__sig"><span class="nw">binomialvariate(r : R</span><wbr>, <span class="nw">n : Int64</span><wbr>, <span class="nw">p : Double) -&gt; Int64</span></div>
           <div class="ins__g" data-zh="n 次独立试验里的成功次数，单次成功率为 p。逐项反演，不做近似。">The number of successes in n trials of probability p, by inverting the distribution term by term.</div>
         </div>
         <div class="ins__row" data-item="cauchy">
-          <div class="ins__sig">pub fn[R : @contract.Rng] cauchy(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">cauchy(r : R</span><wbr>, <span class="nw">loc~ : Double = 0.0</span><wbr>, <span class="nw">scale~ : Double = 1.0) -&gt; Double</span></div>
           <div class="ins__g" data-zh="A Cauchy draw: the location `loc` and the scale `scale`. Its mean and
 variance do not exist, so the median is the only centre it has — and a
 sample of it will surprise anyone who expects one.">A Cauchy draw: the location `loc` and the scale `scale`. Its mean and
@@ -197,141 +198,141 @@ variance do not exist, so the median is the only centre it has — and a
 sample of it will surprise anyone who expects one.</div>
         </div>
         <div class="ins__row" data-item="chi_squared">
-          <div class="ins__sig">pub fn[R : @contract.Rng] chi_squared(r : R, df : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">chi_squared(r : R</span><wbr>, <span class="nw">df : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次卡方抽样，自由度为 df：形状 df/2、尺度二的伽马抽样。">One chi-squared draw with df degrees of freedom: a gamma draw of shape df/2 and scale two.</div>
         </div>
         <div class="ins__row" data-item="choice">
-          <div class="ins__sig">pub fn[R : @contract.Rng, T] choice(r : R, items : ArrayView[T]) -&gt; T?</div>
+          <div class="ins__sig"><span class="nw">choice(r : R</span><wbr>, <span class="nw">items : ArrayView[T]) -&gt; T?</span></div>
           <div class="ins__g" data-zh="从中抽一个；数组为空则返回 None，不凭空造一个。">Take one, or None when there is nothing to take.</div>
         </div>
         <div class="ins__row" data-item="choices">
-          <div class="ins__sig">pub fn[R : @contract.Rng, T] choices(r : R, items : ArrayView[T], k~ : Int32 = 1, weights? : ArrayView[Double]) -&gt; Array[T]</div>
+          <div class="ins__sig"><span class="nw">choices(r : R</span><wbr>, <span class="nw">items : ArrayView[T]</span><wbr>, <span class="nw">k~ : Int32 = 1</span><wbr>, <span class="nw">weights? : ArrayView[Double]) -&gt; Array[T]</span></div>
           <div class="ins__g" data-zh="有放回地抽 k 次；给了权重就按权重抽，权重全为零视同未给。">Take k with replacement; give weights and the draws follow them. All-zero weights are read as none.</div>
         </div>
         <div class="ins__row" data-item="dirichlet">
-          <div class="ins__sig">pub fn[R : @contract.Rng] dirichlet(r : R, alpha : ArrayView[Double]) -&gt; Array[Double]</div>
+          <div class="ins__sig"><span class="nw">dirichlet(r : R</span><wbr>, <span class="nw">alpha : ArrayView[Double]) -&gt; Array[Double]</span></div>
           <div class="ins__g" data-zh="一次狄利克雷抽样：每个浓度取一个伽马，再按总和归一。">One Dirichlet draw: a gamma draw per concentration, each scaled down by their sum.</div>
         </div>
         <div class="ins__row" data-item="expovariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] expovariate(r : R, lambd : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">expovariate(r : R</span><wbr>, <span class="nw">lambd : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次指数抽样，比率为 lambda，均值为其倒数。lambda 不为正时中止。">One exponential draw at rate lambda, mean its reciprocal. A non-positive rate aborts.</div>
         </div>
         <div class="ins__row" data-item="fisher_f">
-          <div class="ins__sig">pub fn[R : @contract.Rng] fisher_f(r : R, d1 : Double, d2 : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">fisher_f(r : R</span><wbr>, <span class="nw">d1 : Double</span><wbr>, <span class="nw">d2 : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次 F 抽样：两个卡方各除以自己的自由度，再相除。">One F draw: two chi-squared draws, each over its own degrees of freedom, divided.</div>
         </div>
         <div class="ins__row" data-item="gammavariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] gammavariate(r : R, alpha : Double, beta : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">gammavariate(r : R</span><wbr>, <span class="nw">alpha : Double</span><wbr>, <span class="nw">beta : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次伽马抽样，Marsaglia–Tsang 法；形状为 alpha，尺度为 beta。">One gamma draw by Marsaglia-Tsang: shape alpha, scale beta.</div>
         </div>
         <div class="ins__row" data-item="gauss">
-          <div class="ins__sig">pub fn[R : @contract.Rng] gauss(r : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">gauss(r : R</span><wbr>, <span class="nw">mu~ : Double = 0.0</span><wbr>, <span class="nw">sigma~ : Double = 1.0) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次正态抽样，Box–Muller 法；均值为 mu，标准差为 sigma。">One normal draw by Box-Muller, centred on mu, as wide as sigma.</div>
         </div>
         <div class="ins__row" data-item="geometric">
-          <div class="ins__sig">pub fn[R : @contract.Rng] geometric(r : R, p : Double) -&gt; Int64</div>
+          <div class="ins__sig"><span class="nw">geometric(r : R</span><wbr>, <span class="nw">p : Double) -&gt; Int64</span></div>
           <div class="ins__g" data-zh="The number of trials up to and including the first success, with success
 probability `p`: the support is 1, 2, 3, and the mean is `1/p`.">The number of trials up to and including the first success, with success
 probability `p`: the support is 1, 2, 3, and the mean is `1/p`.</div>
         </div>
         <div class="ins__row" data-item="getrandbits">
-          <div class="ins__sig">pub fn[R : @contract.Rng] getrandbits(r : R, k : Int32) -&gt; UInt64</div>
+          <div class="ins__sig"><span class="nw">getrandbits(r : R</span><wbr>, <span class="nw">k : Int32) -&gt; UInt64</span></div>
           <div class="ins__g" data-zh="取低 k 位，不多一位。k 超过 64 时返回整个字。">The low k bits, not one more. Above sixty-four, the whole word comes back.</div>
         </div>
         <div class="ins__row" data-item="gumbel">
-          <div class="ins__sig">pub fn[R : @contract.Rng] gumbel(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">gumbel(r : R</span><wbr>, <span class="nw">loc~ : Double = 0.0</span><wbr>, <span class="nw">scale~ : Double = 1.0) -&gt; Double</span></div>
           <div class="ins__g" data-zh="A Gumbel draw, the distribution of a maximum: location `loc`, scale
 `scale`, mean `loc + 0.5772 scale`.">A Gumbel draw, the distribution of a maximum: location `loc`, scale
 `scale`, mean `loc + 0.5772 scale`.</div>
         </div>
         <div class="ins__row" data-item="laplace">
-          <div class="ins__sig">pub fn[R : @contract.Rng] laplace(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">laplace(r : R</span><wbr>, <span class="nw">loc~ : Double = 0.0</span><wbr>, <span class="nw">scale~ : Double = 1.0) -&gt; Double</span></div>
           <div class="ins__g" data-zh="A Laplace draw: the two-sided exponential, centred on `loc`, as wide as
 `scale`, with variance `2 scale^2`.">A Laplace draw: the two-sided exponential, centred on `loc`, as wide as
 `scale`, with variance `2 scale^2`.</div>
         </div>
         <div class="ins__row" data-item="logistic">
-          <div class="ins__sig">pub fn[R : @contract.Rng] logistic(r : R, loc~ : Double = 0.0, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">logistic(r : R</span><wbr>, <span class="nw">loc~ : Double = 0.0</span><wbr>, <span class="nw">scale~ : Double = 1.0) -&gt; Double</span></div>
           <div class="ins__g" data-zh="A logistic draw with location `loc` and scale `scale`: the log-odds of one
 uniform, which is what the distribution is.">A logistic draw with location `loc` and scale `scale`: the log-odds of one
 uniform, which is what the distribution is.</div>
         </div>
         <div class="ins__row" data-item="lognormvariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] lognormvariate(r : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">lognormvariate(r : R</span><wbr>, <span class="nw">mu~ : Double = 0.0</span><wbr>, <span class="nw">sigma~ : Double = 1.0) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次对数正态抽样：先取正态，再取指数。">One lognormal draw: a normal draw, exponentiated.</div>
         </div>
         <div class="ins__row" data-item="normalvariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] normalvariate(r : R, mu~ : Double = 0.0, sigma~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">normalvariate(r : R</span><wbr>, <span class="nw">mu~ : Double = 0.0</span><wbr>, <span class="nw">sigma~ : Double = 1.0) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次正态抽样，Kinderman–Monahan 比值法。同一个种子，走势与 gauss 不同。">One normal draw by Kinderman-Monahan; the same seed gives a different stream than gauss.</div>
         </div>
         <div class="ins__row" data-item="paretovariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] paretovariate(r : R, alpha : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">paretovariate(r : R</span><wbr>, <span class="nw">alpha : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次帕累托抽样，形状参数 alpha；尾部很长，没有上界。">One Pareto draw of shape alpha: a long tail with no upper bound.</div>
         </div>
         <div class="ins__row" data-item="permutation">
-          <div class="ins__sig">pub fn[R : @contract.Rng] permutation(r : R, n : Int32) -&gt; Array[Int32]</div>
+          <div class="ins__sig"><span class="nw">permutation(r : R</span><wbr>, <span class="nw">n : Int32) -&gt; Array[Int32]</span></div>
           <div class="ins__g" data-zh="0 到 n-1 的一个随机顺序：洗牌的索引，不必先有数组。">0 to n - 1 in a random order: the indices of a shuffle, without an array to shuffle.</div>
         </div>
         <div class="ins__row" data-item="poisson">
-          <div class="ins__sig">pub fn[R : @contract.Rng] poisson(r : R, mu : Double) -&gt; Int64</div>
+          <div class="ins__sig"><span class="nw">poisson(r : R</span><wbr>, <span class="nw">mu : Double) -&gt; Int64</span></div>
           <div class="ins__g" data-zh="一次泊松抽样，均值为 mu。均值小时走乘法，均值大时走变换拒绝，各走各的快路。">One Poisson draw with mean mu: multiplication below thirty, transformed rejection above it.</div>
         </div>
         <div class="ins__row" data-item="randbytes">
-          <div class="ins__sig">pub fn[R : @contract.Rng] randbytes(r : R, n : Int32) -&gt; Bytes</div>
+          <div class="ins__sig"><span class="nw">randbytes(r : R</span><wbr>, <span class="nw">n : Int32) -&gt; Bytes</span></div>
           <div class="ins__g" data-zh="从流里取 n 个字节：同一个种子写出的字节相同。">n bytes from the stream: the same seed writes the same bytes.</div>
         </div>
         <div class="ins__row" data-item="randint">
-          <div class="ins__sig">pub fn[R : @contract.Rng] randint(r : R, lo : Int64, hi : Int64) -&gt; Int64</div>
+          <div class="ins__sig"><span class="nw">randint(r : R</span><wbr>, <span class="nw">lo : Int64</span><wbr>, <span class="nw">hi : Int64) -&gt; Int64</span></div>
           <div class="ins__g" data-zh="闭区间 [low, high] 上的整数。high 小于 low 时原样返回 low。">An integer, both ends included. A high below low returns low.</div>
         </div>
         <div class="ins__row" data-item="random">
-          <div class="ins__sig">pub fn[R : @contract.Rng] random(r : R) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">random(r : R) -&gt; Double</span></div>
           <div class="ins__g" data-zh="[0, 1) 之间的实数，五十三位精度，取法与 Python 的 random() 相同。">A real in [0, 1) with exactly fifty-three bits, the same draw as Python&#x27;s random().</div>
         </div>
         <div class="ins__row" data-item="randrange">
-          <div class="ins__sig">pub fn[R : @contract.Rng] randrange(r : R, stop : Int64, start~ : Int64 = 0, step? : Int64) -&gt; Int64</div>
+          <div class="ins__sig"><span class="nw">randrange(r : R</span><wbr>, <span class="nw">stop : Int64</span><wbr>, <span class="nw">start~ : Int64 = 0</span><wbr>, <span class="nw">step? : Int64) -&gt; Int64</span></div>
           <div class="ins__g" data-zh="左闭右开的整数，起点和步长可选。范围为空或步长为零则中止。">An integer, right end excluded, with an optional start and step. An empty range or a zero step aborts.</div>
         </div>
         <div class="ins__row" data-item="rayleigh">
-          <div class="ins__sig">pub fn[R : @contract.Rng] rayleigh(r : R, scale~ : Double = 1.0) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">rayleigh(r : R</span><wbr>, <span class="nw">scale~ : Double = 1.0) -&gt; Double</span></div>
           <div class="ins__g" data-zh="A Rayleigh draw with scale `scale`: the length of a two-dimensional normal
 vector whose components have that standard deviation.">A Rayleigh draw with scale `scale`: the length of a two-dimensional normal
 vector whose components have that standard deviation.</div>
         </div>
         <div class="ins__row" data-item="sample">
-          <div class="ins__sig">pub fn[R : @contract.Rng, T] sample(r : R, items : ArrayView[T], k : Int32, weights? : ArrayView[Double]) -&gt; Array[T]</div>
+          <div class="ins__sig"><span class="nw">sample(r : R</span><wbr>, <span class="nw">items : ArrayView[T]</span><wbr>, <span class="nw">k : Int32</span><wbr>, <span class="nw">weights? : ArrayView[Double]) -&gt; Array[T]</span></div>
           <div class="ins__g" data-zh="不放回地抽 k 个，互不重复。给了权重就按剩余元素的比例逐个占位。">Take k without replacement, no repeats. With weights, each place is filled from what is left in proportion.</div>
         </div>
         <div class="ins__row" data-item="seeded">
-          <div class="ins__sig">pub fn seeded(BytesView) -&gt; @chacha.ChaCha12</div>
+          <div class="ins__sig"><span class="nw">seeded(BytesView) -&gt; @chacha.ChaCha12</span></div>
           <div class="ins__g" data-zh="从三十二字节开始。字节相同，流就相同；四个后端上逐位一致。">Start from thirty-two bytes. The same bytes give the same stream, bit for bit on all four backends.</div>
         </div>
         <div class="ins__row" data-item="shuffle">
-          <div class="ins__sig">pub fn[R : @contract.Rng, T] shuffle(r : R, a : Array[T]) -&gt; Unit</div>
+          <div class="ins__sig"><span class="nw">shuffle(r : R</span><wbr>, <span class="nw">a : Array[T]) -&gt; Unit</span></div>
           <div class="ins__g" data-zh="就地打乱顺序，元素一个不少。">Shuffle in place. Every element stays, no position does.</div>
         </div>
         <div class="ins__row" data-item="student_t">
-          <div class="ins__sig">pub fn[R : @contract.Rng] student_t(r : R, nu : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">student_t(r : R</span><wbr>, <span class="nw">nu : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次 t 抽样，自由度为 nu：正态抽样除以卡方抽样与其自由度之比的开方。">One Student&#x27;s t draw with nu degrees of freedom: a normal draw over the root of a chi-squared one.</div>
         </div>
         <div class="ins__row" data-item="triangular">
-          <div class="ins__sig">pub fn[R : @contract.Rng] triangular(r : R, low~ : Double = 0.0, high~ : Double = 1.0, mode? : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">triangular(r : R</span><wbr>, <span class="nw">low~ : Double = 0.0</span><wbr>, <span class="nw">high~ : Double = 1.0</span><wbr>, <span class="nw">mode? : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次三角分布抽样，峰在 mode；不给则取中点。">One triangular draw peaking at mode, the midpoint when it is not given.</div>
         </div>
         <div class="ins__row" data-item="uniform">
-          <div class="ins__sig">pub fn[R : @contract.Rng] uniform(r : R, a : Double, b : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">uniform(r : R</span><wbr>, <span class="nw">a : Double</span><wbr>, <span class="nw">b : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="[low, high) 上的均匀实数。low 比 high 大也照收，两端自行调换。">Anywhere in [low, high), equally thick. Reversed ends are taken as given.</div>
         </div>
         <div class="ins__row" data-item="vonmisesvariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] vonmisesvariate(r : R, mu : Double, kappa : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">vonmisesvariate(r : R</span><wbr>, <span class="nw">mu : Double</span><wbr>, <span class="nw">kappa : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="圆周上的一次抽样，平均角为 mu，聚集度为 kappa，结果在 [0, 2π) 内。">One draw on the circle, mean angle mu, concentration kappa, in [0, 2 pi).</div>
         </div>
         <div class="ins__row" data-item="weibullvariate">
-          <div class="ins__sig">pub fn[R : @contract.Rng] weibullvariate(r : R, alpha : Double, beta : Double) -&gt; Double</div>
+          <div class="ins__sig"><span class="nw">weibullvariate(r : R</span><wbr>, <span class="nw">alpha : Double</span><wbr>, <span class="nw">beta : Double) -&gt; Double</span></div>
           <div class="ins__g" data-zh="一次威布尔抽样，尺度为 alpha，形状为 beta。">One Weibull draw, scale alpha, shape beta.</div>
         </div>
         <div class="ins__row" data-item="StdRng">
-          <div class="ins__sig">pub type StdRng = @chacha.ChaCha12 ///| /// A `StdRng` seeded from `seed`, reproducible for the same seed. pub fn seeded(seed : BytesView) -&gt; StdRng</div>
+          <div class="ins__sig"><span class="nw">pub type StdRng = @chacha.ChaCha12 ///| /// A `StdRng` seeded from `seed`</span><wbr>, <span class="nw">reproducible for the same seed. pub fn seeded(seed : BytesView) -&gt; StdRng</span></div>
           <div class="ins__g" data-zh="默认生成器的别名。换掉这一行，全库的默认算法随之改变。">The default generator&#x27;s name. Change this line and the whole library follows.</div>
         </div>
         </div>
