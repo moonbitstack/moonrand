@@ -1,6 +1,6 @@
 name = "moonbitstack/moonrand"
 
-version = "0.2.0"
+version = "0.2.1"
 
 readme = "README.md"
 
@@ -57,5 +57,5 @@ description = "Reproducible pseudo-random generators, unbiased sampling and the 
 source = "src"
 
 import {
-  "moonbitstack/moonseed@0.2.0",
+  "moonbitstack/moonseed@0.2.1",
 }
